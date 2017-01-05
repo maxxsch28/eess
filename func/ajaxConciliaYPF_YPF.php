@@ -1,0 +1,55 @@
+﻿<?php
+// calculaPromedios.php
+include_once('../include/inicia.php');
+
+$limit=11;
+$offset=0;
+
+
+
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND femision>='$_REQUEST[rangoInicio]' AND femision<='$_REQUEST[rangoFin]'":'';
+// if(isset($_REQUEST['mes'])&&$_REQUEST['mes']<>''){
+//   $mesFin= date("Y-m-t", strtotime($_REQUEST['mes']));
+//   $andFecha=" AND femision>='$_REQUEST[mes]' AND femision<='$mesFin'";
+// }
+
+$andConciliado = (isset($_POST['soloNoConciliado']))?" AND idConciliado=0":"";
+
+
+$sqlYPF = "SELECT *, str_to_date(femision, '%d/%m/%Y') as femision2  FROM 2016_ctacte WHERE 1 $andFecha $andConciliado ORDER BY femision2 ASC;";
+
+//fb($sqlYPF);
+
+$result = $mysqli3->query($sqlYPF);
+
+$tabla = "";$a=0;$q=0;
+echo "<tbody>";
+while($rowYPF = $result->fetch_assoc()){
+    if($rowYPF['idConciliado']==0){
+      // aun no conciliado
+      $classConciliado='noConciliado';
+      $tdConciliado = "<td class=''><input type='checkbox' name='idypf[]' value='$rowYPF[id]' rel='".abs($rowYPF['Importe'])."' class='ypf'/></td>";
+    } else {
+      $classConciliado="conciliado_$rowYPF[idConciliado]";
+      $tdConciliado = "<td class='mConciliado m$rowYPF[idConciliado]'><span class='label label-info'>$rowYPF[idConciliado]</label></td>";
+    }
+    // reviso si el turno pertenece a caja cerrada o no
+    // levanto los precios historicos del dia
+    //$anio_mes = ($rowYPF['femision'], "Ym");
+    //echo $sqlPreciosHistoricos;
+   
+    //$caja = ($rowYPF['IdCaja']==1)?'<span class="badge badge-warning">PLAYA</span>':'<span class="badge badge-info">SHOP</span>';
+    //15
+    $clase = ($rowYPF['Importe']<0||$rowYPF['clase']=='RC')?"success":'danger';
+    if(strlen($rowYPF['Referencia'])==15){
+      // Visa
+      $rowYPF['clase']='Visa';
+    }
+    if($rowYPF['clase']=='RV')$rowYPF['Referencia']=substr($rowYPF['Referencia'],0,-2); 
+    echo "<tr class='alert alert-$clase $classConciliado' id='ypf_$rowYPF[id]'><td>$rowYPF[femision2]</td><td>$rowYPF[clase]</td><td>$rowYPF[Referencia]</td><td>$".number_format(abs($rowYPF['Importe']), 2, ",", ".")."</td><td>$rowYPF[fvto]</td>$tdConciliado</tr>";
+		
+
+}
+echo "</tbody>";
+if(!isset($clase)){echo "<tbody><tr><td colspan='4'>No hay resultados</td></tr></tbody>";}
+?>

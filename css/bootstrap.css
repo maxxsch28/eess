@@ -1,0 +1,274 @@
+.noVentas{
+	color:#f11;
+}
+#loader_gif{
+	display:none;
+}
+
+
+.noComb, .noOP{
+	font-size: 0.6em;
+}
+
+.sh2{
+	float:right;
+	font-size: 0.5em;
+	vertical-align:bottom;
+}
+#limpiar {
+  display:none;
+}
+.gris {
+	
+}
+#nuevaOP .input-small{
+	width: 82px;
+}
+#nuevaOP .input{
+	width: 205px;
+}
+#facturas .input-small {
+  width: 55px;
+  text-align:right;
+}
+
+#facturas td {
+    padding: 4px;
+}
+#nuevaOP .prepend{
+	border-radius: 0;
+	-moz-border-radius: 0;
+	
+}
+#facturas th, #facturas td, .table th, .table td{
+	font-size: 8pt;
+    text-align: center;
+    vertical-align: middle;
+}
+.table th{
+	text-align: left;
+}
+
+
+
+#celularesCliente{
+	margin-top:-1.5em;
+	margin-bottom:-1.5em;
+}
+
+
+
+#ultimasFacturasCliente td, #ultimasFacturas td, #libroDiario td, #libroDiarioTransporte td{line-height:1px;vertical-align:middle;}
+
+#ultimasFacturasCliente tbody td{text-align:right;}
+
+#ultimasFacturas.table td{
+	text-align:right;
+	}
+
+.montoBuscado{
+	font-size:1.2em;
+	color: red;
+}
+	
+#libroDiario tbody.act, #libroDiarioTransporte tbody.act{
+	background-color: #ffd;
+}
+
+
+#libroDiario tr.fila, #libroDiarioTransporte tr.fila{
+	font-size:.8em;
+}
+#libroDiario .cuentaD, #libroDiarioTransporte .cuentaD{
+	width: 80%;
+	text-align:left;
+}
+#libroDiario .cuentaH, #libroDiarioTransporte .cuentaH{
+	text-align:right;
+	width: 80%;
+}
+#libroDiario .debe, #libroDiario  .haber, #libroDiarioTransporte .debe, #libroDiarioTransporte  .haber{
+	width: 14%;
+	font-weight: bold;
+	text-align:right;
+}
+#libroDiario .encabezaAsiento, #libroDiarioTransporte .encabezaAsiento{
+	width:100%;
+	border-top: 2px solid #000;
+	border-bottom: 1px dotted #000;
+	text-align:left;
+	background-color: #ddd;
+}
+
+#libroDiario .encabezaAsiento2, #libroDiarioTransporte .encabezaAsiento2{
+	width:100%;
+	border-bottom: 1px dotted #000;
+	text-align:left;
+	background-color: #ddd;
+}
+
+#libroDiario td.cierraAsiento, #libroDiarioTransporte td.cierraAsiento{
+	border-bottom: 1px dotted #000;
+	text-align: left;
+	line-height:10px;
+	font-size: 0.5em;
+}
+#libroDiario .cierre, #libroDiarioTransporte .cierre{
+	border-top: 1px solid #000;
+	text-align: right;
+}
+.ui-autocomplete-loading { background: white url(../img/ui-anim_basic_16x16.gif) right center no-repeat; }
+.add-on-large{
+	width: 20px;
+}
+.no{
+	font-size: 0.8em;
+	color: #abc;
+}
+
+@media print{
+	@page {size: portrait}
+  .no {display:none;}
+  .no2 {display:none;}
+  .nombre {width:30%;word-wrap: break-word; }
+  .zebra {background-color: #ccc;}
+  #ultimasFacturas tbody tr{
+	background-color: #abc;
+  }
+}
+
+.zebra {
+	background-color: #ccc;
+}
+.resaltado {
+	background-color: #faa;
+}
+.multiplesFacturas{
+	word-wrap: none;
+}
+
+
+.table td, .table thead tr th{
+	text-align: right;
+}
+
+#ypf{
+	width:100%;
+	height:20em;
+	border:0;
+	overflow:hidden;
+}
+.btn-recibir{
+	float:right;
+	margin-right: 2em;
+}
+.recibiendo{
+	margin-right:0;
+	}
+	
+.infoCamion{
+	width:50%;
+	float:right;
+	position:relative;
+	font-size: 0.8em;
+	color: #abc;
+}
+
+.verticalBarGraph {
+	border-bottom: 1px solid #FFF;
+	height: 250px;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	}
+	
+.verticalBarGraph li {
+	border: 1px solid #555;
+	border-bottom: none;
+	bottom: 0;
+	list-style:none;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	text-align: center;
+	width: 100px;
+	}
+.barGraph {
+	border-bottom: 2px solid #333;
+	font: 9px Helvetica, Geneva, sans-serif;
+	height: 100px;
+	margin: 4em 0 0 0;
+	padding: 0;
+	position: relative;
+	/*width: 302px;*/
+	}
+	
+.barGraph li {
+	border: 1px solid #555;
+	border-bottom: none;
+	bottom: 0; 
+	color: #000;
+	margin: 0; 
+	padding: 0;
+	position: absolute;
+	list-style: none;
+	text-align: center;
+	width: 100px;
+	}
+	
+.barGraph li.p1{ background-color:#fcfcfc }
+.barGraph li.p2069{ background-color:#ff0}
+.barGraph li.p2068{ background-color:#060}
+.barGraph li.p2076{ background-color:#009}
+.barGraph li.p2078{ background-color:#039}
+
+.asignacion {
+	width: 6ex;
+	text-align:right;
+	}
+
+.distriTanques{}
+
+.OPentregada{color: #abc;}
+
+.OPcaida{font-size: 0.8em;	color: #f00;}
+
+.checkbox{text-align:left;}
+
+#observaciones{width:100%;}
+
+tr.center td{	text-align:center;}
+
+#listaAsientos, #detalle{
+	font-size: 10pt;
+	
+}
+
+.filaTotal {
+    font-weight: bold;
+    border-top: 1px solid #000;
+}
+
+#ventasMensuales{
+          font-size: 0.7em;
+          width:100%;
+          text-align:right
+      }
+      
+#ventasMensuales table thead th {
+      text-align: center;
+}
+
+.alert-info2{background-color:#9ad3ec;border-color:#bce8f1;color:#3a87ad}
+
+.alert-info2 hr{border-top-color:#a6e1ec}
+
+.alert-info2 .alert-link{color:#2d6987}
+
+.panel-info2{border-color:#029acf}.panel-info2>.panel-heading{color:#ffffff;background-color:#9ad3ec;border-color:#029acf}.panel-info2>.panel-heading+.panel-collapse>.panel-body{border-top-color:#029acf}.panel-info2>.panel-heading .badge{color:#029acf;background-color:#ffffff}.panel-info2>.panel-footer+.panel-collapse>.panel-body{border-bottom-color:#029acf}
+
+.list-group-item-info2{background-color:#9ad3ec;border-color:#bce8f1;color:#3a87ad}
+
+.panel-heading{color:#8a6d3b;background-color:#fcf8e3;border-color:#faebcc}
+.navbar-default{background-color:#FCF8E3;border-color:#eae7e2}
+.navbar-default .navbar-collapse,.navbar-default .navbar-form{border-color:#eae7e2}

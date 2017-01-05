@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+
+// sql para listar mangueras, picos, tanques y productos desde CaldenOil.
+// Puede servir para un genérico del estadoTanques para levantar los datos y definir parámetros
+
+
+SELECT E.Nombre,S.IdSurtidor,S.NumeroSurtidor,M.NumeroManguera,M.Cara,A.Descripcion,T.Numero AS NumeroTanque,T.NumeroSegunTelemedicion
+from Mangueras M
+inner join Surtidores S ON M.IdSurtidor=S.IdSurtidor
+inner join Articulos A ON M.IdArticulo=A.IdArticulo
+inner join Tanques T ON T.IdTanque=M.IdTanque
+inner join Estaciones E ON S.IdEstacion=E.IdEstacion
+ORDER BY Nombre,NumeroSurtidor,NumeroManguera
+
+
+
+
+// para actualizar fecha comprobantes
+select * from dbo.histcomp where idtranglob=5787;
+select * from dbo.asiecont where idtranglob=5787;
+select * from dbo.audittrn where idtranglob=5787;
+select * from dbo.cobravta where idtranglob=5787;
+select * from dbo.acobrar where idtranglob=5787;
+select * from dbo.histoven where idtranglob=5787;
+update dbo.histoven set emision='2015-07-01', vencimien='2015-07-01' where comprobant='AJUSTE S.INICIAL' and emision>'2015-09-01'
+select * from dbo.histoven where comprobant='AJUSTE S.INICIAL'
+
+
+
+// para cambiar los viajes de "EMPRESA PROPIA"
+Web a partir de parte de viaje te deje cambiar fletero o chofer, siempre y cuando el viaje no esté liquidado.
+select * from dbo.partes where chofer=1198
+select * from dbo.parttram where chofer=1198
+
+update dbo.partes set fletero=1200 where chofer=1198 and fletero=0
+update dbo.parttram set fletero=1200 where chofer=1198 and fletero=0
+
+
+// web que te deje cambiar la cuenta corriente de un cliente una vez que se factura a otro (?)
+
+
+// web que te tire el listado resumido de los viajes realizados por fleteros durante el mes pasado, listo para preparar comisiones (?)
+SELECT parttram.Salida, parttram.SalidaHora, Partes.Sucursal_E, Partes.Parte, Parttram.Tramo,parttram.Origen,parttram.nom_Origen, parttram.Loc_Origen, parttram.ProvOrigen, Parttram.Destino, Parttram.Nom_Destin, Parttram.Loc_Desti, Parttram.Chofer, Choferes.Nombre as Cho_Nombre, parttram.Fletero, Fleteros.Nombre as Fle_Nombre, parttram.RegimenGan, AcomPart.Chofer as Acompanante, Acompa.Nombre as Aco_Nombre, parttram.Equipo, Equipos.Patente as Equ_Patent, Partes.Tara, Partes.Tara_Llega, Equipos.Patente2 as Equ_Paten2, parttram.Acoplado, Acoplado.Patente as Aco_Patent, parttram.tipo_Equi as TipoEquipo, Partes.Tipo_Servi, TipoServ.Detalle As DetServ , TipoEqui.Detalle as TpE_Detall, Partes.Kilometros, Partes.Adelanto, Partes.AdelEfec, Partes.AdelGasOil, Partes.AdelOtros, Partes.AdelChof, Partes.Negocio, Negocios.Nombre as Neg_Nombre, Partes.TipoViaje, TipoPedi.Nombre as TpV_Nombre, Partes.APagar_Fle, Partes.Pagado_Fle, Partes.Imp_Peajes, Partes.Pagado_Pea, Partes.PorcDescPa, Parttram.LiquidarCh, Parttram.SucuLiqCho, Parttram.LiquiChofe, Partes.SucuRendi, Partes.Rendicion, Partes.Observacio, Partes.SucuOrdCar, Partes.NumeOrdCar, Partes.Cumplido, Partes.Rendido, Partes.Anulado, PREFPVTA.Comprobant as Compr_Pref, PREFPVTA.TipFactu, PREFPVTA.SucFactu, PREFPVTA.NumFactu, ParteVta.SucuPrefac, ParteVta.NumePrefac, CASE WHEN Parttram.nume_cumtr=0 THEN 'No' ELSE 'Si' END as nume_cumtr,CASE WHEN Parttram.nume_rentr=0 THEN 'No' ELSE 'Si' END as nume_rentr,Partes.FechaIngre, Partes.HoraIngre, Partes.IdOperador, Partes.Operador, Partes.SucTranGlo, Partes.IdTranGlob, Partes.IdEmpresa, Origen.Localidad NomOrigen, Destino.Localidad NomDestino , Partes.CantEnvios, Partes.Unidades, Partes.Kilos, Partes.KmRecorri, Partes.Declarado ,ParteVta.Importe as ImpVta, ParteVta.Cliente FROM Partes INNER JOIN PARTTRAM ON partes.sucursal_e = parttram.sucursal AND partes.parte = parttram.numero INNER JOIN Choferes ON parttram.Chofer = Choferes.Codigo INNER JOIN Fleteros ON parttram.Fletero = Fleteros.Fletero INNER JOIN Equipos ON parttram.Equipo     = Equipos.Equipo INNER JOIN TipoEqui ON parttram.Tipo_Equi = TipoEqui.Codigo LEFT JOIN Equipos as Acoplado ON parttram.Acoplado   = Acoplado.Equipo  LEFT JOIN Ciudades Origen  ON PartTram.Origen = Origen.Codigo  LEFT JOIN Ciudades Destino ON PartTram.Destino = Destino.Codigo LEFT JOIN Negocios ON Partes.Negocio    = Negocios.Codigo LEFT JOIN TipoPedi ON Partes.TipoViaje  = TipoPedi.Codigo LEFT JOIN TipoServ ON Partes.Tipo_Servi  = TipoServ.Codigo LEFT JOIN AcomPart ON Partes.Sucursal_E   = AcomPart.Sucursal_E AND Partes.Parte        = AcomPart.Parte LEFT JOIN Choferes AS Acompa ON AcomPart.Chofer     = Acompa.Codigo  INNER JOIN ParteVta ON Partes.Sucursal_E = ParteVta.Sucursal_E AND Partes.Parte      = ParteVta.Parte LEFT JOIN PREFCVIA PREFPVTA ON PREFPVTA.Sucursal = ParteVta.SucuPrefac AND PREFPVTA.Numero = ParteVta.NumePrefac  WHERE Partes.Anulado = 0 AND Partes.Salida BETWEEN '2015-07-01' AND '2015-09-18' ORDER BY Fle_Nombre, parttram.Salida, parttram.SalidaHora, Partes.Sucursal_E, Partes.Parte 
+
+
+
+
+// configuracion de reportes, que hace cada uno, desactivar apariciones en dbconfig:
+SELECT     TOP (2000) idreporte, origen, reporte, alcance, alcancedef, alcancedoc, detalle, detalledef, reimprime, sesionpriv, cola, pregunta, previsuali, exportabl, prompt, copias, 
+                      ascii, pagelen, asciicols, asciirows, initstr, dosrepo, dosenv, winenv, items, expr, tipohoja, e_orientat, e_papersiz, e_paperlen, e_paperwid, e_copies, e_defsourc, 
+                      e_color, gm, gt, idrepoorig, [default], exportacio, alcanceusu, dbcactivo, winenvusu, propio, cursoradap, cursorinst, reporte9, bloquear, repornuevo, idreporte9, foxinst, 
+                      modulo, compfiscal, deshabilit, migrado, enedicion
+FROM         cfgprint
+WHERE     (idreporte = 9648)
+
+
+
+
+
+
+// detalles de un viaje desde numero de parte
+select * from detamepa where numero=1429
+
+// detalle valorizacion viajes desde parte
+select * from dbo.detauncp where numero=1429
+
+
+
+
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>TODO write content</div>
+    </body>
+</html>

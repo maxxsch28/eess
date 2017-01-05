@@ -1,0 +1,41 @@
+@media print{@page {size: landscape}}
+
+.navbar , .navbar-fixed-top, .navbar-inner, footer, hr{
+	display: none;
+	height:0;
+	}
+#wrapper, #content {
+	width: 100%;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	float: none !important;
+	}
+	
+
+
+.label, .badge, .info, .label-info, .alert, .alert-info, .alert-success{
+	color:#000;
+}
+
+.noPrint {
+	display:none;
+}
+
+.btn-danger.label, .label.btn-danger{
+	font-weight:bold;
+	color:#fff;
+	background-color:#000;
+	text-decoration:underline;
+}
+
+.no {display:none;}
+.nombre {width:30%;word-wrap: break-word; }
+.zebra {background-color: #ccc;}
+#ultimasFacturas tbody tr{
+	height: 10px;
+	background-color: #abc;
+}
+select {
+	border:none;
+}

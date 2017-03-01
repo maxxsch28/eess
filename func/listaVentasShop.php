@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(isset($_POST['desde2'])){
     $array = explode("_" , $_POST['desde2']);
     $desde = $array[1];
@@ -54,7 +54,7 @@ WHERE cpe1.Fecha>='2015-11-23' ORDER BY fecha DESC;");
 
 //echo $sqlVentas;
 
-$stmt = sqlsrv_query( $mssql, $sqlVentas);
+$stmt = odbc_exec( $mssql, $sqlVentas);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlVentas<br/>";
      die( print_r( sqlsrv_errors(), true));
@@ -65,7 +65,7 @@ $meses = array();
 $linea = array();
 $a=0;$b=-1;//print_r($_POST);
 if($titulo<>"")echo "<tr><td><b>$titulo</b></td></tr>";
-while($rowVentas = sqlsrv_fetch_array($stmt)){
+while($rowVentas = odbc_fetch_array($stmt)){
   $mes = $rowVentas['anio'].$rowVentas['mes'];
   $meses[] = $mes;
   /*IdCierreTurno	Fecha	                  IdEmpleado1	IdEmpleado2	IdEmpleado3	sumaTurno

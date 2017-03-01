@@ -1,6 +1,6 @@
 ﻿<?php
 $nivelRequerido = 3;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_ALL, 'es_ES.utf-8');
 ?>
 <!DOCTYPE html>
@@ -8,7 +8,7 @@ setlocale(LC_ALL, 'es_ES.utf-8');
   <head>
     <meta charset="utf-8">
     <title>Lista comisiones mensuales</title>
-    <?php include ('/include/head.php');?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -40,7 +40,7 @@ setlocale(LC_ALL, 'es_ES.utf-8');
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-12">
@@ -79,9 +79,9 @@ setlocale(LC_ALL, 'es_ES.utf-8');
 			</div>
 		</div>
       
-        <?php include ('include/footer.php')?>
+        <?php include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
     $(document).ready(function() {
       $('#comisionesSocios tbody').html("<tr><td colspan='5'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();

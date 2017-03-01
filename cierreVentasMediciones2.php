@@ -1,10 +1,10 @@
-﻿<?php
+<?php
 if(substr($_SERVER['HTTP_USER_AGENT'], 0,4)=='curl'){
   //lo llame desde cron
 } else {
   $nivelRequerido = 4;
 }
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 
@@ -53,15 +53,15 @@ $sqlVentas = "select IdArticulo, sum(AforadorElectronico) as Electronico, sum(Af
 
 // Saco el estado de los tanques al último cierre de las 22
 $sqlMediciones = "select IdArticulo, SUM(medicion) from dbo.CierresDetalleTanques where IdCierreTurno=(select top 1 IdCierreTurno from dbo.CierresTurno where IdCaja=1 AND idCierreTurno<=(select top 1 idCierreturno FROM dbo.Cierresturno where DATEPART(hh, Fecha)>=21 AND DATEPART(hh, Fecha)<=22 order by Fecha desc) order by fecha desc) GROUP BY IdArticulo";
-$stmt = sqlsrv_query( $mssql, $sqlMediciones);
-while($rowMediciones = sqlsrv_fetch_array($stmt)){
+$stmt = odbc_exec( $mssql, $sqlMediciones);
+while($rowMediciones = odbc_fetch_array($stmt)){
 	$mediciones[$rowMediciones[0]]=$rowMediciones[1];
 }
 
 // selecciono los dos turnos de las 22 de ayer y antes de ayer
 $sqlTurnos = "select top 2 IdCierreTurno, fecha from dbo.CierresTurno where IdCaja=1 AND idCierreTurno<=(select top 1 idCierreturno FROM dbo.Cierresturno where DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=22 order by Fecha desc) AND  DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=22 order by fecha desc";
-$stmt = sqlsrv_query( $mssql, $sqlTurnos);
-while($rowTurnos = sqlsrv_fetch_array($stmt)){
+$stmt = odbc_exec( $mssql, $sqlTurnos);
+while($rowTurnos = odbc_fetch_array($stmt)){
   //print_r($rowTurnos);
     if(!isset($fechaCierre))$fechaCierre=$rowTurnos[1];
 	$turnos[]=$rowTurnos[0];
@@ -71,15 +71,15 @@ while($rowTurnos = sqlsrv_fetch_array($stmt)){
 // obtengo el estado de los aforadores al cierre de las 22 de ayer y antes de ayer
 foreach($turnos as $idcierreturno){
     $sqlAforadores = "select IdArticulo, sum(AforadorElectronico) as Electronico, sum(AforadorMecanico) as Mecanico from dbo.CierresDetalleSurtidores, dbo.CierresSurtidores, dbo.mangueras where dbo.CierresSurtidores.IdCierreSurtidores=dbo.CierresDetalleSurtidores.IdCierreSurtidores AND dbo.mangueras.idmanguera=dbo.cierresdetallesurtidores.idManguera AND IdCierreTurno =$idcierreturno group by idarticulo";
-    $stmt = sqlsrv_query( $mssql, $sqlAforadores);
-    while($rowAforadores = sqlsrv_fetch_array($stmt)){
+    $stmt = odbc_exec( $mssql, $sqlAforadores);
+    while($rowAforadores = odbc_fetch_array($stmt)){
         $electronicos[$idcierreturno][$rowAforadores[0]]=$rowAforadores[1];
         $mecanicos[$idcierreturno][$rowAforadores[0]]=$rowAforadores[2];
     }
     $sqlAforadores2 = "select dbo.CierresDetalleSurtidores.idManguera, AforadorElectronico as Electronico, AforadorMecanico as Mecanico from dbo.CierresDetalleSurtidores, dbo.CierresSurtidores, dbo.mangueras where dbo.CierresSurtidores.IdCierreSurtidores=dbo.CierresDetalleSurtidores.IdCierreSurtidores AND dbo.mangueras.idmanguera=dbo.cierresdetallesurtidores.idManguera AND IdCierreTurno =$idcierreturno";
     //echo $sqlAforadores2;
-    $stmt2 = sqlsrv_query( $mssql, $sqlAforadores2);
-    while($rowAforadores2 = sqlsrv_fetch_array($stmt2)){
+    $stmt2 = odbc_exec( $mssql, $sqlAforadores2);
+    while($rowAforadores2 = odbc_fetch_array($stmt2)){
         $electronicos2[$idcierreturno][$rowAforadores2[0]]=$rowAforadores2[1];
         $mecanicos2[$idcierreturno][$rowAforadores2[0]]=$rowAforadores2[2];
     }
@@ -145,7 +145,7 @@ foreach($mediciones as $key => $litros){
 	<link href="css/print.css" rel="stylesheet" type="text/css" media="print"/>
   </head>
   <body>
-	<?php if(!isset($_GET['soloComb'])){include('include/menuSuperior.php');} ?>
+	<?php if(!isset($_GET['soloComb'])){include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');} ?>
     <div class="container">
 		<!-- Example row of columns -->
 		<div class="row">
@@ -166,9 +166,9 @@ foreach($mediciones as $key => $litros){
 			</div>
 		</div>
 
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
     $(document).ready(function() {
 

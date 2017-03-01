@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411';
@@ -34,8 +34,8 @@ while($fila = $result->fetch_assoc()){
 	//$result2 = $mysqli->query($sqlClientes2);
 	//$fila2 = $result2->fetch_assoc();
 	// $sqlClientes = "select IdCliente, Codigo, RazonSocial, Identificador from dbo.Clientes where IdCliente='$fila[idCliente]'";
-	// $stmt = sqlsrv_query( $mssql, $sqlClientes);
-	// $cliente = sqlsrv_fetch_array($stmt);
+	// $stmt = odbc_exec( $mssql, $sqlClientes);
+	// $cliente = odbc_fetch_array($stmt);
 	if(!isset($facturaB)&&$fila['facturaB']==0&&!isset($limit)){
 		$facturaB=false;
 		$tabla.="<tr><td colspan='14' class='label-info center'>Total Facturas B: $totalB</td></tr>";

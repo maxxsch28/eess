@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
  //fb($_POST);
@@ -38,11 +38,11 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
        // saca de SQL Server despachos por pico leídos por CaldenOil
       $sqlDespachos = "select idManguera, sum(cantidad) from dbo.despachos where fecha>='$anterior[fechaCierre]' and fecha<='$filaCEM[fechaCierre]' group by Idmanguera order BY IdManguera;";
       //fb($sqlDespachos);
-      $stmt = sqlsrv_query( $mssql, $sqlDespachos);
+      $stmt = odbc_exec( $mssql, $sqlDespachos);
       unset($pico, $tableTanques2, $diferenciaPico);
       $rowCalden = "<tr>";
       $rowDiferencia = "</tr><tr class='diferencias'>";
-      while($filaCalden = sqlsrv_fetch_array($stmt)){
+      while($filaCalden = odbc_fetch_array($stmt)){
         $tableTanques2[$filaCalden[0]] = "<td>".round($filaCalden[1],2)."</td>";
         $pico[$filaCalden[0]] = $filaCalden[1];
       }

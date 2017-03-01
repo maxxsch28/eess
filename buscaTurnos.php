@@ -1,7 +1,8 @@
-﻿<?php
+<?php
 $nivelRequerido = 2;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
+$titulo="Busca turnos para abrir y cerrar";
 
 if(!isset($_SESSION['ultimosMeses'])||1){
 	$_SESSION['ultimosMeses']='';
@@ -13,9 +14,9 @@ if(!isset($_SESSION['ultimosMeses'])||1){
 if(!isset($_SESSION['ultimosCierresTesoreria'])){
 	// carga los datos de esta orden
 	$sqlCajas = "SELECT IdCierreCajaTesoreria, FechaCierre FROM dbo.CierresCajaTesoreria WHERE FechaCierre>=DATEADD(month, -1, GETDATE()) ORDER BY FechaCierre desc;";
-	$stmt = sqlsrv_query( $mssql, $sqlCajas);
+	$stmt = odbc_exec( $mssql, $sqlCajas);
 	$_SESSION['ultimosCierresTesoreria']='';
-	while($rowCuentas = sqlsrv_fetch_array($stmt)){
+	while($rowCuentas = odbc_fetch_array($stmt)){
 		$_SESSION['ultimosCierresTesoreria'].="<option value='$rowCuentas[IdCierreCajaTesoreria]'>".date_format($rowCuentas['FechaCierre'], "d/m/Y H:i:s")."</option>";
 	}
 }
@@ -24,22 +25,16 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Busca turnos para abrir y cerrar</title>
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
         padding-bottom: 40px;
       }
-	  html {
-    
-}
     </style>
-   
   </head>
-
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-6">
@@ -129,10 +124,10 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
 			</div>
 			
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 		$(document).ready(function() {
 			$('#botonEnvio').fadeIn();

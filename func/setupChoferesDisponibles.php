@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411'; 
@@ -29,9 +29,9 @@ if(isset($_POST['ocultaMenu'])){
 }
 
 
-$sqlSocios = "select codigo, choferes.nombre as nombreChofer, celular, choferes.telefono, cuil, vtopsicofi, vtocarnet, segurovida, vtocharla, equipo, acoplado, fleteros.nombre as nombreFletero, fleteros.cuit from dbo.choferes, dbo.fleteros WHERE dbo.choferes.fletero = dbo.fleteros.fletero AND dbo.fleteros.pidecta=1 AND choferes.inhabfecha<=choferes.rehabfecha AND fleteros.inhabfecha<=fleteros.rehabfecha ORDER BY fleteros.nombre;";
+$sqlSocios = "select codigo, choferes.nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombreChofer, celular, choferes.telefono, cuil, vtopsicofi, vtocarnet, segurovida, vtocharla, equipo, acoplado, fleteros.nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombreFletero, fleteros.cuit from dbo.choferes, dbo.fleteros WHERE dbo.choferes.fletero = dbo.fleteros.fletero AND dbo.fleteros.pidecta=1 AND choferes.inhabfecha<=choferes.rehabfecha AND fleteros.inhabfecha<=fleteros.rehabfecha ORDER BY fleteros.nombre;";
 
-$sqlSociosDedicados = "select codigo, choferes.nombre as nombreChofer, celular, choferes.telefono, cuil, vtopsicofi, vtocarnet, segurovida, vtocharla, equipo, acoplado, fleteros.nombre as nombreFletero, fleteros.cuit from dbo.choferes, dbo.fleteros WHERE dbo.choferes.fletero = dbo.fleteros.fletero AND dbo.fleteros.pidecta=1 AND numeccpro=1 AND choferes.inhabfecha<=choferes.rehabfecha AND fleteros.inhabfecha<=fleteros.rehabfecha ORDER BY fleteros.nombre;";
+$sqlSociosDedicados = "select codigo, choferes.nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombreChofer, celular, choferes.telefono, cuil, vtopsicofi, vtocarnet, segurovida, vtocharla, equipo, acoplado, fleteros.nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombreFletero, fleteros.cuit from dbo.choferes, dbo.fleteros WHERE dbo.choferes.fletero = dbo.fleteros.fletero AND dbo.fleteros.pidecta=1 AND numeccpro=1 AND choferes.inhabfecha<=choferes.rehabfecha AND fleteros.inhabfecha<=fleteros.rehabfecha ORDER BY fleteros.nombre;";
 
 
 $sqlPosicionFlecha = "SELECT DISTINCT tipo, fecha, chofer, posicionflecha.idEstado, estado FROM `posicionflecha` , `estados` WHERE estados.idEstado = posicionflecha.idestado ORDER BY idPosicion DESC LIMIT 3";
@@ -44,16 +44,10 @@ while($filaPosicionFlecha = $resPosicionFlecha->fetch_assoc()){
 // echo $sqlSocios;
 
 
-$stmt = sqlsrv_query( $mssql2, $sqlSocios);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlSocios<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-$stmtDedicado = sqlsrv_query( $mssql2, $sqlSocios);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlSocios<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2( $mssql2, $sqlSocios, __LINE__, __FILE__);
+
+$stmtDedicado = odbc_exec2( $mssql2, $sqlSocios, __LINE__, __FILE__);
+
 $tabla = "";$a=0;
 $totalB = 0;
 $totalA = 0;
@@ -62,22 +56,18 @@ $comision=array();
 $totalAComisionar = array();
 //var_dump($flecha);
 fb($flecha);
-while($fila = sqlsrv_fetch_array($stmt)){
+while($fila = odbc_fetch_array($stmt)){
   $problemaVencimiento=false;
   $choferConFlecha = false;
   $desactivado = false;
   $datosViaje = "";
   // verifico que el chofer no esté con viaje sin cumplir
   $sqlChoferDisponible = "SELECT sucursal_e, parte, loc_origen, loc_desti, salida  FROM [sqlcoop_dbimplemen].[dbo].[partes] WHERE chofer=$fila[codigo] AND cumplido=0 AND anulado=0 ORDER BY salida DESC";
-  $stmt2 = sqlsrv_query( $mssql2, $sqlChoferDisponible);
-  if( $stmt2 === false ){
-    echo "1. Error in executing query.</br>$sqlChoferDisponible<br/>";
-    die( print_r( sqlsrv_errors(), true));
-  }
-  if(sqlsrv_has_rows($stmt2)){
+  $stmt2 = odbc_exec2( $mssql2, $sqlChoferDisponible, __LINE__, __FILE__);
+  $filaViaje = odbc_fetch_array($stmt2);
+  if(is_array($filaViaje)){
     // El chofer tiene viaje sin cumplir
     $desactivado = true;
-    $filaViaje = sqlsrv_fetch_array($stmt2);
     $datosViaje = "<span class='glyphicon glyphicon-warning-sign'></span>&nbsp;<span class='text-danger'>De $filaViaje[loc_origen] a $filaViaje[loc_desti]. Salida ".$filaViaje['salida']->format('d/m/y').'</span>';
   }
   
@@ -118,11 +108,15 @@ while($fila = sqlsrv_fetch_array($stmt)){
   <div class='panel-body small'>".(($fila['cuil']<>$fila['cuit'])?"<span class='pull-right'><b>".utf8_encode(ucwords(strtolower(trim($fila['nombreChofer']))))."</b></span>":'').(($fila['celular']>0)?"<span class='glyphicon glyphicon-phone'></span><a href='tel:$fila[celular]'> $fila[celular]</a><br/>":'').(($fila['telefono']>0)?"<span class='glyphicon glyphicon-phone-alt'></span><a href='tel:$fila[telefono]'> $fila[telefono]</a><br/>":'');
   $tabla .= $datosViaje;
   $vencimiento = "</div><div class='vencimientos alert-danger panel-footer small'>";
-    if($fila['vtopsicofi']->format('d/m/Y')<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Psfísico ".$fila['vtopsicofi']->format('d/m/y').'<br/>';$problemaVencimiento=true;
+    $vtopsicofi=date(substr($fila['vtopsicofi'],0,10));
+    $vtocarnet=date(substr($fila['vtocarnet'],0,10));
+    $segurovida=date(substr($fila['segurovida'],0,10));
+    $vtocharla=date(substr($fila['vtocharla'],0,10));
+    if($vtopsicofi<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Psfísico $vtopsicofi<br/>";$problemaVencimiento=true;
     }
-    if($fila['vtocarnet']->format('d/m/Y')<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Carnet ".$fila['vtocarnet']->format('d/m/y').'<br/>';$problemaVencimiento=true;}
-    if($fila['segurovida']->format('d/m/Y')<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Seguro ".$fila['segurovida']->format('d/m/y').'<br/>';$problemaVencimiento=true;}
-    if($fila['vtocharla']->format('d/m/Y')<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Charla ".$fila['vtocharla']->format('d/m/y').'<br/>';$problemaVencimiento=true;}
+    if($vtocarnet<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Carnet $vtocarnet<br/>";$problemaVencimiento=true;}
+    if($segurovida<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Seguro $segurovida<br/>";$problemaVencimiento=true;}
+    if($vtocharla<=date('Y-m-d', strtotime("+10 days"))){$vencimiento.="Charla $vtocharla<br/>";$problemaVencimiento=true;}
     $vencimiento .= "</div>";
   $tabla .= (($problemaVencimiento)?$vencimiento:'</div>')."</div>";
   $primero = 1;

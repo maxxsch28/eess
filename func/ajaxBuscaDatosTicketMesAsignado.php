@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //fb($_POST);
 //fechaTicket: data.fecha, fechaCanje: $(this.val())
 $d1 = explode('/',$_POST['fechaTicket']);

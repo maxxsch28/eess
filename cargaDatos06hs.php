@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 if(substr($_SERVER['REMOTE_ADDR'], 0, 10)=='192.168.1.'){
     $nivelRequerido=5;
 }
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 $titulo = "Carga de datos al cierre 22hs";
 
@@ -29,7 +29,7 @@ $arrayProductos = array('ns','ni','ed','ud');
       </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
         <!-- Cargo por la noche la lectura de lo que dice el CEM mas los aforadores al cierre de las 22hs.-->
 		<!-- Example row of columns -->
@@ -95,9 +95,9 @@ $arrayProductos = array('ns','ni','ed','ud');
             <div id='muestraDatos' class='row' style='display:none'>
                 <h2>Resumen información ingresada</h2>
             </div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
     <script>
 		$(document).ready(function() {
             StartDate = new Date("<?php echo "$fechaCierreAnterior[0]/$fechaCierreAnterior[1]/$fechaCierreAnterior[2]"?>");

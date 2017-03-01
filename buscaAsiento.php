@@ -1,7 +1,8 @@
 ﻿<?php
-xdebug_disable();
+//xdebug_disable();
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
+$titulo="Busca asiento 2.0";
 $ambito['activo']['eess'] = $ambito['activo']['transporte'] = $ambito['activo']['integral'] = "";
 $ambito['checked']['eess'] = $ambito['checked']['transporte'] = $ambito['checked']['integral'] = "";
 if(isset($_GET['id'])&&is_numeric($_GET['id'])){
@@ -42,24 +43,29 @@ if(isset($_GET['id'])&&is_numeric($_GET['id'])){
 
 unset($selectedTransporte, $selectedEESS);
 
-if(!isset($_SESSION['cuentasContablesTransporte'])||(isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']>0)){
+if((!isset($_SESSION['cuentasContablesTransporte'])||(isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']>0))){
   // carga los datos de esta orden
-  $sqlCuentas = "SELECT orden, nombre FROM [sqlcoop_dbshared].[dbo].[plancuen] WHERE imputable='S' ORDER BY Nombre;";
-  $stmt = sqlsrv_query( $mssql2, $sqlCuentas);
+  $sqlCuentas = "SELECT orden, nombre FROM dbo.plancuen WHERE imputable='S' ORDER BY Nombre;";
+  fb($sqlCuentas);
+  $stmt = odbc_exec2($mssql3, $sqlCuentas, __LINE__, __FILE__);
   $_SESSION['cuentasContablesTransporte']='';
-  fb("SELECT orden, nombre FROM [sqlcoop_dbshared].[dbo].[plancuen] WHERE imputable='S' AND orden=$rowHistorico[cuentaTransporte] ORDER BY Nombre;");
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  /*if(isset($rowHistorico)){
+    fb("SELECT orden, nombre FROM [sqlcoop_dbshared].[dbo].[plancuen] WHERE imputable='S' AND orden=$rowHistorico[cuentaTransporte] ORDER BY Nombre;");
+  }*/
+  while($rowCuentas = odbc_fetch_array($stmt)){
     $selectedTransporte = (isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']==trim($rowCuentas['orden']))?" selected='selected'":"";
-    if((isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']==trim($rowCuentas['orden']))){fb($rowCuentas['orden']);}
     $_SESSION['cuentasContablesTransporte'].="<option value='".trim($rowCuentas['orden'])."'$selectedTransporte>".utf8_encode($rowCuentas['nombre'])."</option>";
+    /*if((isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']==trim($rowCuentas['orden']))){
+      fb($rowCuentas['orden']);
+    }*/
   }
 }
-if(!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$rowHistorico['cuentaEESS']>0)){
+if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$rowHistorico['cuentaEESS']>0))){
   // carga los datos de esta orden
   $sqlCuentas = "SELECT IdCuentaContable, Descripcion FROM dbo.CuentasContables WHERE Imputable=1 ORDER BY Descripcion;";
-  $stmt = sqlsrv_query( $mssql, $sqlCuentas);
+  $stmt = odbc_exec2( $mssql, $sqlCuentas, __LINE__, __FILE__);
   $_SESSION['cuentasContables']='';
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  while($rowCuentas = odbc_fetch_array($stmt)){
     $selectedEESS = (isset($rowHistorico['cuentaEESS'])&&$rowHistorico['cuentaEESS']==$rowCuentas['IdCuentaContable'])?" selected='selected'":"";
     $_SESSION['cuentasContables'].="<option value='$rowCuentas[IdCuentaContable]'$selectedEESS>$rowCuentas[Descripcion]</option>";
   }
@@ -69,8 +75,7 @@ if(!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Busca asiento 2.0</title>
-  <?php include ('/include/head.php');?>
+  <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
   <style type="text/css">
   .containerIntegral{
     width:1400px;
@@ -78,7 +83,7 @@ if(!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$
   </style>
 </head>
 <body>
-<?php include('include/menuSuperior.php');?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 <div class="container<?php if($ambito['activo']['eess']<>""||$ambito['activo']['transporte']<>""){echo "";}else{echo " containerIntegral";}?>" id='container'>
   <div class='row'>
     <h2></h2>
@@ -112,9 +117,9 @@ if(!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$
               <div class="controls">
                 <div class="input-group" id='rop'> <!--2015-12-31 => 12-31-2015-->
                   <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" 
-                  value="<?php if(isset($rowHistorico)&&$rowHistorico['rangoinicio']<>0){echo substr($rowHistorico['rangoinicio'], 5,2).'/'.substr($rowHistorico['rangoinicio'], 8,2).'/'.substr($rowHistorico['rangoinicio'], 2,2);} else {echo "01/01/".date("y");}?>" data-date-format="mm/dd/yy"  data-plus-as-tab='true'/>
+                  value="<?php if(isset($rowHistorico)&&$rowHistorico['rangoinicio']<>0){echo substr($rowHistorico['rangoinicio'], 8,2).'/'.substr($rowHistorico['rangoinicio'], 5,2).'/'.substr($rowHistorico['rangoinicio'], 2,2);} else {echo "01/01/".date("y");}?>" data-date-format="dd/mm/yy"  data-plus-as-tab='true'/>
                   <span class="input-group-addon"></span>
-                  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="<?php if(isset($rowHistorico)&&$rowHistorico['rangofin']<>0){echo substr($rowHistorico['rangofin'], 5,2).'/'.substr($rowHistorico['rangofin'], 8,2).'/'.substr($rowHistorico['rangofin'], 2,2);} else {echo "12/31/".date("y");}?>" data-date-format="mm/dd/yy" data-plus-as-tab='true'/>
+                  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="<?php if(isset($rowHistorico)&&$rowHistorico['rangofin']<>0){echo substr($rowHistorico['rangofin'], 8,2).'/'.substr($rowHistorico['rangofin'], 5,2).'/'.substr($rowHistorico['rangofin'], 2,2);} else {echo "31/12/".date("y");}?>" data-date-format="dd/mm/yy" data-plus-as-tab='true'/>
                   <span class="input-group-addon presetAnio btn" id="1000">&#8734; </span>
                   <span class="input-group-addon presetAnio btn" id="<?php echo date('y', strtotime("-1 year"))?>"><?php echo date('y', strtotime("-1 year"))?></span>
                   <span class="input-group-addon presetAnio btn<?php if(!isset($_GET['id']))echo" label-success";?>" id="<?php echo date('y')?>"><?php echo date('y')?></span>
@@ -237,9 +242,9 @@ if(!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$
       </div>
     </div>
   </div>
-  <?php include ('include/footer.php')?>
+  <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 </div> <!-- /container -->
-<?php include('include/termina.php');?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 <script>
   $(document).ready(function() {
     $('#rangoInicio').datepicker();
@@ -280,10 +285,10 @@ if(!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&$
       $(this).addClass('label-success');
       if(year==='1000'){
         $('#rangoInicio').val('01/01/11');
-        $('#rangoFin').val('12/31/69');
+        $('#rangoFin').val('31/12/69');
       } else {
         $('#rangoInicio').val('01/01/'+year);
-        $('#rangoFin').val('12/31/'+year);
+        $('#rangoFin').val('31/12/'+year);
       }
     });
     $('.ambito').click(function(){

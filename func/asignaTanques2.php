@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // asignaTanques2.php
 // muestra modal para descarga de camión y a la vez procesa esa descarga.
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
 
 if(isset($_GET['idOrden'])){

@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
 if(isset($_POST['mes'])){
@@ -12,19 +12,19 @@ if(isset($_POST['mes'])){
 $rangoMes = "DATEPART(month, fecha) = $mes and DATEPART(year, fecha)=$anio";
 $rangoMes = "mes = $mes and anio = $anio";
 // determina que movimientos suman y cuales restan.
-$tiposMovimientosQueSuman = "'FAA', 'FAC', 'FAB', 'ACR', 'REC', 'REA', 'NDI', 'NDA'";
+$tiposMovimientosQueSuman = "'FAA', 'FAC', 'FAB', 'ACR', 'REC', 'REA', 'NDI', 'NDA', 'TIK'";
 
 
 $sqlGastos = "select distinct razonsocial, sum(Costo*Cantidad*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as resumenRenglon, sum(netoNoGravado*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as NoGravado, sum(NetoMercaderias*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Mercaderias, sum(NetoCombustibles*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Combustibles, sum(NetoLubricantes*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Lubricantes, sum(NetoGastos*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Gastos, sum(NetoFletes*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Fletes, sum(Total*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Total, dbo.cuentasgastos.Descripcion as CuentaGasto from dbo.MovimientosPro, dbo.CuentasGastos, dbo.MovimientosDetallePro where $rangoMes and dbo.MovimientosDetallePro.IdCuentaGastos=dbo.CuentasGastos.IdCuentaGastos and dbo.MovimientosPro.IdMovimientoPro=dbo.MovimientosDetallePro.IdMovimientoPro and (IdTipoMovimientoProveedor<>'RV' AND IdTipoMovimientoProveedor<>'VP') and dbo.movimientosdetallepro.IdCuentaGastos<>43 and dbo.movimientosdetallepro.IdCuentaGastos<>48 group by  razonsocial, dbo.cuentasgastos.Descripcion order by dbo.cuentasgastos.Descripcion asc, RazonSocial asc";
 
 fb($sqlGastos);
 
-$stmt = sqlsrv_query( $mssql, $sqlGastos);
+$stmt = odbc_exec( $mssql, $sqlGastos);
 
 
 $tabla = "";$a=0;$q=0;
 $sumaNoGravado=$sumaFletes=$sumaGastos=$sumaLubricantes=$sumaMercaderias=$sumaCombustibles=0;
-while($fila = sqlsrv_fetch_array($stmt)){
+while($fila = odbc_fetch_array($stmt)){
     if(!isset($encabezado)){
         //$tabla.="<tr><td colspan=7>&nbsp;</td></tr>";
         //$tabla .= "<tr><td colspan='8'><b>".substr($fila['numeroFactura'],-9)." | ".substr($fila['periodo'],4).'/'.substr($fila['periodo'],0,4)."$socio</b> <a href='/ypf/cargaMovistar.php?id=$fila[idFacturaRecibida]'><i class='glyphicon glyphicon-pencil'></i></a></td></tr>";

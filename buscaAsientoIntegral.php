@@ -1,23 +1,23 @@
-﻿<?php
+<?php
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 if(!isset($_SESSION['cuentasContablesTransporte'])){
   // carga los datos de esta orden
   $sqlCuentas = "SELECT orden, nombre FROM [sqlcoop_dbshared].[dbo].[plancuen] WHERE imputable='S' ORDER BY Nombre;";
-  $stmt = sqlsrv_query( $mssql2, $sqlCuentas);
+  $stmt = odbc_exec( $mssql2, $sqlCuentas);
   $_SESSION['cuentasContablesTransporte']='';
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  while($rowCuentas = odbc_fetch_array($stmt)){
     $_SESSION['cuentasContablesTransporte'].="<option value='$rowCuentas[orden]'>".utf8_encode($rowCuentas['nombre'])."</option>";
   }
 }
 if(!isset($_SESSION['cuentasContables'])){
   // carga los datos de esta orden
   $sqlCuentas = "SELECT IdCuentaContable, Descripcion FROM dbo.CuentasContables WHERE Imputable=1 ORDER BY Descripcion;";
-  $stmt = sqlsrv_query( $mssql, $sqlCuentas);
+  $stmt = odbc_exec( $mssql, $sqlCuentas);
   $_SESSION['cuentasContables']='';
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  while($rowCuentas = odbc_fetch_array($stmt)){
     $_SESSION['cuentasContables'].="<option value='$rowCuentas[IdCuentaContable]'>$rowCuentas[Descripcion]</option>";
   }
 }
@@ -32,7 +32,7 @@ if(!isset($_SESSION['cuentasContables'])){
   </style>
 </head>
 <body>
-<?php include('include/menuSuperior.php');?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 <div class="container" style='width:1400px'>
   <div class='row'>
     <h2></h2>
@@ -128,9 +128,9 @@ if(!isset($_SESSION['cuentasContables'])){
       </div>
     </div>
   </div>
-  <?php include ('include/footer.php')?>
+  <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 </div> <!-- /container -->
-<?php include('include/termina.php');?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 <script>
   $(document).ready(function() {
     $('#botonEnvio').fadeIn();

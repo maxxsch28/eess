@@ -7,16 +7,16 @@
 	*/
 
 $titulo = "401 - Ingreso no autorizado";
-require_once("include/inicia.php");
-require_once("include/config.php"); ?>
+require_once($_SERVER['DOCUMENT_ROOT']."/include/inicia.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/include/config.php"); ?>
 
 <!DOCTYPE html>
 <html lang="es">
   <head>
-      <?php include ('/include/head.php')?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php')?>
   </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
 		<!-- Example row of columns -->
 		<div class="row">
@@ -28,9 +28,9 @@ require_once("include/config.php"); ?>
                 <p class="lead">Su usuario no está autorizado a ingresar en esta página.</p>
             </center>
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 	</script>
   </body>

@@ -1,14 +1,14 @@
 ﻿<?php
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 
-$articulo = 'Yog.ent.bot.';
+$articulo = 'mas.oreo duo ';
 // $articulo = '%TANG';
-$articulo2 =" AND Descripcion like ('%185g%')";
+$articulo2 = "";//" AND Descripcion like ('%70G%')";
 //$articulo2 = " AND Descripcion   like ('%women%')";// AND Descripcion NOT LIKE ('%duo%') AND Descripcion NOT LIKE ('%relle%')";// AND Descripcion  like ('%ent%')";//AND Descripcion not like ('%leche%')";//AND Descripcion not like ('%varios%')";// ";// AND Descripcion NOT LIKE ('%LECH%')";
 
-$idArticuloReemplazo='1256';
+$idArticuloReemplazo='1800';
 
 $select = "SELECT * FROM dbo.Articulos WHERE Descripcion LIKE ('$articulo%')$articulo2<br>";
 
@@ -30,27 +30,26 @@ $updateMovimientosCtaProDetalle		= "UPDATE dbo.MovimientosDetallePro SET IdArtic
 
 echo $select.'<br/>'.$updateFacturasConArticulo.'<br/>'.$updateMovimientoStock.'<br/>'.$updateArticulosNoAjustados.'<br/>'.$updateCambiosPrecios.'<br/>'.$updateCierreControlStock.'<br/>'.$updateRecepcionMercaderia.'<br/>'.$updateMovimientosStock."<br/>$updateMovimientosCtaProDetalle<br/><br/>";
 
-// Despachos extraidos de la tabla de despachos, contiene todo lo que salió de los surtidores y no solo lo facturado
 $sqlArticulos = "select * from dbo.Articulos where Descripcion like ('$articulo%')$articulo2 ;";
 //echo $sqlArticulos;
-$stmt = sqlsrv_query( $mssql, $sqlArticulos);
+$stmt = odbc_exec( $mssql, $sqlArticulos);
 $A=0;
-while($row = sqlsrv_fetch_array($stmt)){
+while($row = odbc_fetch_array($stmt)){
 	//print_r($row);
 	echo "$row[IdArticulo] ($row[Codigo])- $row[Descripcion]<br/>";
 	$sqlFacturasConArticulo = "SELECT * FROM dbo.MovimientosDetalleFac WHERE idArticulo='$row[IdArticulo]'";
 	//echo $sqlFacturasConArticulo;
-	$stmt2 = sqlsrv_query( $mssql, $sqlFacturasConArticulo);
+	$stmt2 = odbc_exec( $mssql, $sqlFacturasConArticulo);
 	if($stmt2)
-	while($row2 = sqlsrv_fetch_array($stmt2)){
+	while($row2 = odbc_fetch_array($stmt2)){
 		echo "Fc $row2[IdMovimientoFac] - $row2[Cantidad] - $row2[Precio]<br/>";
 		$A++;
 	}
 	$sqlMovimientoStock = "select * from dbo.PedidosStockDetalle WHERE idArticulo='$row[IdArticulo]'";
 	//echo $sqlFacturasConArticulo;
-	$stmt3 = sqlsrv_query( $mssql, $sqlMovimientoStock);
+	$stmt3 = odbc_exec( $mssql, $sqlMovimientoStock);
 	if($stmt3)
-	while($row3 = sqlsrv_fetch_array($stmt3)){
+	while($row3 = odbc_fetch_array($stmt3)){
 		echo "St $row3[IdPedidoStock] - $row3[CantidadPedida] - $row3[CantidadRepuesta]<br/>";
 		$A++;
 	}
@@ -112,7 +111,7 @@ echo "Total $A";
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
 		<!-- Example row of columns -->
 		<div class="row">
@@ -128,7 +127,7 @@ echo "Total $A";
 			<p>&copy; Cooperativa de Transporte 2012</p>
 		</footer>-->
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 	</script>
   </body>

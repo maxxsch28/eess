@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaNuevosCelulares.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 // print_r($_POST);
  // $array=array();
 if(isset($_POST['idCliente'])){

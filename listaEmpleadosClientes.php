@@ -1,5 +1,5 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 $titulo = "Empleados y Clientes";
 ?>
@@ -21,7 +21,7 @@ $titulo = "Empleados y Clientes";
       </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
 		<div class="row">
             <div id='letras' class="ln-letters"><a class='let' id="_" href="#">0-9</a><a class='let' id="a" href="#">A</a><a class='let' id="b" href="#">B</a><a class='let' id="c" href="#">C</a><a class='let' id="d" href="#">D</a><a class='let' id="e" href="#">E</a><a class='let' id="f" href="#">F</a><a class='let' id="g" href="#">G</a><a class='let' id="h" href="#">H</a><a class='let' id="i" href="#">I</a><a class='let' id="j" href="#">J</a><a class='let' id="k" href="#">K</a><a class='let' id="l" href="#">L</a><a class='let' id="m" href="#">M</a><a class='let' id="n" href="#">N</a><a class='let' id="o" href="#">O</a><a class='let' id="p" href="#">P</a><a class='let' id="q" href="#">Q</a><a class='let' id="r" href="#">R</a><a class='let' id="s" href="#">S</a><a class='let' id="t" href="#">T</a><a class='let' id="u" href="#">U</a><a class='let' id="v" href="#">V</a><a class='let' id="w" href="#">W</a><a class='let' id="x" href="#">X</a><a class='let' id="y" href="#">Y</a><a class='let' id="z ln-last" href="#">Z</a></div>
@@ -30,9 +30,9 @@ $titulo = "Empleados y Clientes";
                 </tbody>
             </table>
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
          $(document).ready(function() {
             $('.let').click(function(){

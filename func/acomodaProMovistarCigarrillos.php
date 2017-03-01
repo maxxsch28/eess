@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $fechaDesde = '2016-11-01';
 
@@ -205,8 +205,8 @@ $sql['YPFServiclub'] = "UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=21 W
 $sql['Donaciones1'] = "update dbo.MovimientosFac set IdCliente=5233 where IdTipoMovimiento='REM' and IdCliente=1132 and Fecha>='$fechaDesde'";
 $sql['Donaciones2'] = "update dbo.MovimientosFac set IdCliente=5235 where IdTipoMovimiento='REM' and IdCliente=4438 and Fecha>='$fechaDesde'";
 
-//$smtpD1 = sqlsrv_query( $mssql, $sqlDonaciones1);
-//$smtpD2 = sqlsrv_query( $mssql, $sqlDonaciones2);
+//$smtpD1 = odbc_exec( $mssql, $sqlDonaciones1);
+//$smtpD2 = odbc_exec( $mssql, $sqlDonaciones2);
 
 // sql neto no gravado en acreditaciones
 
@@ -216,7 +216,7 @@ $sql['Donaciones2'] = "update dbo.MovimientosFac set IdCliente=5235 where IdTipo
 
 
 foreach ($sql as $rubro => $acomoda){
-  $stmt = sqlsrv_query( $mssql, $acomoda);
+  $stmt = odbc_exec( $mssql, $acomoda);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$acomoda<br/>";
       die( print_r( sqlsrv_errors(), true));

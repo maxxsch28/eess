@@ -1,13 +1,13 @@
-﻿<?php
+<?php
 //  $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 $titulo = "Listado de precios para góndolas";
 
 if(!isset($_SESSION['selectGrupos'])){
   $sqlGrupos = "select dbo.GruposArticulos.IdGrupoArticulo, dbo.GruposArticulos.Descripcion, count(IdArticulo) as q from dbo.GruposArticulos, dbo.Articulos WHERE dbo.GruposArticulos.activo=1 AND dbo.Articulos.activo=1 AND dbo.GruposArticulos.IdGrupoArticulo=dbo.Articulos.IdGrupoArticulo GROUP BY dbo.GruposArticulos.IdGrupoArticulo, dbo.GruposArticulos.Descripcion ORDER BY dbo.GruposArticulos.Descripcion;";
-  $stmt = sqlsrv_query( $mssql, $sqlGrupos);
+  $stmt = odbc_exec( $mssql, $sqlGrupos);
   $_SESSION['selectGrupos'] = '';
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  while($rowCuentas = odbc_fetch_array($stmt)){
     if($rowCuentas['q']>1&&substr($rowCuentas['Descripcion'],0,2)<>"Z "){
     $_SESSION['selectGrupos'].="<option value='$rowCuentas[IdGrupoArticulo]'>$rowCuentas[Descripcion] ($rowCuentas[q])</option>";}
   }
@@ -16,9 +16,9 @@ if(!isset($_SESSION['selectGrupos'])){
 
 if(!isset($_SESSION['selectUbicacion'])||1){
   $sqlGrupos = "select Ubicacion, count(idArticulo) as q from dbo.articulos where Ubicacion<>'' AND Ubicacion<>'0' AND Activo=1 GROUP BY Ubicacion ORDER BY Ubicacion;";
-  $stmt = sqlsrv_query( $mssql, $sqlGrupos);
+  $stmt = odbc_exec( $mssql, $sqlGrupos);
   $_SESSION['selectUbicacion'] = '';
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  while($rowCuentas = odbc_fetch_array($stmt)){
     if($rowCuentas['q']>1&&strlen(trim($rowCuentas['Ubicacion']))>3){
     $_SESSION['selectUbicacion'].="<option value='$rowCuentas[Ubicacion]'>$rowCuentas[Ubicacion] ($rowCuentas[q])</option>";}
   }
@@ -29,7 +29,7 @@ if(!isset($_SESSION['selectUbicacion'])||1){
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       @media print
       {    
@@ -81,7 +81,7 @@ if(!isset($_SESSION['selectUbicacion'])||1){
     </style>
   </head>
   <body>
-    <?php include('include/menuSuperior.php');?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
     <div class="container">
       <div class='row'>
         <h2></h2>
@@ -131,9 +131,9 @@ if(!isset($_SESSION['selectUbicacion'])||1){
         </div>
       </div>
     </div>
-    <?php include ('include/footer.php')?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
   </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
     $(document).ready(function() {
       $('#botonEnvio').fadeIn();

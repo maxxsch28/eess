@@ -1,14 +1,13 @@
-﻿<?php
+<?php
 $nivelRequerido = 2;
-include('include/inicia.php');
-$titulo='';
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
+$titulo='Ventas de lubricantes por empleado';
 ?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Ventas de lubricantes por empleado</title>
-    <?php include ('/include/head.php');?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -108,7 +107,7 @@ $titulo='';
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-12">
@@ -156,10 +155,10 @@ $titulo='';
         </div>
                      
 
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
             $(document).ready(function() {
                 $('#ventasMensuales').html("<tr><td align=center colspan=10><br><img src='img/ajax-loader.gif'/></td></tr>").fadeIn();

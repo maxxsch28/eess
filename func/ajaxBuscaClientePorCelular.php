@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaNuevosCelulares.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
 if(isset($_GET['term'])){
@@ -21,9 +21,9 @@ if(isset($_GET['term'])){
 }
 if(isset($_POST['idCliente'])){
 	$sqlClientes = "select RazonSocial, Identificador from dbo.Clientes where IdCliente='$_POST[idCliente]'";
-	$stmt = sqlsrv_query( $mssql, $sqlClientes);
+	$stmt = odbc_exec( $mssql, $sqlClientes);
 	$arrayReemplazo = array('TELEFONO', 'TELEFONOS');
-	$row = sqlsrv_fetch_array($stmt);
+	$row = odbc_fetch_array($stmt);
 	if(trim(str_replace($arrayReemplazo, '', $row['Identificador']))<>''){
 		$identificador = "(".str_replace($arrayReemplazo, '', $row['Identificador']).")";
 	} else $identificador = "";

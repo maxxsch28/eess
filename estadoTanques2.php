@@ -1,5 +1,5 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 class Tanques{
 	public function Tanques(){
@@ -12,8 +12,8 @@ class Tanques{
 
 // Despachos extraidos de la tabla de despachos, contiene todo lo que salió de los surtidores y no solo lo facturado
 $sqlDespachos = "select IdArticulo, SUM(Cantidad) from dbo.Despachos WHERE Fecha>='".date("Y-m-d")."' GROUP BY IdArticulo;";
-$stmt = sqlsrv_query( $mssql, $sqlDespachos);
-while($row = sqlsrv_fetch_array($stmt)){
+$stmt = odbc_exec( $mssql, $sqlDespachos);
+while($row = odbc_fetch_array($stmt)){
 	$despachos[$row[0]]=$row[1];
 }
 
@@ -28,8 +28,8 @@ if($result&&$result->num_rows>0){
 	}
 } else {
 	$sqlPromedioHistorico = "SELECT SUM(dbo.MovimientosDetalleFac.Cantidad) as ventas, IdArticulo, COUNT(distinct(dateadd(dd,0, datediff(dd,0,Fecha)))) as dias, (SUM(dbo.MovimientosDetalleFac.Cantidad)/COUNT(distinct(dateadd(dd,0, datediff(dd,0,Fecha))))) as promedio FROM dbo.MovimientosDetalleFac, dbo.MovimientosFac WHERE IdArticulo in (2068,2069,2078,2076) AND dbo.MovimientosFac.DocumentoCancelado=0 AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND getdate()-fecha>30 AND fecha<'".date("Y-m-d")."' GROUP BY IdArticulo";
-	$stmt = sqlsrv_query( $mssql, $sqlPromedioHistorico);
-	while($rowPromedioHistorico = sqlsrv_fetch_array($stmt)){
+	$stmt = odbc_exec( $mssql, $sqlPromedioHistorico);
+	while($rowPromedioHistorico = odbc_fetch_array($stmt)){
 		$estadoComb[$rowPromedioHistorico[1]]['promedio']=sprintf("%01.2f",$rowPromedioHistorico[3]);
 		$mysqli->query("INSERT INTO promedios SET fecha='$fechaParaTraerPromedio', promedio='$rowPromedioHistorico[3]', idArticulo='$rowPromedioHistorico[1]'");
 	}
@@ -37,8 +37,8 @@ if($result&&$result->num_rows>0){
 
 // sql para cantidad de dias con ventas para cada producto
 $sqlDiasConVentas = "SELECT distinct(dateadd(dd,0, datediff(dd,0,Fecha))) as fecha, datepart(dw, Fecha) as dia, IdArticulo FROM dbo.MovimientosDetalleFac, dbo.MovimientosFac WHERE dbo.MovimientosDetalleFac.IdArticulo in (2068,2069,2078,2076) AND dbo.MovimientosFac.DocumentoCancelado=0 AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND getdate()-fecha>30 AND fecha<'".date("Y-m-d")."' GROUP BY IdArticulo, fecha order by idArticulo, dia, fecha";
-$stmt = sqlsrv_query( $mssql, $sqlDiasConVentas);
-while($rowDiasConVentas = sqlsrv_fetch_array($stmt)){
+$stmt = odbc_exec( $mssql, $sqlDiasConVentas);
+while($rowDiasConVentas = odbc_fetch_array($stmt)){
 	//Array ( [0] => DateTime Object ( [date] => 2011-10-16 00:00:00 [timezone_type] => 3 [timezone] => America/Argentina/Buenos_Aires ) [fecha] => DateTime Object ( [date] => 2011-10-16 00:00:00 [timezone_type] => 3 [timezone] => America/Argentina/Buenos_Aires ) [1] => 1 [dia] => 1 [2] => 2068 [IdArticulo] => 2068 ) 
 	if(!isset($diasConVentas[$rowDiasConVentas[2]][$rowDiasConVentas[1]]))
 		$diasConVentas[$rowDiasConVentas[2]][$rowDiasConVentas[1]]=0;
@@ -47,11 +47,11 @@ while($rowDiasConVentas = sqlsrv_fetch_array($stmt)){
 
 // sql para promedio histórico por días
 $sqlPromedioDiaSemana = "SELECT datepart(dw, Fecha) as dia, SUM(dbo.MovimientosDetalleFac.Cantidad), IdArticulo, COUNT(IdArticulo) FROM dbo.MovimientosDetalleFac, dbo.MovimientosFac WHERE  dbo.MovimientosDetalleFac.IdArticulo in (2068,2069,2078,2076) AND dbo.MovimientosFac.DocumentoCancelado=0 AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosDetalleFac.Cantidad>0 AND Fecha<'".date("Y-m-d")."' GROUP BY datepart(dw, Fecha), IdArticulo order by dia;";
-$stmt = sqlsrv_query( $mssql, $sqlPromedioDiaSemana);
+$stmt = odbc_exec( $mssql, $sqlPromedioDiaSemana);
 
 
 $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
-while($rowPromedioDiaSemana = sqlsrv_fetch_array($stmt)){
+while($rowPromedioDiaSemana = odbc_fetch_array($stmt)){
 	//Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio
 	//Array ( [0] => Wednesday [] => 1084 [1] => 76340.9271 [2] => 2068 [IdArticulo] => 2068 [3] => 1084 )
 	$ventasPorDiaSemana[$rowPromedioDiaSemana[2]][$rowPromedioDiaSemana[0]]=$rowPromedioDiaSemana[1];
@@ -74,8 +74,8 @@ $tablaPromedioDiaSemana.="<tr class='label label-info'><td>General</td><td>".$es
 
 // fecha y hora del ultimo cierre
 $sqlUltimoCierre = "select top 1 dbo.CierresTurno.Fecha from dbo.CierresTurno order by IdCierreTurno DESC";
-$stmt = sqlsrv_query( $mssql, $sqlUltimoCierre);
-$rowUltimoCierre = sqlsrv_fetch_array($stmt);
+$stmt = odbc_exec( $mssql, $sqlUltimoCierre);
+$rowUltimoCierre = odbc_fetch_array($stmt);
 
  // print_r($rowUltimoCierre);
 $ultimoCierre=$rowUltimoCierre['Fecha']->format('Y-m-d H:i:s');
@@ -84,16 +84,16 @@ $ultimoCierre=$rowUltimoCierre['Fecha']->format('Y-m-d H:i:s');
 // despachos por tanque desde ultimo cierre
 $sqlDespachosDesdeUltimoCierre = "select IdTanque, SUM(Cantidad) from dbo.Despachos, dbo.Mangueras WHERE Fecha>=(select top 1 dbo.CierresTurno.Fecha from dbo.CierresTurno order by IdCierreTurno DESC) AND dbo.Despachos.IdManguera=dbo.Mangueras.IdManguera GROUP BY Idtanque order by IdTanque;";
 //echo $sqlDespachosDesdeUltimoCierre;
-$stmt = sqlsrv_query( $mssql, $sqlDespachosDesdeUltimoCierre);
-while($rowDespachosDesdeUltimoCierre = sqlsrv_fetch_array($stmt)){
+$stmt = odbc_exec( $mssql, $sqlDespachosDesdeUltimoCierre);
+while($rowDespachosDesdeUltimoCierre = odbc_fetch_array($stmt)){
 	$despachosDesdeUltimoCierre[$rowDespachosDesdeUltimoCierre[0]] = $rowDespachosDesdeUltimoCierre[1];
 }
 
 // Obtengo descargas de YPF efectuadas en el día
 $sqlDespachosCALDEN = "SELECT IdTanque, IdArticulo, Descarga FROM dbo.CierresDetalleTanques WHERE Descarga>0 AND IdCierreTurno IN (SELECT idCierreTurno FROM  dbo.CierresTurno WHERE Fecha>='".date("Y-m-d")."')";
-$stmt = sqlsrv_query($mssql, $sqlDespachosCALDEN);
+$stmt = odbc_exec($mssql, $sqlDespachosCALDEN);
 // verifico si hubo descargas en Calden, si las hubo las cotejo contra las OP cargadas en mysql, si no las hubo reviso si hay alguna descarga en mysql en este día para incorporarlas
-while($descarga = sqlsrv_fetch_array($stmt)){
+while($descarga = odbc_fetch_array($stmt)){
 	// hay descargas en Calden
 	//$estadoComb[$descarga['IdArticulo']]['descarga'] = $descarga['Descarga'];
 }
@@ -115,9 +115,9 @@ while($descarga = $resDespachosMAXI->fetch_array()){
 
 // COMBUSTIBLES
 $sqlInfoUltimoCierre = "select top 6 dbo.CierresTurno.idCierreTurno as idT, CONVERT(VARCHAR(5), dbo.CierresTurno.Fecha,4) AS Fecha, CONVERT(VARCHAR(8), dbo.CierresTurno.Fecha, 108), Descarga, Medicion, Vendido, StockActual, Capacidad, CAST(round(Medicion/Capacidad*100,2) AS decimal(4, 2)) as Ocupado, (Capacidad-Medicion) as Disponible, dbo.CierresDetalleTanques.IdTanque,  dbo.CierresDetalleTanques.IdArticulo as idArticulo, dbo.CierresTurno.Fecha as fechaCierre from dbo.Tanques, dbo.CierresDetalleTanques, dbo.Articulos, dbo.CierresTurno WHERE dbo.CierresDetalleTanques.IdArticulo=dbo.Articulos.IdArticulo AND dbo.CierresTurno.IdCierreTurno=dbo.CierresDetalleTanques.IdCierreTurno AND dbo.Tanques.idTanque=dbo.CierresDetalleTanques.idTanque order by dbo.CierresDetalleTanques.IdCierreTurno DESC, idArticulo ;";
-$stmt = sqlsrv_query( $mssql, $sqlInfoUltimoCierre);
+$stmt = odbc_exec( $mssql, $sqlInfoUltimoCierre);
 /* Retrieve and display the results of the query. */
-while($tanque = sqlsrv_fetch_array($stmt)){
+while($tanque = odbc_fetch_array($stmt)){
 	$idCierre = $tanque[0];
 	$dia = $tanque[1];
 	$hora = $tanque[2];
@@ -248,8 +248,8 @@ foreach($combustible as $key => $cb){
 // termina
 /* Free statement and connection resources. */
 if(isset($stmt))
-	sqlsrv_free_stmt($stmt);
-sqlsrv_close($mssql);
+	odbc_free_result($stmt);
+odbc_close($mssql);
 $mysqli->close();
 ?>
   </body>

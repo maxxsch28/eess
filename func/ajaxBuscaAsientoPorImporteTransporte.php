@@ -1,12 +1,13 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$limit=11;
-$offset=0;
 fb($_POST, 'POST');
 
-
+$r2 = explode("/", $_REQUEST['rangoFin']);
+$r1 = explode("/", $_REQUEST['rangoInicio']);
+$rangoFin="$r2[1]/$r2[0]/$r2[2]";
+$rangoInicio="$r1[1]/$r1[0]/$r1[2]";
 
 
 //fb($loggedInUser->user_id);
@@ -45,8 +46,8 @@ if(isset($_POST['idBuscaAsiento'])){
 } else{
   // inserto una nueva búsqueda // 28-09-1977
   $fuzyness = (isset($_REQUEST['fuzzy']))?$_REQUEST['fuzziness']:0;
-  $rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
-  $rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
+  //$rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
+  //$rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
   $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaTransporte, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?$_REQUEST['cuentaTransporte']:0)."', $loggedInUser->user_id)";
   fb($sql);
 }
@@ -59,7 +60,7 @@ if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
 //$result = $mysqli->query($sql);
 
 
-$andFecha=(isset($_REQUEST['rangoInicio']))?" AND dbo.concasie.fecha_asie>='{$_REQUEST['rangoInicio']}' AND dbo.concasie.fecha_asie<='{$_REQUEST['rangoFin']} 23:59:59'":"";
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND dbo.concasie.fecha_asie>='{$rangoInicio}' AND dbo.concasie.fecha_asie<='{$rangoFin} 23:59:59'":"";
 
 if($_REQUEST['importe']<>''){
   $sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} UNION SELECT DISTINCT dbo.diario.asiento, detalle, fecha, diario.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.diario.cod_libro FROM dbo.diario, dbo.concasie WHERE dbo.diario.asiento=dbo.concasie.asiento AND dbo.diario.cod_libro=dbo.concasie.cod_libro{$fuzziness2}{$leyenda}{$cuenta} $andFecha order by fecha asc");
@@ -79,36 +80,38 @@ $dbg=0;
 
 if($dbg)echo "<thead ><tr><td colspan=4 style='height:5em'>$sqlAsientos</td></tr></thead>";
 
-$stmt = sqlsrv_query( $mssql2, $sqlAsientos);
+$stmt = odbc_exec( $mssql2, $sqlAsientos);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlAsientos<br/>";
-     die( print_r( sqlsrv_errors(), true));
+     die( print_r( odbc_errormsg().' -- '.odbc_error(), true));
 }
-while($rowAsientos = sqlsrv_fetch_array($stmt)){
+while($rowAsientos = odbc_fetch_array($stmt)){
   $sqlDetalles = "SELECT cantidad, [sqlcoop_dbimplemen].[dbo].[asiecont].asiento, [sqlcoop_dbimplemen].[dbo].[concasie].detalle, debe, haber, fecha, [sqlcoop_dbshared].[dbo].[plancuen].nombre, cuentacont, ordenamien, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[asiecont].idtranglob, [sqlcoop_dbimplemen].[dbo].[asiecont].cod_libro FROM [sqlcoop_dbimplemen].[dbo].[asiecont], [sqlcoop_dbimplemen].[dbo].[concasie], [sqlcoop_dbshared].[dbo].[plancuen] WHERE [sqlcoop_dbshared].[dbo].[plancuen].codigo=cuentacont AND [sqlcoop_dbimplemen].[dbo].[asiecont].cod_libro=[sqlcoop_dbimplemen].[dbo].[concasie].cod_libro AND [sqlcoop_dbimplemen].[dbo].[asiecont].asiento=[sqlcoop_dbimplemen].[dbo].[concasie].asiento AND [sqlcoop_dbimplemen].[dbo].[asiecont].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[concasie].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[asiecont].asiento=$rowAsientos[asiento] UNION SELECT cantidad, [sqlcoop_dbimplemen].[dbo].[diario].asiento, [sqlcoop_dbimplemen].[dbo].[concasie].detalle, debe, haber, fecha, [sqlcoop_dbshared].[dbo].[plancuen].nombre, cuentacont, ordenamien, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[diario].idtranglob, [sqlcoop_dbimplemen].[dbo].[diario].cod_libro FROM [sqlcoop_dbimplemen].[dbo].[diario], [sqlcoop_dbimplemen].[dbo].[concasie], [sqlcoop_dbshared].[dbo].[plancuen] WHERE [sqlcoop_dbshared].[dbo].[plancuen].codigo=cuentacont AND [sqlcoop_dbimplemen].[dbo].[diario].cod_libro=[sqlcoop_dbimplemen].[dbo].[concasie].cod_libro AND [sqlcoop_dbimplemen].[dbo].[diario].asiento=[sqlcoop_dbimplemen].[dbo].[concasie].asiento AND [sqlcoop_dbimplemen].[dbo].[diario].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[concasie].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[diario].asiento=$rowAsientos[asiento] ORDER BY debe DESC, haber DESC";
             
-  //fb($sqlDetalles);
+  fb($sqlDetalles);
     
-  $stmt2 = sqlsrv_query( $mssql, $sqlDetalles);
+  $stmt2 = odbc_exec( $mssql2, $sqlDetalles);
   if( $stmt2 === false ){
     echo "2. Error in executing query.</br>$sqlDetalles<br/>";
-    die( print_r( sqlsrv_errors(), true));
+    die( print_r( odbc_errormsg().' -- '.odbc_error(), true));
   }
-  $fecha = date_format($rowAsientos['fecha'], "d/m/Y");
+  $fecha = substr($rowAsientos['fecha'], 0,10);
   unset($nombre);
   $detalle = utf8_encode($rowAsientos['detalle']);
   
   if(!isset($_SESSION['concepto'][$rowAsientos['concepto']])){
-    $stmt3 = sqlsrv_query($mssql, "SELECT concepto FROM [sqlcoop_dbimplemen].[dbo].[CONCECON] WHERE codigo='$rowAsientos[concepto]';");
-     if( $stmt3 === false ){
-      echo "2. Error in executing query.</br>SELECT concepto FROM [sqlcoop_dbimplemen].[dbo].[CONCECON] WHERE codigo='$rowAsientos[concepto]'<br/>";
-      die( print_r( sqlsrv_errors(), true));
+    $sqlConcepto = "SELECT TOP 1 concepto FROM CONCECON WHERE codigo=$rowAsientos[concepto];";
+    fb($sqlConcepto);
+    $stmt5 = odbc_exec($mssql2, $sqlConcepto);
+     if( $stmt5 === false ){
+      echo "2. Error in executing query.</br>$sqlConcepto<br/>";
+      die( print_r( odbc_errormsg().' - '.odbc_error(), true));
     }
-    $tmp = sqlsrv_fetch_array($stmt3, SQLSRV_FETCH_ASSOC);
-    $tmp = substr($tmp['concepto'], 5);
-    $_SESSION['concepto'][$rowAsientos['concepto']] = trim($tmp);
+    $tmp = odbc_fetch_array($stmt5,0);print_r(debug_backtrace());
+    $tmp2 = substr($tmp3['concepto'], 5);
+    $_SESSION['concepto'][$rowAsientos['concepto']] = trim($tmp2);
   }
-  
+  fb($_SESSION['concepto']);
   switch(intval($rowAsientos['concepto'])) {
     case 30:
       // if concepto==30 buscar datos de fletero.
@@ -116,25 +119,25 @@ while($rowAsientos = sqlsrv_fetch_array($stmt)){
       
       $sqlFletero = "SELECT nombre FROM [sqlcoop_dbimplemen].[dbo].ordservi, [sqlcoop_dbimplemen].[dbo].fleteros WHERE [sqlcoop_dbimplemen].[dbo].ordservi.idtranglob=$rowAsientos[idtranglob] AND [sqlcoop_dbimplemen].[dbo].ordservi.fletero=[sqlcoop_dbimplemen].[dbo].fleteros.fletero";
       fb($sqlFletero, $rowAsientos['asiento']);
-      $stmt3 = sqlsrv_query( $mssql, $sqlFletero);
+      $stmt3 = odbc_exec( $mssql, $sqlFletero);
       if( $stmt3 === false ){
         echo "3. Error in executing query.</br>$sqlFletero<br/>";
         die( print_r( sqlsrv_errors(), true));
       }
-      $rowFletero = sqlsrv_fetch_array($stmt3, SQLSRV_FETCH_ASSOC);
+      $rowFletero = odbc_fetch_array($stmt3, 0);
       $nombre = $rowFletero['nombre'];
       break;
     case 1039:
       $sqlFletero = "SELECT nombre FROM [sqlcoop_dbimplemen].[dbo].histccfl, [sqlcoop_dbimplemen].[dbo].fleteros WHERE [sqlcoop_dbimplemen].[dbo].histccfl.idtranglob=$rowAsientos[idtranglob] AND [sqlcoop_dbimplemen].[dbo].histccfl.fletero=[sqlcoop_dbimplemen].[dbo].fleteros.fletero";
       fb($sqlFletero, $rowAsientos['asiento']);
-      $stmt3 = sqlsrv_query( $mssql, $sqlFletero);
+      $stmt3 = odbc_exec( $mssql, $sqlFletero);
       if( $stmt3 === false ){
         echo "3. Error in executing query.</br>$sqlFletero<br/>";
         die( print_r( sqlsrv_errors(), true));
       }
       $arrayDetalle=explode("DESDE VI", utf8_encode($rowAsientos['detalle']));
       $detalle=$arrayDetalle[0];
-      $rowFletero = sqlsrv_fetch_array($stmt3, SQLSRV_FETCH_ASSOC);
+      $rowFletero = odbc_fetch_array($stmt3);
       $nombre = $rowFletero['nombre'];
       break;
     case 1057:
@@ -226,7 +229,7 @@ while($rowAsientos = sqlsrv_fetch_array($stmt)){
   echo "<tbody class='asientoTransporte' id='$rowAsientos[idtranglob]_$rowAsientos[concepto]'><tr class='encabezaAsiento encabezado2' style='line-height:12em;' title='".$rowAsientos['concepto']."-{$_SESSION['concepto'][$rowAsientos['concepto']]}'><td align='left' rowspan='".((isset($nombre))?'1':'2')."'>$detalle</td><td colspan='2'>($fecha) Nº $rowAsientos[asiento]</td></tr><tr class='encabezaAsiento2'>".(isset($nombre)?"<td><b>$nombre</b></td>":'')."<td colspan='2'><span class='label label-$label'>{$_SESSION['transporte_libros_contables'][$rowAsientos['cod_libro']]}</span></td></tr>";
   if($dbg)echo "<tr><td colspan=2>$sqlDetalles</td></tr>";
   $debe  =$haber=0;
-  while($rowDetalles = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
+  while($rowDetalles = odbc_fetch_array($stmt2)){
     $monto = sprintf("%.2f",$rowDetalles['cantidad']);
     $monto = number_format(str_replace(',', '.', $monto), 2, ',', '.');
     if(isset($_REQUEST['fuzzy'])){

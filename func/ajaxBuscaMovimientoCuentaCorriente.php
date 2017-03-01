@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $limit=11;
 $offset=0;
@@ -9,12 +9,12 @@ $offset=0;
 
 $sqlFactura = "select * from dbo.MovimientosFac where puntoVenta=$_POST[prefijo] and numero=$_POST[numero];";
 
-$stmt = sqlsrv_query( $mssql, $sqlFactura);
+$stmt = odbc_exec( $mssql, $sqlFactura);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlFactura<br/>";
      die( print_r( sqlsrv_errors(), true));
 }
-$facturaTotal = sqlsrv_fetch_array($stmt);
+$facturaTotal = odbc_fetch_array($stmt);
 $importeRastrear = round($facturaTotal['Total'] - $_POST['importe'],2);
 if($importeRastrear==0){
     $fecha=true;
@@ -32,13 +32,13 @@ echo $sqlMovimientos;
 //echo $sqlFactura;
 
 
-$stmt = sqlsrv_query( $mssql, $sqlMovimientos);
+$stmt = odbc_exec( $mssql, $sqlMovimientos);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlMovimientos<br/>";
      die( print_r( sqlsrv_errors(), true));
 }
 echo "<tbody class='turno'>";
-while($rowImporte = sqlsrv_fetch_array($stmt)){
+while($rowImporte = odbc_fetch_array($stmt)){
     //print_r($rowImporte); 
 	$fecha = date_format($rowImporte['Fecha'], "d/m/Y H:i:s");
 	
@@ -48,12 +48,12 @@ while($rowImporte = sqlsrv_fetch_array($stmt)){
     if($rowImporte['IdTipoMovimiento']=='REC'){
         // muestra número de recibo
         $sqlRecibo = "select * from dbo.Recibos where IdRecibo=$rowImporte[IdRecibo];";
-        $stmt = sqlsrv_query( $mssql, $sqlRecibo);
+        $stmt = odbc_exec( $mssql, $sqlRecibo);
         if( $stmt === false ){
              echo "1. Error in executing query.</br>$sqlRecibo<br/>";
              die( print_r( sqlsrv_errors(), true));
         }
-        $rowRecibo = sqlsrv_fetch_array($stmt);
+        $rowRecibo = odbc_fetch_array($stmt);
         echo "<tr class='fila'><td class='cuentaD' colspan=3>Recibo $rowRecibo[PuntoVenta] - $rowRecibo[Numero]</td></tr>";
         //echo $sqlRecibo;
     }

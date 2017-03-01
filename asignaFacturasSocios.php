@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 // asignaFacturasSocios.php
 // lista las facturas emitidas sin turno asociado y permite asignarlas al turno actual
@@ -22,7 +22,7 @@ include('include/inicia.php');
     </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
           <div class='row'>
             <div class="">
@@ -31,9 +31,9 @@ include('include/inicia.php');
               </div>
             </div>
             </div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
           $(document).ready(function() {
             $('#detalle').html("<center><img src='img/ajax-loader.gif'/></center>").fadeIn();

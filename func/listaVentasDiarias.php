@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // listaStockTanques.php
 // muestra y lleva el control de stocks de combustibles.
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411';

@@ -1,5 +1,4 @@
-﻿<?php // 192.168.1.93  // IP Playa
-//192.168.1.5 // Teresa
+﻿<?php 
 $ypfUrl = '/ypf';
 $ypfUrl = '';
 ?>
@@ -27,8 +26,6 @@ $ypfUrl = '';
                 <?php if($loggedInUser){
                     if($loggedInUser->group_id==2||$loggedInUser->group_id==4){ // Playa?>
                     <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanques.php")echo ' class="active"';?>><a href="/">Combustibles</a></li>
-
-               
                 <?php } 
                 if($loggedInUser->group_id==2){ // Gestion?>
                     <li role="presentation" class="dropdown" style='height:50px'>
@@ -40,6 +37,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/saldoYER.php')echo ' class="active"';?>><a href="/saldoYER.php">Saldo YPF en Ruta</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/stockTanques.php')echo ' class="active"';?>><a href="/stockTanques.php">Control de stock de tanques</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/combTrackingVentas.php')echo ' class="active"';?>><a href="/combTrackingVentas.php">Tracking Ventas</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/registroRemito.php')echo ' class="active"';?>><a href="/registroRemito.php">Recepcion combustible</a></li>
                         </ul>
                     </li>
                 <?php } 
@@ -54,7 +52,6 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listaFacturacion.php")echo ' class="active"';?>><a href="/listaFacturacion.php">Refacturacion</a></li>
                         </ul>
                     </li>
-        			
                 <?php } 
                     if($loggedInUser->group_id==2){ // Gestion?>
                     <li role="presentation" class="dropdown" style='height:50px'>
@@ -117,7 +114,7 @@ $ypfUrl = '';
                         <ul class="dropdown-menu" role="menu">
                              <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/comisionesTransporte.php")echo ' class="active"';?>><a href="/comisionesTransporte.php">Comisiones Viajes</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/buscaAsientoTransporte.php")echo ' class="active"';?>><a href="/buscaAsientoTransporte.php">Busca Asientos <b>TRANSPORTE</b></a></li>
-                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/pagoAdelantos.php")echo ' class="active"';?>><a href="/pagoAdelantos.php">Detalle pago adelantos</a></li>
+                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupPagoAdelantos.php")echo ' class="active"';?>><a href="/setupPagoAdelantos.php">Detalle pago adelantos</a></li>
                              <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/ivaCargaComprobantes.php")echo ' class="active"';?>><a href="/ivaCargaComprobantes.php">Carga comprobante</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/ivaCargaSocio.php")echo ' class="active"';?>><a href="/ivaCargaSocio.php">Nuevo socio</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/ivaCargaTerceros.php")echo ' class="active"';?>><a href="/ivaCargaTerceros.php">Cliente/Proveedor</a></li>
@@ -139,7 +136,7 @@ $ypfUrl = '';
                         </div>
                         </form>
                     </div>
-                <?}
+                <?php }
                 } else { // generico ?>
                     <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanques.php")echo ' class="active"';?>><a href="/">Estado tanques</a></li>
                     <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/cargaMovistar.php")echo ' class="active"';?>><a href="/cargaMovistar.php">Movistar</a></li>

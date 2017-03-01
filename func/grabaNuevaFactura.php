@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaNuevaFactura.php
 // procesa los datos de una nueva factura y la graba en la base de datos
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 // print_r($_POST);//die;
 if(isset($_POST['idFactura'])){
 	// borro todos los registros de este cliente

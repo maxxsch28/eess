@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 2;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 $titulo='Ventas en Servicompras por empleado';
 ?>
 <!DOCTYPE html>
@@ -107,7 +107,7 @@ $titulo='Ventas en Servicompras por empleado';
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-12">
@@ -153,10 +153,10 @@ $titulo='Ventas en Servicompras por empleado';
         </div>
                      
 
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
             $(document).ready(function() {
                 $('#ventasMensuales').html("<tr><td align=center colspan=10><br><img src='img/ajax-loader.gif'/></td></tr>").fadeIn();

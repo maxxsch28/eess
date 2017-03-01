@@ -1,19 +1,16 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$limit=11;
-$offset=0;
-
-print_r($_REQUEST);
+//fb($_REQUEST);
 
 if(!isset($_SESSION['empleados'])){
-	$s = "SELECT IdEmpleado, Empleado FROM empleados ORDER BY IdEmpleado";
-	$q = sqlsrv_query($mssql, $s);
-	while($r = sqlsrv_fetch_array($q, SQLSRV_FETCH_ASSOC)){
-		$rr[$r['IdEmpleado']]=$r['Empleado'];
-	}
-	$_SESSION['empleados']=$rr;
+  $s = "SELECT IdEmpleado, Empleado FROM empleados ORDER BY IdEmpleado";
+  $q = odbc_exec2($mssql, $s, __LINE__, __FILE__);
+  while($r = odbc_fetch_array($q)){
+    $rr[$r['IdEmpleado']]=$r['Empleado'];
+  }
+  $_SESSION['empleados']=$rr;
 }
 
 $andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='$_REQUEST[rangoInicio]' AND Fecha<='$_REQUEST[rangoFin] 23:59:59'":'';
@@ -41,7 +38,7 @@ $idCaja = (isset($_REQUEST['idCaja'])&&$_REQUEST['idCaja']>0)?" AND IdCaja=$_REQ
 if(is_array($_REQUEST['idCierreCajaTesoreria'])&&$_REQUEST['idCierreCajaTesoreria'][0]<>''){
   $cierresTurnos = " AND dbo.CierresTurno.IdCierreCajaTesoreria IN (";
   foreach($_REQUEST['idCierreCajaTesoreria'] as $turno){
-          $cierresTurnos .= "$turno, ";
+    $cierresTurnos .= "$turno, ";
   }
   $cierresTurnos = substr($cierresTurnos, 0, -2).")";
 } else $cierresTurnos = "";
@@ -50,15 +47,14 @@ if(is_array($_REQUEST['idCierreCajaTesoreria'])&&$_REQUEST['idCierreCajaTesoreri
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno NOT IN (SELECT idCierreTurno FROM dbo.Table_1 where IdCierreTurno IS NOT NULL);";
 
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno IN (SELECT idCierreTurno FROM dbo.Table_1 where IdCierreCajaTesoreria IS NULL);";
-$stmt0 = sqlsrv_query( $mssql, $sqlTurnos0);
-if( $stmt0 === false ){
-     echo "1. Error in executing query.</br>$sqlTurnos0<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
+$stmt0 = odbc_exec2( $mssql, $sqlTurnos0, __LINE__, __FILE__);
+//fb($sqlTurnos0);
+while($rowTurnos0 = odbc_fetch_array($stmt0)){
+  //fb($rowTurnos0);var_dump($rowTurnos0);
   if(isset($rowTurnos0['IdCierreCajaTesoreria'])){
-    $dmd = sqlsrv_fetch_array(sqlsrv_query( $mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]"));
+    $dmd = odbc_fetch_array(odbc_exec( $mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]"));
     //var_dump($dmd);
+    fb("SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]");
     if($dmd == NULL){
       $sqlInsert = "INSERT INTO dbo.Table_1 (idCierreTurno, idCierreCajaTesoreria) VALUES ($rowTurnos0[IdCierreTurno], $rowTurnos0[IdCierreCajaTesoreria]);";
     } else {
@@ -66,23 +62,20 @@ while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
     }
   } else {
     // NULL
+    fb($rowTurnos0['IdCierreCajaTesoreria']);
     $sqlInsert = "INSERT INTO dbo.Table_1 (idCierreTurno, idCierreCajaTesoreria) VALUES ($rowTurnos0[IdCierreTurno], NULL);";
   }
   //echo $sqlInsert;
   //var_dump($rowTurnos0['IdCierreCajaTesoreria']);
-  $stmt2 = sqlsrv_query( $mssql, $sqlInsert);
+  $stmt2 = odbc_exec2( $mssql, $sqlInsert, __LINE__, __FILE__);
 }
 
 
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno NOT IN (SELECT idCierreTurno FROM dbo.Table_1);";
-$stmt0 = sqlsrv_query( $mssql, $sqlTurnos0);
-if( $stmt0 === false ){
-     echo "1. Error in executing query.</br>$sqlTurnos0<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
+$stmt0 = odbc_exec2( $mssql, $sqlTurnos0, __LINE__, __FILE__);
+while($rowTurnos0 = odbc_fetch_array($stmt0)){
   if(isset($rowTurnos0['IdCierreCajaTesoreria'])){
-    $dmd = sqlsrv_fetch_array(sqlsrv_query( $mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]"));
+    $dmd = odbc_fetch_array(odbc_exec($mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]"));
     //var_dump($dmd);
     if($dmd == NULL){
       $sqlInsert = "INSERT INTO dbo.Table_1 (idCierreTurno, idCierreCajaTesoreria) VALUES ($rowTurnos0[IdCierreTurno], $rowTurnos0[IdCierreCajaTesoreria]);";
@@ -95,7 +88,7 @@ while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
   }
   //echo $sqlInsert;
   //var_dump($rowTurnos0['IdCierreCajaTesoreria']);
-  $stmt2 = sqlsrv_query( $mssql, $sqlInsert);
+  $stmt2 = odbc_exec2( $mssql, $sqlInsert, __LINE__, __FILE__);
 }
 
 
@@ -109,45 +102,40 @@ $sqlTurnos = "SELECT {$top}dbo.CierresTurno.IdCierreTurno, Fecha, IdCaja, IdEmpl
 
 fb($sqlTurnos);
 
-$stmt = sqlsrv_query( $mssql, $sqlTurnos);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlTurnos<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-
-while($rowTurnos = sqlsrv_fetch_array($stmt)){
-/* print_r($rowTurnos); */
-	$fecha = date_format($rowTurnos['Fecha'], "d/m/Y H:i:s");
-	
-	$caja = ($rowTurnos['IdCaja']==1)?'<span class="label label-warning">PLAYA</span>':(($rowTurnos['IdCaja']==2)?'<span class="label label-info">SHOP</span>':'<span class="label label-info">ADMIN</span>');
-	
-	$factdiferencia = ($_POST['buscador']=='turnos')?(($rowTurnos['EmitioFacturaComplemento']==1)?'':" alert alert-danger"):'';
-	
-	
-	$debe=$haber=0;
-	
-	$empleados = '';
-	$empleados .= (isset($rowTurnos['IdEmpleado2']))?'+'.$_SESSION['empleados'][$rowTurnos['IdEmpleado2']]:'';
-	$empleados .= (isset($rowTurnos['IdEmpleado3']))?' +'.$_SESSION['empleados'][$rowTurnos['IdEmpleado3']]:'';
-	$empleados .= (isset($rowTurnos['IdEmpleado4']))?' +'.$_SESSION['empleados'][$rowTurnos['IdEmpleado4']]:'';
-	
-	if($_POST['buscador']=='tarjetas'){
-          $lotesRevisados = "<td class='lotesRevisados'><span class='label label-".(($rowTurnos['lotesRevisados']==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></td>";
-	} else {
-          $lotesRevisados = "<td></td>";
-	}
-	$verLotesTurno = ($_POST['buscador']<>'turnos')?"<td class='verTurno' id='turno_$rowTurnos[0]'><span class='viendo label label-success'>VER TURNO</span></td>":'';
-	if($rowTurnos['IdCierreCajaTesoreria'] == NULL){
-          $activaDesactiva = "";
-	} else {
-          $activaDesactiva = "<span class='abreCierra label label-".(($rowTurnos['IdCierreCajaTesoreria']<>$rowTurnos['idCierreCajaTesoreria'])?"warning'><i class='glyphicon glyphicon-warning-sign'></i>CERRAR":"success'>ABRIR")."</span>";
-	}
-	
-	
-	echo "<tbody class='turno$factdiferencia' id='t$rowTurnos[0]'><tr class='encabezaAsiento'>{$lotesRevisados}<td align='left'>$caja $fecha</td><td colspan='2'>Nº $rowTurnos[0]</td></tr>";
-	
-	
-	echo "<tr class='fila'><td class='cuentaD' colspan='2'>$empleados</td>$verLotesTurno<td class='debe' id='$rowTurnos[0]'>$activaDesactiva</td></tr></tbody>";	
+$stmt = odbc_exec2( $mssql, $sqlTurnos, __LINE__, __FILE__);
+while($rowTurnos = odbc_fetch_array($stmt)){
+  /* print_r($rowTurnos); */
+  $fecha = fecha($rowTurnos['Fecha']);
+  
+  $caja = ($rowTurnos['IdCaja']==1)?'<span class="label label-warning">PLAYA</span>':(($rowTurnos['IdCaja']==2)?'<span class="label label-info">SHOP</span>':'<span class="label label-info">ADMIN</span>');
+  
+  $factdiferencia = ($_POST['buscador']=='turnos')?(($rowTurnos['EmitioFacturaComplemento']==1)?'':" alert alert-danger"):'';
+  
+  
+  $debe=$haber=0;
+  
+  $empleados = '';
+  $empleados .= (isset($rowTurnos['IdEmpleado2']))?'+'.$_SESSION['empleados'][$rowTurnos['IdEmpleado2']]:'';
+  $empleados .= (isset($rowTurnos['IdEmpleado3']))?' +'.$_SESSION['empleados'][$rowTurnos['IdEmpleado3']]:'';
+  $empleados .= (isset($rowTurnos['IdEmpleado4']))?' +'.$_SESSION['empleados'][$rowTurnos['IdEmpleado4']]:'';
+  
+  if($_POST['buscador']=='tarjetas'){
+    $lotesRevisados = "<td class='lotesRevisados'><span class='label label-".(($rowTurnos['lotesRevisados']==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></td>";
+  } else {
+    $lotesRevisados = "<td></td>";
+  }
+  $verLotesTurno = ($_POST['buscador']<>'turnos')?"<td class='verTurno' id='turno_$rowTurnos[IdCierreTurno]'><span class='viendo label label-success'>VER TURNO</span></td>":'';
+  if($rowTurnos['IdCierreCajaTesoreria'] == NULL){
+    $activaDesactiva = "";
+  } else {
+    $activaDesactiva = "<span class='abreCierra label label-".(($rowTurnos['IdCierreCajaTesoreria']<>$rowTurnos['idCierreCajaTesoreria'])?"warning'><i class='glyphicon glyphicon-warning-sign'></i>CERRAR":"success'>ABRIR")."</span>";
+  }
+      
+      
+  echo "<tbody class='turno$factdiferencia' id='t$rowTurnos[IdCierreTurno]'><tr class='encabezaAsiento'>{$lotesRevisados}<td align='left'>$caja $fecha</td><td colspan='2'>Nº $rowTurnos[IdCierreTurno]</td></tr>";
+  
+  
+  echo "<tr class='fila'><td class='cuentaD' colspan='2'>$empleados</td>$verLotesTurno<td class='debe' id='$rowTurnos[IdCierreTurno]'>$activaDesactiva</td></tr></tbody>";	
 }
 if(!isset($fecha))echo "<tbody><tr><td colspan='3'>No hay resultados</td></tr></tbody>";
 ?>

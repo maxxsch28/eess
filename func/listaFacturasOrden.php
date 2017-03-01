@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // listaFacturasOrden.php
 // revisa todos los clientes "orden" de caldenoil, saca sus respectivas facturas en cta cte impagas y revisa para cada uno si existe un adelanto en Setup por el mismo importe.
 
@@ -10,7 +10,7 @@
 
 
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411';
@@ -29,7 +29,7 @@ if(isset($_POST['mes'])){
  // echo $sqlClientes;
 
 
-$stmt = sqlsrv_query( $mssql2, $sqlClientes);
+$stmt = odbc_exec( $mssql2, $sqlClientes);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlClientes<br/>";
      die( print_r( sqlsrv_errors(), true));
@@ -40,7 +40,7 @@ $totalA = 0;
 $cantidadFacturas = $cantidadClientes = 0;
 $comision=array();
 $totalAComisionar = array();
-while($fila = sqlsrv_fetch_array($stmt)){
+while($fila = odbc_fetch_array($stmt)){
     if(!isset($idSocio)){
         $idSocio = $fila['Fletero'];
         $socio = $fila['Fle_Nombre'];

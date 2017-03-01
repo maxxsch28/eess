@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 3;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_ALL, 'es_ES.utf-8');
 $titulo="Tablero flechas Socios";
 require_once 'classes/Mobile_Detect.php';
@@ -14,7 +14,7 @@ if(!isset($_SESSION['esMovil'])){
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <?php include ('/include/head.php');?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -88,7 +88,7 @@ if(!isset($_SESSION['esMovil'])){
   </style>
   </head>
   <body data-target=".navbar" data-offset="50">
-    <?php if(!isset($_SESSION['esMovil'])||!$_SESSION['esMovil']){include('include/menuSuperior.php');} ?>
+    <?php if(!isset($_SESSION['esMovil'])||!$_SESSION['esMovil']){include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');} ?>
     <div class="container<?php if((isset($_SESSION['ocultaMenu'])&&$_SESSION['ocultaMenu']==1)||(isset($_COOKIE['ocultaMenu'])&&$_COOKIE['ocultaMenu']==1)){echo " ocultarMenu";}?>"> 
       <div class='row'>
       <div class="<?php if(!isset($_SESSION['esMovil'])||!$_SESSION['esMovil']){echo "col-md-12";}?>">
@@ -157,10 +157,10 @@ if(!isset($_SESSION['esMovil'])){
         </div>
       </div>
     </div>
-    <?php if(!isset($_SESSION['esMovil'])||!$_SESSION['esMovil']||false){//include ('include/footer.php');
+    <?php if(!isset($_SESSION['esMovil'])||!$_SESSION['esMovil']||false){//include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php');
     }?>
   </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
   $(document).ready(function() {
     $('#socios').html("<center><img src='img/ajax-loader.gif'/></center>").fadeIn();

@@ -1,5 +1,5 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 
   </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
 		<!-- Example row of columns -->
 		<div class="row">
@@ -149,9 +149,9 @@ setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 			</div>
 		</div>
 	<!--	
-        <?php include ('include/footer.php')?> -->
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?> -->
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 	</script>
   </body>

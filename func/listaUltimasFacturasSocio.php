@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // listaUltimasFacturasSocio.php
 // muestra en una tabla todas las facturas de ventas y compras cargadas para el socio determinado
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  //print_r($_POST);
  // $array=array();
  

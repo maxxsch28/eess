@@ -108,7 +108,7 @@ if(!empty($_POST)){
       </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
 		<!-- Example row of columns -->
 		<form class="form-signin" name="newUser" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
@@ -140,9 +140,9 @@ if(!empty($_POST)){
                 <button class="btn btn-lg btn-primary btn-block" type="submit" name="new" id="newfeedform">Registrar</button><br/>
                 <a href="login.php">Ya tengo usuario</a> | <a href="users_forgot-password.php">¿Olvidó su contraseña?</a></p>
             </form>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 	</script>
   </body>

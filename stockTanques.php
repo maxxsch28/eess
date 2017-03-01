@@ -1,11 +1,11 @@
-﻿<?php
+<?php
 $nivelRequerido = 4;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
-if(isset($_GET['cem'])){
-  $origen = 'cem';
-} else {
+if(isset($_GET['calden'])){
   $origen = 'calden';
+} else {
+  $origen = 'cem';
 }
 ?>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ if(isset($_GET['cem'])){
 <head>
   <meta charset="utf-8">
   <title>Control de stock en tanques</title>
-  <?php include ('/include/head.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
   <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
   <style type="text/css">
     body {
@@ -32,7 +32,7 @@ if(isset($_GET['cem'])){
   </style>
 </head>
 <body>
-      <?php include('include/menuSuperior.php') ?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
       <div class="container">
               <div class='row' id='fila1'>
           <!--
@@ -104,9 +104,9 @@ if(isset($_GET['cem'])){
         <div id='listaProducto'>
         </div>
       </div>
-      <?php include ('include/footer.php')?>
+      <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
   </div> <!-- /container -->
-<?php include('include/termina.php');?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 <script src="js/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
 <script>
 $(document).ready(function() {

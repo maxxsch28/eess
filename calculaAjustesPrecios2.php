@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 ?>
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ include('include/inicia.php');
     </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
           <div class='row'>
             <div class="col-md-6">
@@ -44,12 +44,12 @@ include('include/inicia.php');
                     <option value='' disabled selected>Seleccionar Cliente</option>
                     <?php 
                     $sql = "SELECT IdCliente, RazonSocial, Identificador FROM dbo.Clientes WHERE IdCondicionVenta=2 AND Activo=1 ORDER BY RazonSocial ASC";
-                    $stmt = sqlsrv_query( $mssql, $sql);
+                    $stmt = odbc_exec( $mssql, $sql);
                     if( $stmt === false ){
                         echo "1. Error in executing query.</br>$sql<br/>";
                         die( print_r( sqlsrv_errors(), true));
                     }
-                    while($rowRemito = sqlsrv_fetch_array($stmt)){
+                    while($rowRemito = odbc_fetch_array($stmt)){
                         echo "<option value='$rowRemito[IdCliente]'>$rowRemito[RazonSocial]".(($rowRemito['Identificador']<>'')?" ($rowRemito[Identificador])":'')."</option>";
                     }?>
                   </select>
@@ -98,9 +98,9 @@ include('include/inicia.php');
                     </div>
             </div>
             </div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
           $(document).ready(function() {
           $('#botonEnvio').fadeIn();

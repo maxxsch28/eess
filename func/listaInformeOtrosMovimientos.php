@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
 if(isset($_POST['mes'])){
@@ -15,7 +15,7 @@ $rangoMes = "DATEPART(month, fecha) = $mes and DATEPART(year, fecha)=$anio";
 
 $sqlGastos = "SELECT Descripcion, IngresoEgreso, Detalle, dbo.OtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria, Importe FROM dbo.OtrosMovimientosCajaTesoreria, dbo.GruposOtrosMovimientosCajaTesoreria WHERE dbo.OtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria=dbo.GruposOtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria AND $rangoMes AND otrosmovimientoscajatesoreria.IdGrupoOtrosMovimientosCajaTesoreria NOT IN (1, 2, 16, 27, 3, 34,31) order by Descripcion";
 
-$stmt = sqlsrv_query( $mssql, $sqlGastos);
+$stmt = odbc_exec( $mssql, $sqlGastos);
 $cantidadFilas = sqlsrv_num_rows($stmt);
 
 //DONACIONES	                1	RIFA LINDNER SANCHEZ          	20	50.0000
@@ -24,7 +24,7 @@ $cantidadFilas = sqlsrv_num_rows($stmt);
 $a=0;
 $sumaGasto=0;
 $div="";//"<p class='text-capitalize'>";//'<div class="div-table-row"><div class="div-table-col" align="center">Rubro</div><div  class="div-table-col">Importe</div></div>';
-while($fila = sqlsrv_fetch_array($stmt)){
+while($fila = odbc_fetch_array($stmt)){
     $a++;//echo "|".fmod(6, $a)."|";
     if(!isset($encabezado)){
       $encabezado=trim($fila['Descripcion']);

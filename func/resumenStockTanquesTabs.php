@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 // resumenStockTanquesTabs.php
 // arma 4 boxes y 3 graficos de torta como excel YPF
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
 if(isset($_POST['mes'])){

@@ -1,6 +1,6 @@
 ﻿<?php
 $nivelRequerido = 3;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_ALL, 'es_ES.utf-8');
 $titulo="Detalle productos por Fleteros";
 ?>
@@ -8,7 +8,7 @@ $titulo="Detalle productos por Fleteros";
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -41,7 +41,7 @@ $titulo="Detalle productos por Fleteros";
     </style>
   </head>
   <body>
-    <?php include('include/menuSuperior.php') ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
     <div class='row'>
       <div class="col-md-12">
@@ -81,9 +81,9 @@ $titulo="Detalle productos por Fleteros";
         </table>
       </div>
     </div>
-    <?php include ('include/footer.php')?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
   </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
   $(document).ready(function() {
     $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();

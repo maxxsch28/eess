@@ -1,5 +1,5 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 

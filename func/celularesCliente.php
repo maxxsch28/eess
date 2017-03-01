@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 // celularesCliente.php
 // Devuelve el formulario con los celulares de cada cliente
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 $sqlOrdenes = "SELECT * FROM `movistar.clientes` where idCliente=$_GET[idCliente] LIMIT 1";
 //echo $sqlOrdenes;//celular, bb, socio, variosClientes
 /* Select queries return a resultset */

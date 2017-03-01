@@ -1,5 +1,5 @@
 <?php
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 $titulo="";
 
 function muestraDetallesTanquesTelemedidos(){
@@ -7,19 +7,19 @@ function muestraDetallesTanquesTelemedidos(){
 	$tablaTanques="";
 
     $sqlTanques = "select Capacidad, idArticulo, numero, idTanque from dbo.tanques order by numero;";
-	$stmt = sqlsrv_query($mssql, $sqlTanques);
+	$stmt = odbc_exec($mssql, $sqlTanques);
 	if( $stmt === false ){
 		 echo "Error in executing query.</br>";
 		 die( print_r( sqlsrv_errors(), true));
 	}
-    while($tanque = sqlsrv_fetch_array($stmt)){
+    while($tanque = odbc_fetch_array($stmt)){
       $sqlTelemedicion = "SELECT TOP 1 Litros, NivelAgua, Nivel from dbo.tanquesmediciones WHERE idTanque=$tanque[idTanque] ORDER BY LastUpdated DESC";
-      $stmtTelemedicion = sqlsrv_query($mssql, $sqlTelemedicion);
+      $stmtTelemedicion = odbc_exec($mssql, $sqlTelemedicion);
       if( $stmt === false ){
         echo "Error in executing query.</br>";
         die( print_r( sqlsrv_errors(), true));
       }
-      $telemedido[$tanque[3]] = sqlsrv_fetch_array($stmtTelemedicion);
+      $telemedido[$tanque[3]] = odbc_fetch_array($stmtTelemedicion);
       
       $stockActual = $telemedido[$tanque['idTanque']]['Litros'];
       
@@ -116,8 +116,8 @@ function muestraDetallesTanquesTelemedidos(){
           </div>
         </div></div>
         </div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   </body>
 </html>

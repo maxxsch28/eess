@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 6;
 
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 /*
   - Primero debe ingresarse el proveedor, buscador como el de movistar para elegir por codigo, cuit o por nombre
   - si es Coopetrans luego selecciona el punto de venta, si es 7 levanta los datos desde Setup, si es 8 o 9 desde Calden. No deja modificar los importes.
@@ -17,7 +17,7 @@ setlocale(LC_ALL, 'es_ES');
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <?php include ('/include/head.php');?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -28,7 +28,7 @@ setlocale(LC_ALL, 'es_ES');
   </head>
 
   <body>
-    <?php include('include/menuSuperior.php') ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
     <!-- Main hero unit for a primary marketing message or call to action -->
       <div class='row'>
@@ -71,9 +71,9 @@ setlocale(LC_ALL, 'es_ES');
         </form>   
                         
       </div>
-    <?php include ('include/footer.php')?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
     $(document).ready(function() {
       $("#busca").autocomplete({

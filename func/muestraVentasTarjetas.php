@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $limit=11;
 //$offset=0;
@@ -31,12 +31,12 @@ for ($i = 12; $i > 0; $i--) {
     
     $sqlFacturas = trim("select sum(total) as tot from dbo.movimientosfac where idtipomovimiento NOT IN ('NCA','NCB','NLP') AND Fecha>='$desde' AND Fecha<'$hasta'");
     $sqlNotasCredito = trim("select sum(total) as tot from dbo.movimientosfac where idtipomovimiento IN ('NCA','NCB') AND Fecha>='$desde' AND Fecha<'$hasta'");
-    $stmtFac = sqlsrv_query( $mssql, $sqlFacturas);
-    $stmtNC  = sqlsrv_query( $mssql, $sqlNotasCredito);
-    $rowFac = sqlsrv_fetch_array($stmtFac, SQLSRV_FETCH_ASSOC);
-    $rowNC = sqlsrv_fetch_array($stmtNC, SQLSRV_FETCH_ASSOC);
+    $stmtFac = odbc_exec( $mssql, $sqlFacturas);
+    $stmtNC  = odbc_exec( $mssql, $sqlNotasCredito);
+    $rowFac = odbc_fetch_array($stmtFac, SQLSRV_FETCH_ASSOC);
+    $rowNC = odbc_fetch_array($stmtNC, SQLSRV_FETCH_ASSOC);
     
-    $stmt = sqlsrv_query( $mssql, $sqlAsientos);
+    $stmt = odbc_exec( $mssql, $sqlAsientos);
     if( $stmt === false ){
          echo "1. Error in executing query.</br>$sqlAsientos<br/>";
          die( print_r( sqlsrv_errors(), true));
@@ -49,7 +49,7 @@ for ($i = 12; $i > 0; $i--) {
     $_SESSION['ventasTarjetas'][$b]['totalTarjetas']=0;
     $_SESSION['ventasTarjetas'][$b]['porcentaje']=0;
     $_SESSION['ventasTarjetas'][$b]['porcentajeSobreFacturacion']=0;
-    while($rowAsientos = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
+    while($rowAsientos = odbc_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
         if(in_array($rowAsientos['Nombre'], $tarjetaDebito)){
             $_SESSION['ventasTarjetas'][$b]['debito']+=$rowAsientos['VentasTarjeta'];
         } else {

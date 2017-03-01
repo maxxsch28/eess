@@ -1,6 +1,6 @@
 ﻿<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 $limit=11;
 $offset=0;
@@ -14,7 +14,7 @@ if(isset($_GET['alterno'])&&$_GET['alterno']==1){
 $filtroUsuarios = (!isset($_SESSION['soloMios'])||$_SESSION['soloMios']==0)?"":" AND tmpBuscaAsientos.user_id=".$loggedInUser->user_id;
 
 $sql = "SELECT id, importe, leyenda, fuzzyness, ambito, rangoinicio, rangofin, cuentaEESS, cuentaTransporte, cantidadusos, username, color FROM tmpBuscaAsientos, users_users WHERE tmpBuscaAsientos.user_id=users_users.user_id $filtroUsuarios ORDER BY id DESC LIMIT 10;";
-// fb($sql);
+ fb($sql);
 $result = $mysqli->query($sql);
 while($row = $result->fetch_assoc()){
   if($row['rangoinicio']=='2011-01-01'&&$row['rangofin']=='2069-12-31'){

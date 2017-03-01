@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 4;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 $sqlOrdenes = "SELECT DISTINCT(ordenes.idOrden), op, DATE_FORMAT(fechaPedido, '%e/%m/%Y') as fPedido, fechaDespacho FROM ordenes, pedidos WHERE ordenes.idOrden=pedidos.idOrden ORDER BY fechaPedido DESC, idOrden DESC LIMIT 10;";
 /* Select queries return a resultset */
@@ -63,7 +63,7 @@ if(isset($_GET['id'])){
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
 	<div class="container">
 	<!-- Main hero unit for a primary marketing message or call to action -->
 		<div class='row'>
@@ -150,10 +150,10 @@ if(isset($_GET['id'])){
 				</table>
 			</div>
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 		$(document).ready(function() {
 			$('#fechaPedido, #fechaEstimada').datepicker({

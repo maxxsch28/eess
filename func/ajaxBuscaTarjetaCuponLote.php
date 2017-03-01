@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // buscaTarjetaCuponLote.php
 // busca lotes, cupones o acreditaciones de tarjeta, tratando de dar la máxima información posible
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $limit=11;
 $offset=0;
@@ -38,12 +38,12 @@ $sqlLotes = trim("select dbo.Recibos.fecha as fecha, dbo.chequesTerceros.Numero,
 
 echo $sqlCupones;
 
-$stmt = sqlsrv_query( $mssql, $sqlCupones);
+$stmt = odbc_exec( $mssql, $sqlCupones);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlCupones<br/>";
      die( print_r( sqlsrv_errors(), true));
 }
-while($rowCupones = sqlsrv_fetch_array($stmt)){
+while($rowCupones = odbc_fetch_array($stmt)){
     $a1=1;
 	$fecha = date_format($rowCupones['fecha'], "d/m/Y");
 	echo "<tbody class='asiento' id='$rowCupones[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$fecha</td><td colspan='2'>Nº $rowCupones[idAsiento]</td></tr>";
@@ -61,12 +61,12 @@ while($rowCupones = sqlsrv_fetch_array($stmt)){
 } 
 if(!isset($a1))echo "<tbody><tr><td colspan='2'>No hay depósitos</td></tr></tbody>";
 
-$stmt = sqlsrv_query( $mssql, $sqlRecibos);
+$stmt = odbc_exec( $mssql, $sqlRecibos);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlRecibos<br/>";
      die( print_r( sqlsrv_errors(), true));
 }
-while($rowRecibos = sqlsrv_fetch_array($stmt)){
+while($rowRecibos = odbc_fetch_array($stmt)){
     $a2=1;
 	$fecha = date_format($rowRecibos['fecha'], "d/m/Y");
 	echo "<tbody class='recibo' id='$rowRecibos[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$fecha</td><td colspan='2'>Nº $rowRecibos[idAsiento]</td></tr>";

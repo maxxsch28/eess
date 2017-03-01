@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 // detalleOrden.php
 // actauliza cuadrito con las ultimas ordenes cargadas con links para ver detalles
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(isset($_GET['id'])){
 	// pide tooltip detalles orden
 	$sqlOrdenes = "SELECT op, DATE_FORMAT(fechaPedido, '%e/%m/%Y') as fechaPedido, DATE_FORMAT(fechaDespacho, '%e/%m/%Y') as fechaDespacho, idArticulo, litrosPedidos, litrosEntregados  FROM ordenes, pedidos WHERE ordenes.idOrden=pedidos.idOrden AND ordenes.idOrden='$_GET[id]' ORDER BY fechaPedido DESC;";

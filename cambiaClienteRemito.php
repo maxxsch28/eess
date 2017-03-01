@@ -1,13 +1,13 @@
-﻿<?php
+<?php
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 $sqlClientes = "SELECT IdCliente, Codigo, RazonSocial, Identificador, EmiteRemito, IdPeriodicidadFacturacionRemito, IdClienteAsociado FROM dbo.clientes WHERE IdPeriodicidadFacturacionRemito IS NOT NULL AND EmiteRemito<>0 AND Activo=1 ORDER BY RazonSocial, Identificador";
-$stmt = sqlsrv_query( $mssql, $sqlClientes);
+$stmt = odbc_exec( $mssql, $sqlClientes);
 
 if(!isset($_SESSION['clientesRemitos'])){
   $_SESSION['clientesRemitos']='';
   $_SESSION['clientesRemitosInternos']='';
-  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+  while($rowCuentas = odbc_fetch_array($stmt)){
     if($rowCuentas['IdPeriodicidadFacturacionRemito']==3||$rowCuentas['IdPeriodicidadFacturacionRemito']==12||$rowCuentas['IdClienteAsociado']!=NULL){
       $_SESSION['clientesRemitosInternos'].="<option value='$rowCuentas[IdCliente]'>$rowCuentas[Codigo] - ".(($rowCuentas['Identificador']<>"")?"<b>$rowCuentas[Identificador]</b> / ".substr($rowCuentas['RazonSocial'],0,15):"<b>$rowCuentas[RazonSocial]</b>")."</option>";
       
@@ -16,7 +16,7 @@ if(!isset($_SESSION['clientesRemitos'])){
     }
   }
 }
-
+$titulo = "Remitos Municipalidad";
 
 
 ?>
@@ -24,8 +24,8 @@ if(!isset($_SESSION['clientesRemitos'])){
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Remitos Municipalidad</title>
-    <?php include ('/include/head.php');?>
+    <title></title>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -34,7 +34,7 @@ if(!isset($_SESSION['clientesRemitos'])){
     </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
           <div class='row'>
             <div class="col-md-6">
@@ -119,10 +119,10 @@ if(!isset($_SESSION['clientesRemitos'])){
 			</div>
 			
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
           $(document).ready(function() {
             $('.radioClientes').click(function(){

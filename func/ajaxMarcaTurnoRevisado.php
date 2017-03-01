@@ -1,15 +1,15 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $sqlTurnos = "SELECT dbo.Table_1.lotesRevisados FROM dbo.Table_1 WHERE dbo.Table_1.IdCierreTurno=$_GET[idTurno];";
 
-$stmt = sqlsrv_query( $mssql, $sqlTurnos);
+$stmt = odbc_exec( $mssql, $sqlTurnos);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlTurnos<br/>";
      die( print_r( sqlsrv_errors(), true));
 }
-$rowTurnos = sqlsrv_fetch_array($stmt);
+$rowTurnos = odbc_fetch_array($stmt);
 if($rowTurnos[0]==0||$rowTurnos[0]==NULL){
 	// cerrar
 	$update = "UPDATE dbo.Table_1 SET lotesRevisados=1 WHERE IdCierreTurno=$_GET[idTurno];";
@@ -20,6 +20,6 @@ if($rowTurnos[0]==0||$rowTurnos[0]==NULL){
 	$devuelve = "<span id='marcarRevisado' class='btn btn-xs btn-danger'>NO REVISADO</span>";
 }
 
-$stmt = sqlsrv_query( $mssql, $update);
+$stmt = odbc_exec( $mssql, $update);
 echo $devuelve;
 ?>

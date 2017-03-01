@@ -6,8 +6,12 @@ $dbtype = "mysqli";
 $db_host = "localhost";
 $db_user = "coopetrans";
 $db_pass = "vGCP6eZ6dqUFZ2pB";
-$db_pass2= "5TB2J4yqY5sVGhQt";
-$db_pass3= "Xj3BZ8mY63nfsAJu";
+$db_pass2= "vGCP6eZ6dqUFZ2pB";
+$db_pass3= "vGCP6eZ6dqUFZ2pB";
+//$db_user = "root";
+//$db_pass = "e757g4a";
+//$db_pass2= "e757g4a";
+//$db_pass3= "e757g4a";
 $db_name = "pedidosypf";
 $db_name2 = "transporte";
 $db_name3 = 'cuentaypf';
@@ -29,19 +33,16 @@ if(is_array($db->sql_connect($db_host, $db_user,$db_pass,$db_name, $db_port, fal
   die("Unable to connect to the database");
 }
 	
-require_once($_SERVER['DOCUMENT_ROOT']."include/es.php");
-require_once($_SERVER['DOCUMENT_ROOT']."classes/class.user.php");
-//require_once("/classes/class.mail.php");
-require_once($_SERVER['DOCUMENT_ROOT']."func/funcs.user.php");
-require_once($_SERVER['DOCUMENT_ROOT']."func/funcs.general.php");
-require_once($_SERVER['DOCUMENT_ROOT']."classes/class.newuser.php");
-require_once($_SERVER['DOCUMENT_ROOT'].'func/FirePHPCore/fb.php'); //firebug
+require_once($_SERVER['DOCUMENT_ROOT']."/include/es.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/classes/class.user.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/func/funcs.user.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/func/funcs.general.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/classes/class.newuser.php");
+require_once($_SERVER['DOCUMENT_ROOT'].'/func/FirePHPCore/fb.php'); //firebug
 
 session_start();
 ob_start(); //firebug
-
-
-
+$remember_me_length = "1wk";
 //Global User Object Var
 //loggedInUser can be used globally if constructed
 if(isset($_SESSION["userPieUser"]) && is_object($_SESSION["userPieUser"]))
@@ -73,6 +74,7 @@ $mysqli3 = new mysqli($db_host, $db_user, $db_pass, $db_name3);
 if ($mysqli->connect_error) {
     die('MySQL - Error de Conexión ('.$mysqli->connect_errno.') '.$mysqli->connect_error);
 }
+
 if ($mysqli2->connect_error) {
     die('MySQL - Error de Conexión ('.$mysqli2->connect_errno.') '.$mysqli2->connect_error);
 }
@@ -84,36 +86,30 @@ if ($mysqli3->connect_error) {
 ini_set('mssql.charset', 'UTF-8');
 /* Specify the server and connection string attributes. */
 $serverName = 'Server01\SQLAONIKEN';
-//echo phpinfo();
-
-/* Get UID and PWD from application-specific files.  */
+$serverName = '192.168.1.35\SQLAONIKEN';
+$serverName = "sqlserver";
 $uid = 'sa';
 $pwd = 'B8000ftq';
-$connectionInfo = array( "UID"=>'sa',
-                         "PWD"=>'B8000ftq',
-                         "Database"=>"CoopDeTrabajo.Net");
-$connectionInfo2 = array( "UID"=>'sa',
-                         "PWD"=>'B8000ftq',
-                         "Database"=>"sqlcoop_dbimplemen");
-$connectionInfo3 = array( "UID"=>'sa',
-                         "PWD"=>'B8000ftq',
-                         "Database"=>"sqlcoop_dbshared");
+$database1 = "calden";
+$database2 = "sqlcoop_dbimplemen";
+$database3 = "sqlcoop_dbshared";
 
 /* Connect using SQL Server Authentication. */
-$mssql = sqlsrv_connect($serverName, $connectionInfo);
+//$mssql = sqlsrv_connect($serverName, $connectionInfo);
+$mssql = odbc_connect("calden",$uid, $pwd);
 if( $mssql === false ){
-     echo "MSSQL - No pudo conectarse:</br></br></br>";
-     die( print_r( sqlsrv_errors(), true));
+     echo "MSSQL - No pudo conectarse:</br>";
+     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
 }
-$mssql2 =  sqlsrv_connect($serverName, $connectionInfo2);
-if( $mssql === false ){
+$mssql2 = odbc_connect("dbimplemen",$uid, $pwd);
+if( $mssql2 === false ){
      echo "MSSQL - No pudo conectarse:</br></br></br>";
-     die( print_r( sqlsrv_errors(), true));
+     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
 }
-$mssql3 =  sqlsrv_connect($serverName, $connectionInfo3);
-if( $mssql === false ){
+$mssql3 = odbc_connect("dbshared",$uid, $pwd);
+if( $mssql3 === false ){
      echo "MSSQL - No pudo conectarse:</br></br></br>";
-     die( print_r( sqlsrv_errors(), true));
+     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
 }
       
 
@@ -149,13 +145,13 @@ $vendedor=array();
 // query para sacar empleados desde la base:
 if(!isset($_SESSION['vendedor'])){
     $sqlVendedores = "select idEmpleado, empleado from dbo.empleados where esVendedor=1 and activo=1 and idgrupovendedores=1;";
-    $stmt = sqlsrv_query($mssql, $sqlVendedores);
-    while($rowVendedor = sqlsrv_fetch_array($stmt)){
-        $apellido = explode(" ", $rowVendedor[1]);
+    $stmt = odbc_exec2($mssql, $sqlVendedores);
+    while($rowVendedor = odbc_fetch_array($stmt)){
+        $apellido = explode(" ", $rowVendedor['empleado']);
         if(strlen($apellido[0])>3){
-            $vendedor[$rowVendedor[0]]=$apellido[0];
+            $vendedor[$rowVendedor['idEmpleado']]=$apellido[0];
         } else {
-            $vendedor[$rowVendedor[0]]=$apellido[0].' '.$apellido[1];
+            $vendedor[$rowVendedor['idEmpleado']]=$apellido[0].' '.$apellido[1];
         }
         
     }
@@ -166,13 +162,14 @@ if(!isset($_SESSION['vendedor'])){
 }
 if(!isset($_SESSION['empleado'])||1){
     $sqlCajeros = "select idEmpleado, empleado, idgrupovendedores from dbo.empleados where esVendedor=1;";
-    $stmt = sqlsrv_query($mssql, $sqlCajeros);
-    while($rowCajero = sqlsrv_fetch_array($stmt)){
-        $apellido = explode(" ", $rowCajero[1]);
+    $stmt = odbc_exec($mssql, $sqlCajeros);
+    while($rowCajero = odbc_fetch_array($stmt)){
+	//fb($rowCajero);
+        $apellido = explode(" ", $rowCajero['empleado']);
         if(strlen($apellido[0])>3){
-            $empleado[$rowCajero[2]][$rowCajero[0]]=$apellido[0];
+            $empleado[$rowCajero['idgrupovendedores']][$rowCajero['idEmpleado']]=$apellido[0];
         } else {
-            $empleado[$rowCajero[2]][$rowCajero[0]]=$apellido[0].' '.$apellido[1];
+            $empleado[$rowCajero['idgrupovendedores']][$rowCajero['idEmpleado']]=$apellido[0].' '.$apellido[1];
         }
         
     }
@@ -184,12 +181,12 @@ if(!isset($_SESSION['empleado'])||1){
 
 
 if(!isset($_SESSION['comision'])){
-    $stmt = sqlsrv_query($mssql, "select preciopublico from Articulos where Codigo=2472"); // saca precio F10 de litro
+    $stmt = odbc_exec($mssql, "select preciopublico from Articulos where Codigo=2472"); // saca precio F10 de litro
     if( $stmt === false ){
          echo "1. Error in executing query.</br>$sqlVentas<br/>";
-         die( print_r( sqlsrv_errors(), true));
+         die( print_r( odbc_errors(), true));
     }
-    $rowVentas = sqlsrv_fetch_array($stmt);
+    $rowVentas = odbc_fetch_array($stmt);
     $_SESSION['comision']=round($rowVentas[0],2);
 }
 $multiplica = 1;
@@ -201,12 +198,12 @@ $historicoNoAfectadoNoche=1; // 1 histórico es afectado por noches
 
 if(!isset($_SESSION['empleadosZZ'])||1){
     $_SESSION['empleadosZZ'] = "(0";
-    $stmt = sqlsrv_query($mssql, "select idEmpleado from dbo.empleados where empleado like ('%ZZs%') and activo=0");
+    $stmt = odbc_exec($mssql, "select idEmpleado from dbo.empleados where empleado like ('%ZZs%') and activo=0");
     if( $stmt === false ){
          //echo "1. Error in executing query.</br>$sqlVentas<br/>";
-         die( print_r( sqlsrv_errors(), true));
+         die( print_r( odbc_errors(), true));
     }
-    while($rowVentas = sqlsrv_fetch_array($stmt)){
+    while($rowVentas = odbc_fetch_array($stmt)){
         $_SESSION['empleadosZZ'].=", $rowVentas[0]";
     }
     
@@ -219,12 +216,12 @@ if(!isset($_SESSION['precios'])){
 
 // TRANSPORTE
 if(!isset($_SESSION['transporte_tipos_comisiones'])){
-    $stmt = sqlsrv_query($mssql3, "select codigo, nombre from dbo.tipopedi"); // saca precio F10 de litro
+    $stmt = odbc_exec($mssql3, "select codigo, nombre from dbo.tipopedi"); // saca precio F10 de litro
     if( $stmt === false ){
          echo "1. Error in executing query.</br>tipopedi<br/>";
-         die( print_r( sqlsrv_errors(), true));
+         die( print_r( odbc_errors(), true));
     }
-    while($rowVentas = sqlsrv_fetch_array($stmt)){
+    while($rowVentas = odbc_fetch_array($stmt)){
         $_SESSION['transporte_tipos_comisiones'][$rowVentas['codigo']]=$rowVentas['nombre'];
         if (preg_match("/(([0-9]+(.)+[0-9]+%)|([0-9]+%))/", $rowVentas['nombre'], $matches)) {
             $percentage = explode('%',$matches[0]);
@@ -234,12 +231,12 @@ if(!isset($_SESSION['transporte_tipos_comisiones'])){
 }
 
 if(!isset($_SESSION['transporte_libros_contables'])){
-   $stmt = sqlsrv_query($mssql2, "select codigo, detalle from [sqlcoop_dbimplemen].[dbo].[LIBRASIE]");
+   $stmt = odbc_exec($mssql2, "select codigo, detalle from [sqlcoop_dbimplemen].[dbo].[LIBRASIE]");
     if( $stmt === false ){
          echo "1. Error in executing query.</br>LIBRASIE<br/>";
-         die( print_r( sqlsrv_errors(), true));
+         die( print_r( odbc_errors(), true));
     }
-    while($rowVentas = sqlsrv_fetch_array($stmt)){
+    while($rowVentas = odbc_fetch_array($stmt)){
         $_SESSION['transporte_libros_contables'][$rowVentas['codigo']]=trim($rowVentas['detalle']);
     }
 }
@@ -280,7 +277,7 @@ $debug_mode = false;
 //Remember me - amount of time to remain logged in.
 $remember_me_length = "1wk";
 
-require_once $_SERVER['DOCUMENT_ROOT'].'classes/Mobile_Detect.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Mobile_Detect.php';
 if(!isset($_SESSION['esMovil'])){
   $detect = new Mobile_Detect;
   $_SESSION['esMovil'] = ($detect->isMobile()||$detect->isTablet())?true:false; 
@@ -324,6 +321,35 @@ if(isset($nivelRequerido)){
         header("Location: 401.php");
         die;
     }
+}
+
+function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
+  global $mssql, $mssql2, $mssql3;
+  // realiza el query y muestra error unificado en caso de falla
+  $stmt = odbc_exec( $db, $sql);
+  if( $stmt === false ){
+    fb("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
+    echo "<span class='alert alert-danger'>Error SQL</span>";
+    die();
+  }
+  return $stmt;
+}
+
+function fecha($fecha, $res='dmy', $tipo='ymd'){
+  switch($res){
+    case "Ym":
+    $tmp = substr($fecha, 0,4).substr($fecha, 5,2);
+    break;
+    case "dmyH":
+    $tmp = substr($fecha, 8,2).'/'.substr($fecha, 5,2).'/'.substr($fecha, 0,4).' '.substr($fecha,-8);
+    break;
+    case "dmy":
+    case "dmY":
+    default:
+    $tmp = substr($fecha, 8,2).'/'.substr($fecha, 5,2).'/'.substr($fecha, 0,4);
+    break;
+  }
+  return $tmp;
 }
 
 

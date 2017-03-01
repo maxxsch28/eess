@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 6;
 
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 /*
   - Primero debe ingresarse el proveedor, buscador como el de movistar para elegir por codigo, cuit o por nombre
   - si es Coopetrans luego selecciona el punto de venta, si es 7 levanta los datos desde Setup, si es 8 o 9 desde Calden. No deja modificar los importes.
@@ -28,7 +28,7 @@ setlocale(LC_ALL, 'es_ES');
   </head>
 
   <body>
-      <?php include('include/menuSuperior.php') ?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
       <div class="container">
       <!-- Main hero unit for a primary marketing message or call to action -->
         <div class='row'>
@@ -76,11 +76,18 @@ setlocale(LC_ALL, 'es_ES');
         <div class='row'>
           
         </div>
-      <?php include ('include/footer.php')?>
+      <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
   </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
+    function zeroFill( number, width ) {
+      width -= number.toString().length;
+      if ( width > 0 )  {
+        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+      }
+      return number + ""; // always return a string
+    }
     $(document).ready(function() {
       $("#nuevaOP").submit(function(e){
           return false;
@@ -98,17 +105,20 @@ setlocale(LC_ALL, 'es_ES');
             $('#IdMovimientoFac').val(data.IdMovimientoFac);
             $('#FechaTicket').val(data.FechaTicket);
             $('#fcanje').focusout(function(){
+              
+            });
+            $('#mesAsignado').focusin(function(){
               var d = new Date();
               if($('#fcanje').val().length<3){
                 // solo el día, el mes es el actual
-                var dia = $('#fcanje').val()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+                var dia = $('#fcanje').val()+'/'+zeroFill((d.getMonth()+1),2)+'/'+d.getFullYear();
                 $('#fcanje').val(dia);
               } else if($('#fcanje').val().length<6){
                 // solo el día, el mes es el actual
                 var dia = $('#fcanje').val()+'/'+d.getFullYear();
                 $('#fcanje').val(dia);
               }
-              $.post('func/ajaxBuscaDatosTicketMesAsignado.php', { fechaTicket: data.FechaTicket, fechaCanje: $(this).val() }, function(data2) {
+              $.post('func/ajaxBuscaDatosTicketMesAsignado.php', { fechaTicket: data.FechaTicket, fechaCanje: $('#fcanje').val() }, function(data2) {
                 $('#mesAsignado').val(data2.mesAsignado).change();
               }, "json");
             });

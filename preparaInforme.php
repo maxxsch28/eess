@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 4;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 // acomoda Movistar
 //include('func/acomodaProMovistar.php');
@@ -31,7 +31,7 @@ include('include/inicia.php');
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-12">
@@ -63,11 +63,11 @@ include('include/inicia.php');
 			</div>
 		</div>
       
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
         
 
     </div> <!-- /container -->
-  <?php include('include/termina.php');?>
+  <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <!--<script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
   <script src="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.js"></script>-->
   <script>

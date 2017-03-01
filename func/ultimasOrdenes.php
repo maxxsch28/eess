@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 // ultimasOrdenes.php
 // actauliza cuadrito con las ultimas ordenes cargadas con links para ver detalles
 // DEPRECATED.
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 {
 	$sqlOrdenes = "SELECT DISTINCT(ordenes.idOrden), op, DATE_FORMAT(fechaPedido, '%e/%m/%Y') as fechaPedido, fechaDespacho, fechaEstado, estado FROM ordenes, pedidos, estados WHERE ordenes.idOrden=pedidos.idOrden AND estados.idOrden=ordenes.idOrden ORDER BY fechaPedido DESC, idOrden DESC LIMIT 5;";
 	/* Select queries return a resultset */

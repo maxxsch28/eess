@@ -1,5 +1,5 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 if(isset($_GET['id'])){
@@ -8,10 +8,10 @@ if(isset($_GET['id'])){
 }
 
 $sqlClientes = "select IdCliente, Codigo, RazonSocial, Identificador from dbo.Clientes where IdZonaCliente=2 order by RazonSocial";
-$stmt = sqlsrv_query( $mssql, $sqlClientes);
+$stmt = odbc_exec( $mssql, $sqlClientes);
 $options="<option value='' selected='selected'>Seleccione cliente</option>";
 $arrayReemplazo = array('TELEFONO', 'TELEFONOS');
-while($row = sqlsrv_fetch_array($stmt)){
+while($row = odbc_fetch_array($stmt)){
 	if(trim(str_replace($arrayReemplazo, '', $row['Identificador']))<>''){
 		$identificador = "(".str_replace($arrayReemplazo, '', $row['Identificador']).")";
 	} else $identificador = "";
@@ -38,7 +38,7 @@ $actualiza = false;
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-6">
@@ -68,10 +68,10 @@ $actualiza = false;
 			</div>
 			
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 		$(document).ready(function() {
 			$("#idCliente").change(function() {

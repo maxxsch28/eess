@@ -1,16 +1,16 @@
-﻿<?php
+<?php
 // detalleOrden.php
 // actauliza cuadrito con las ultimas ordenes cargadas con links para ver detalles
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(isset($_GET['idOrden'])){
 	$sqlTanques = "select top 6 dbo.CierresTurno.idCierreTurno as idT, CONVERT(VARCHAR(5), dbo.CierresTurno.Fecha,4) AS Fecha, CONVERT(VARCHAR(8), dbo.CierresTurno.Fecha, 108), Descarga, Medicion, Vendido, StockActual, Capacidad, CAST(round(Medicion/Capacidad*100,2) AS decimal(4, 2)) as Ocupado, (Capacidad-Medicion) as Disponible, dbo.CierresDetalleTanques.IdTanque,  dbo.CierresDetalleTanques.IdArticulo as idArticulo, dbo.CierresTurno.Fecha as fechaCierre from dbo.Tanques, dbo.CierresDetalleTanques, dbo.Articulos, dbo.CierresTurno WHERE dbo.CierresDetalleTanques.IdArticulo=dbo.Articulos.IdArticulo AND dbo.CierresTurno.IdCierreTurno=dbo.CierresDetalleTanques.IdCierreTurno AND dbo.Tanques.idTanque=dbo.CierresDetalleTanques.idTanque order by dbo.CierresDetalleTanques.IdCierreTurno DESC, idTanque;";
-	$stmt = sqlsrv_query($mssql, $sqlTanques);
+	$stmt = odbc_exec($mssql, $sqlTanques);
 	if( $stmt === false ){
 		 echo "Error in executing query.</br>";
 		 die( print_r( sqlsrv_errors(), true));
 	}
-	while($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
+	while($row = odbc_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
 		$tanque[$row['idArticulo']][$row['IdTanque']] = $row;
 	}
 

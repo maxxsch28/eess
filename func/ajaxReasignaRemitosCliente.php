@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // ajaxListaRemitosCliente.php
 // muestra los remitos del cliente seleccionado.
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_GET);
 
 if(!isset($_GET['nuevoCliente'])||!is_numeric($_GET['nuevoCliente'])){
@@ -14,8 +14,8 @@ if(isset($_GET['idRemitos'])){
   foreach($idRemitos as $IdMovimientoFac){
     $sqlRemito = "UPDATE dbo.MovimientosFac SET idCliente='$_GET[nuevoCliente]' WHERE IdMovimientoFac=$IdMovimientoFac;";
     $sqlRemitoCancelado = "UPDATE dbo.MovimientosFac SET idCliente='$_GET[nuevoCliente]' WHERE IdMovimientoCancelado=$IdMovimientoFac;";
-    $stmt = sqlsrv_query( $mssql, $sqlRemito);
-    $stmt = sqlsrv_query( $mssql, $sqlRemitoCancelado);
+    $stmt = odbc_exec( $mssql, $sqlRemito);
+    $stmt = odbc_exec( $mssql, $sqlRemitoCancelado);
   }
   echo "yes";
 } else {

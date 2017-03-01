@@ -1,5 +1,5 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 $imprimeTotalAsiento=true;
 $imprimeDetalleAsiento=true;
@@ -19,7 +19,7 @@ $imprimeDetalleAsiento=true;
    
   </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
 		<!-- Example row of columns -->
 		<div class="row">
@@ -162,7 +162,7 @@ $imprimeDetalleAsiento=true;
 			<p>&copy; Cooperativa de Transporte 2012</p>
 		</footer>-->
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 	</script>
   </body>

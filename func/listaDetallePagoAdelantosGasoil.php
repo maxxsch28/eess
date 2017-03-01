@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411';
@@ -23,7 +23,7 @@ if(isset($_POST['numero'])){
  echo $sqlClientes;
 
 
-$stmt = sqlsrv_query( $mssql2, $sqlClientes);
+$stmt = odbc_exec( $mssql2, $sqlClientes);
 //print_r($stmt);
 if( $stmt === false ){
      echo "1. Error in executing query.</br>$sqlClientes<br/>";
@@ -33,7 +33,7 @@ $tabla = "";
 $cantidadFacturas = $cantidadClientes = 0;
 $comision=array();
 $totalAComisionar = array();
-while($fila = sqlsrv_fetch_array($stmt)){
+while($fila = odbc_fetch_array($stmt)){
     //$date = date_create_from_format('j-M-Y', $fila['fechaprest']);
     //echo date_format($date, 'Y-m-d');
     //echo $fila['fechaprest'];

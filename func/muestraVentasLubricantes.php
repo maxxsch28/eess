@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $limit=11;
 //$offset=0;
@@ -21,7 +21,7 @@ for ($i = 10; $i > 0; $i--) {
             . "ORDER BY dbo.CierresTurno.IdCierreTurno, IdEmpleado2, IdEmpleado3,  MovimientosDetalleFac.IdArticulo;");
     //echo $sqlAsientos;
     
-    $stmt = sqlsrv_query( $mssql, $sqlAsientos);
+    $stmt = odbc_exec( $mssql, $sqlAsientos);
     if( $stmt === false ){
          echo "1. Error in executing query.</br>$sqlAsientos<br/>";
          die( print_r( sqlsrv_errors(), true));
@@ -34,7 +34,7 @@ for ($i = 10; $i > 0; $i--) {
     $_SESSION['ventasLubricantes'][$b]['total']=0;
     $_SESSION['ventasLubricantes'][$b]['porcentaje']=0;
     $_SESSION['ventasLubricantes'][$b]['lts_porcentaje']=0;
-    while($rowAsientos = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
+    while($rowAsientos = odbc_fetch_array($stmt, SQLSRV_FETCH_ASSOC)){
         if($rowAsientos['IdGrupoDescuento']>0 || strpos($rowAsientos['Descripcion'], 'ELAION')){
             $_SESSION['ventasLubricantes'][$b]['lts_elaion']+=(strpos($rowAsientos['Descripcion'], '1 LT')||strpos($rowAsientos['Descripcion'], '1LT'))?1:(strpos($rowAsientos['Descripcion'], '4 LT')||strpos($rowAsientos['Descripcion'], '4LT'))?4:(strpos($rowAsientos['Descripcion'], '20 LT')||strpos($rowAsientos['Descripcion'], '20LT'))?20:0;
             $_SESSION['ventasLubricantes'][$b]['elaion']+=$rowAsientos['Facturado'];

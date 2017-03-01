@@ -1,17 +1,13 @@
-﻿<?php
+<?php
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 // prepara array clientes con movimientos en cuenta en los últimos 2 años
 if(!isset($_SESSION['clientesCuentaCorriente'])||1){
   unset($_SESSION['clientesCuentaCorriente']);
   $sql = "SELECT IdCliente, RazonSocial, Identificador FROM dbo.Clientes WHERE IdCondicionVenta=2 AND Activo=1 AND (IdCliente IN (SELECT IdCliente FROM dbo.movimientosCta WHERE Fecha>'2015-01-01' GROUP BY IdCliente) OR IdClienteAsociado IN (SELECT IdCliente FROM dbo.movimientosCta WHERE Fecha>'2015-01-01' GROUP BY IdCliente)) AND Identificador NOT LIKE ('%ORDEN%') ORDER BY RazonSocial ASC";
-  $stmt = sqlsrv_query( $mssql, $sql);
-  if( $stmt === false ){
-      echo "1. Error in executing query.</br>$sql<br/>";
-      die( print_r( sqlsrv_errors(), true));
-  }
-  while($rowRemito = sqlsrv_fetch_array($stmt)){
+  $stmt = odbc_exec2( $mssql, $sql, __LINE__, __FILE__);
+  while($rowRemito = odbc_fetch_array($stmt)){
     $_SESSION['clientesCuentaCorriente'][$rowRemito['IdCliente']] = $rowRemito;
   }
 }
@@ -23,7 +19,7 @@ if(!isset($_SESSION['clientesCuentaCorriente'])||1){
   <head>
     <meta charset="utf-8">
     <title>Calcula ajustes de precios</title>
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       
       body {
@@ -33,7 +29,7 @@ if(!isset($_SESSION['clientesCuentaCorriente'])||1){
     </style>
   </head>
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
           <div class='row'>
             <div class="col-md-5 hidden-print">
@@ -44,9 +40,9 @@ if(!isset($_SESSION['clientesCuentaCorriente'])||1){
                 <label class="control-label" for="rangoFechas">Rango de fechas</label>
                 <div class="controls">
                 <div class="input-group" id='rop'>
-                  <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="01/01/<?php echo date("Y")?>" data-date-format="mm/dd/yy"  data-plus-as-tab='true'/>
+                  <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="01/01/<?php echo date("Y")?>" data-date-format="dd/mm/yy"  data-plus-as-tab='true'/>
                   <span class="input-group-addon">a</span>
-                  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="12/31/<?php echo date("Y")?>" data-date-format="mm/dd/yy" data-plus-as-tab='true'/>
+                  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="31/12/<?php echo date("Y")?>" data-date-format="dd/mm/yy" data-plus-as-tab='true'/>
                   <span class="input-group-addon presetAnio btn" id="1000">TODOS</span>
                   <span class="input-group-addon presetAnio btn" id="<?php echo date('Y', strtotime("-1 year"))?>"><?php echo date('Y', strtotime("-1 year"))?></span>
                   <span class="input-group-addon presetAnio btn" id="<?php echo date('Y')?>"><?php echo date('Y')?></span>
@@ -121,9 +117,9 @@ if(!isset($_SESSION['clientesCuentaCorriente'])||1){
                     </div>-->
             </div>
             </div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
           $(document).ready(function() {
           $('#botonEnvio').fadeIn();

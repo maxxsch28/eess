@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 // detalleOrden.php
 // actauliza cuadrito con las ultimas ordenes cargadas con links para ver detalles
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 // print_r($_POST);
 //Array ( [totalCalculado] => 34000 [tq] => Array ( [2] => 18000 [6] => 6000 [5] => 5000 [3] => 5000 ) [controlIngreso] => Array ( [2] => 12000 [6] => 12000 [5] => 5000 [3] => 5000 ) )
 $sqlOrdenes = "SELECT * FROM pedidos WHERE idOrden='$_POST[idOrden]';";

@@ -1,12 +1,12 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //fb($_POST);
 if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
   $sqlTicket = "select PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -3, GETDATE());";
 
  //fb($sqlTicket);
-  $stmt = sqlsrv_query( $mssql, $sqlTicket);
+  $stmt = odbc_exec( $mssql, $sqlTicket);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlTicket<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -15,7 +15,7 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
   //fb(sqlsrv_num_rows($stmt));
   if(sqlsrv_has_rows($stmt)){
     // multiples resultados
-    while($rowTicket = sqlsrv_fetch_array($stmt)){
+    while($rowTicket = odbc_fetch_array($stmt)){
       $tmp[]=$rowTicket;
     }
     if(count($tmp)>1){
@@ -39,14 +39,14 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
   $sqlTicket = "select PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND dbo.MovimientosDetalleFac.IdMovimientoFac=$_POST[IdMovimientoFac] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -3, GETDATE());";
 
   //fb($sqlTicket);
-  $stmt = sqlsrv_query( $mssql, $sqlTicket);
+  $stmt = odbc_exec( $mssql, $sqlTicket);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlTicket<br/>";
       die( print_r( sqlsrv_errors(), true));
   }
   if(sqlsrv_has_rows($stmt)){
     // multiples resultados
-    $rowTicket = sqlsrv_fetch_array($stmt);
+    $rowTicket = odbc_fetch_array($stmt);
     $_SESSION['esNafta'] = (($rowTicket['IdArticulo']==2076)?1:0);
     $devuelve = "$rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (".$rowTicket[2]->format('d/m/Y').")";
     echo json_encode(array('status' => 'single','message'=> $devuelve, 'fecha'=>$rowTicket[2]->format('d/m'), 'pv'=> $rowTicket[0], 'IdMovimientoFac'=> $rowTicket[6], 'FechaTicket'=>$rowTicket[2]->format('d/m/Y')));

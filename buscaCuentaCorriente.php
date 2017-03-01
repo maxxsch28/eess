@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 5;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 ?>
@@ -9,7 +9,7 @@ include('include/inicia.php');
   <head>
     <meta charset="utf-8">
     <title>Rastrea cuentas corrientes</title>
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
         .encabezaAsiento{
             font-weight: bold;
@@ -19,7 +19,7 @@ include('include/inicia.php');
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
 		<div class='row'>
 			<div class="col-md-6">
@@ -103,10 +103,10 @@ include('include/inicia.php');
 			</div>
 			
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 		$(document).ready(function() {
 			$('#botonEnvio').fadeIn();

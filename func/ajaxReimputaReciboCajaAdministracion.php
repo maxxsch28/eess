@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // ajaxReimputaReciboCajaAdministracion.php
 // Cambia el recibo seleccionado a la caja de Administracion abierta en curso
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 print_r($_GET);
 
 if(isset($_GET['IdRecibo'])&&is_numeric($_GET['IdRecibo'])){
@@ -11,8 +11,8 @@ if(isset($_GET['IdRecibo'])&&is_numeric($_GET['IdRecibo'])){
   $sqlChequesEnRecibo = "UPDATE dbo.chequesterceros SET IdCaja=4 WHERE IdRecibo='$idRecibo'";
   fb($sqlRecibo);
   fb($sqlChequesEnRecibo);
-  $stmt = sqlsrv_query( $mssql, $sqlRecibo);
-  $stmt = sqlsrv_query( $mssql, $sqlChequesEnRecibo);
+  $stmt = odbc_exec( $mssql, $sqlRecibo);
+  $stmt = odbc_exec( $mssql, $sqlChequesEnRecibo);
   echo "yes";
 } else {
   echo "No hay remitos seleccionados";

@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 
 if(!isset($_POST['noche']))$ponderaNoche=1;
@@ -48,14 +48,14 @@ WHERE cpe1.Fecha>=\''.$desde.'\' AND cpe1.Fecha<\''.$hasta.'\' AND (IdEmpleado2<
 
 // fb($sqlVentas);
 
-$stmt = sqlsrv_query($mssql, $sqlVentas);
+$stmt = odbc_exec($mssql, $sqlVentas);
 if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlVentas<br/>";
       die( print_r( sqlsrv_errors(), true));
 }
 //if(!isset($articulo)){$articulo = array();} // deprecated, esto sirve para el listaVentas
 
-while($rowVentas = sqlsrv_fetch_array($stmt)){
+while($rowVentas = odbc_fetch_array($stmt)){
   $mes = $rowVentas['anio'].sprintf('%02d', $rowVentas['mes']);
   $meses[] = $mes;
   /*IdCierreTurno	Fecha	                  IdEmpleado1	IdEmpleado2	IdEmpleado3	sumaTurno

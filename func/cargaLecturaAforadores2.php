@@ -1,6 +1,6 @@
 <?php
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //cargaLecturaAforadores2.php
 print_r($_POST);
 $fecha = explode('/', $_POST['fechaCierre']);

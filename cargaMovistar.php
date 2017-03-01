@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 3;
 
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 $modifica = false;
 $fechaFactura = false;
@@ -27,7 +27,7 @@ if(isset($_GET['id'])){
   <head>
     <meta charset="utf-8">
     <title>Carga Factura | Movistar</title>
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -38,7 +38,7 @@ if(isset($_GET['id'])){
   </head>
 
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
 	<div class="container">
 	<!-- Main hero unit for a primary marketing message or call to action -->
 		<div class='row'>
@@ -128,10 +128,10 @@ if(isset($_GET['id'])){
 				</table>
 			</div>
 		</div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
 
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script>
 		$(document).ready(function() {
 			<?php if($modifica){?>

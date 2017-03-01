@@ -1,20 +1,20 @@
-﻿<?php
+<?php
 // listaStockTanques.php
 // muestra y lleva el control de stocks de combustibles.
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_GET);
  // $array=array();
 //$_POST['mes']='201411';
 if(isset($_GET['idTurno'])&&is_numeric($_GET['idTurno'])){
   // esta revisado?
-  $stmprevisado = sqlsrv_query($mssql, "SELECT lotesRevisados FROM dbo.Table_1 WHERE IdCierreTurno=$_GET[idTurno]");
-  $revisado = sqlsrv_fetch_array($stmprevisado);
+  $stmprevisado = odbc_exec($mssql, "SELECT lotesRevisados FROM dbo.Table_1 WHERE IdCierreTurno=$_GET[idTurno]");
+  $revisado = odbc_fetch_array($stmprevisado);
   
 
   // Obtengo lotes cargados en el turno requerido
   $sqlLotesTurno = "select IdLoteTarjetasCredito, dbo.TarjetasCredito.IdTarjeta, Nombre, Loteprefijo, LoteNumero, Importe, IdCuentaContable_presentacion, idAsiento, TipoAcreditacion from dbo.LotesTarjetasCredito, dbo.TarjetasCredito where dbo.LotesTarjetasCredito.IdTarjeta=dbo.TarjetasCredito.IdTarjeta AND Importe<>0 AND IdCierreTurno=$_GET[idTurno] order by LotePrefijo, LoteNumero";
 
-  $stmt = sqlsrv_query( $mssql, $sqlLotesTurno);
+  $stmt = odbc_exec( $mssql, $sqlLotesTurno);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlLotesTurno<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -22,7 +22,7 @@ if(isset($_GET['idTurno'])&&is_numeric($_GET['idTurno'])){
 
   echo "<form name='modificacionLotesTarjetas' id='modificacionLotesTarjetas'><table class='table table-striped table-bordered IdCierreTurno' id='$_GET[idTurno]'><thead><tr><th width='15%'>idLote / Asiento</th><th>Tarjeta</th><th colspan=2 width='15%'>Prefijo y Lote</th><th>Importe</th><th><span id='marcarRevisado' class='btn btn-xs btn-".(($revisado[0]==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></th></tr></thead><tbody>";
   $sumaLote = 0;
-  while($rowLotesIngresados = sqlsrv_fetch_array($stmt)){
+  while($rowLotesIngresados = odbc_fetch_array($stmt)){
       //print_r($rowLotesIngresados);
       //Array ( [0] => 129889 [IdLoteTarjetasCredito] => 129889 [1] => VISA DEBITO [Nombre] => VISA DEBITO [2] => 2 [Loteprefijo] => 2 [3] => 257 [LoteNumero] => 257 [4] => 1193.5000 [Importe] => 1193.5000 [5] => 714 [idCuentaContable_presentacion] => 714 [6] => 616219 [idAsiento] => 616219 ) 
       if(!isset($lote)){

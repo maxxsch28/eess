@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $limit=11;
 $offset=0;
@@ -28,10 +28,10 @@ while($rowYPF = $result->fetch_assoc()){
     if($rowYPF['idConciliado']==0){
       // aun no conciliado
       $classConciliado='noConciliado';
-      $tdConciliado = "<td class=''><input type='checkbox' name='idypf[]' value='$rowYPF[id]' rel='".abs($rowYPF['Importe'])."' class='ypf'/></td>";
+      $tdConciliado = "<td class=''><input type='checkbox' name='idypf[]' value='$rowYPF[id]' rel='".abs($rowYPF['Importe'])."' class='ypf'/> $rowYPF[id]</td>";
     } else {
       $classConciliado="conciliado_$rowYPF[idConciliado]";
-      $tdConciliado = "<td class='mConciliado m$rowYPF[idConciliado]'><span class='label label-info'>$rowYPF[idConciliado]</label></td>";
+      $tdConciliado = "<td class='m$rowYPF[idConciliado]'><span class='label label-info mConciliado'>$rowYPF[idConciliado]</label></td>";
     }
     // reviso si el turno pertenece a caja cerrada o no
     // levanto los precios historicos del dia
@@ -46,7 +46,8 @@ while($rowYPF = $result->fetch_assoc()){
       $rowYPF['clase']='Visa';
     }
     if($rowYPF['clase']=='RV')$rowYPF['Referencia']=substr($rowYPF['Referencia'],0,-2); 
-    echo "<tr class='alert alert-$clase $classConciliado' id='ypf_$rowYPF[id]'><td>$rowYPF[femision2]</td><td>$rowYPF[clase]</td><td>$rowYPF[Referencia]</td><td>$".number_format(abs($rowYPF['Importe']), 2, ",", ".")."</td><td>$rowYPF[fvto]</td>$tdConciliado</tr>";
+    $femision3 = explode('-', $rowYPF['femision2']);
+    echo "<tr class='alert alert-$clase $classConciliado' id='ypf_$rowYPF[id]'><td>$femision3[2]/$femision3[1]/$femision3[0]</td><td>$rowYPF[clase]</td><td>$rowYPF[Referencia]</td><td>$".number_format(abs($rowYPF['Importe']), 2, ",", ".")."</td><td>$rowYPF[fvto]</td>$tdConciliado</tr>";
 		
 
 }

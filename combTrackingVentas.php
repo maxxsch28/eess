@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 4;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 //include('func/acomodaProMovistar.php');
 
@@ -12,7 +12,7 @@ include('include/inicia.php');
 <head>
   <meta charset="utf-8">
   <title>Tracking ventas CEM/CaldenOil</title>
-  <?php include ('/include/head.php');?>
+  <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
   <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
   <style type="text/css">
     body {
@@ -31,7 +31,7 @@ include('include/inicia.php');
   </style>
 </head>
 <body>
-      <?php include('include/menuSuperior.php') ?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
       <div class="container">
           <div class='row' id='fila1'>
           <div class="col-md-10">
@@ -53,9 +53,9 @@ include('include/inicia.php');
           </div>
 
       </div>
-      <?php include ('include/footer.php')?>
+      <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
   </div> <!-- /container -->
-<?php include('include/termina.php');?>
+<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 <script src="js/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
 <script>
 $(document).ready(function() {

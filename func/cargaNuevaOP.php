@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaNuevaOP.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 if(!isset($_POST['actualiza'])){
 	if(isset($_POST['op'])){

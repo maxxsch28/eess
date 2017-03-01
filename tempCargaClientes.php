@@ -1,14 +1,14 @@
-﻿<?php
-include('include/inicia.php');
+<?php
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 
 $sqlClientes = "select IdCliente, Codigo, RazonSocial, Identificador from dbo.Clientes where IdZonaCliente=2 order by RazonSocial";
-$stmt = sqlsrv_query( $mssql, $sqlClientes);
+$stmt = odbc_exec( $mssql, $sqlClientes);
 $options="<option value='' selected='selected'>Seleccione cliente</option>";
 $arrayReemplazo = array('TELEFONO', 'TELEFONOS');
 
-while($row = sqlsrv_fetch_array($stmt)){
+while($row = odbc_fetch_array($stmt)){
 	if(trim(str_replace($arrayReemplazo, '', $row['Identificador']))<>''){
 		$identificador = " (".str_replace($arrayReemplazo, '', $row['Identificador']).")";
 	} else $identificador = "";

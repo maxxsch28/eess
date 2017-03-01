@@ -1,5 +1,5 @@
-<div class="odal-content">
-  <div class="odal-header">
+<div class="modal-content">
+  <div class="modal-header">
     <h4 class="modal-title" id="myModalLabel">Descarga de camión</h4>
   </div>
   <form class="form-horizontal" role="form" id='formDescarga' name='formDescarga' action='/func/asignaTanques2.php' method='post'>

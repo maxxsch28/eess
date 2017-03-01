@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 // cargaNuevosCelulares.php
 // recibe datos del form y los procesa en mysql
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
 if(isset($_GET['term'])){
@@ -10,13 +10,13 @@ if(isset($_GET['term'])){
   $sqlClientes = "SELECT fletero, nombre, cuit, tipo_resp, cliente FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
   //echo $sqlOrdenes;
   
-  $stmt = sqlsrv_query( $mssql2, $sqlClientes);
+  $stmt = odbc_exec( $mssql2, $sqlClientes);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlClientes<br/>";
       die( print_r( sqlsrv_errors(), true));
   }
    $array = "[";
-  while($row = sqlsrv_fetch_array($stmt)){
+  while($row = odbc_fetch_array($stmt)){
     //echo "$fila[celular]";
     $array.="{\"label\":\"$row[nombre]\", \"value\":\"$row[fletero]\"},";
     if(!isset($_SESSION['datosSocio'][$row['fletero']]))$_SESSION['datosSocio'][$row['fletero']] = $row['cuit'];
@@ -28,9 +28,9 @@ if(isset($_GET['term'])){
 }
 if(isset($_POST['idCliente'])){
   $sqlClientes = "select RazonSocial, Identificador from dbo.Clientes where IdCliente='$_POST[idCliente]'";
-  $stmt = sqlsrv_query( $mssql, $sqlClientes);
+  $stmt = odbc_exec( $mssql, $sqlClientes);
   $arrayReemplazo = array('TELEFONO', 'TELEFONOS');
-  $row = sqlsrv_fetch_array($stmt);
+  $row = odbc_fetch_array($stmt);
   if(trim(str_replace($arrayReemplazo, '', $row['Identificador']))<>''){
           $identificador = "(".str_replace($arrayReemplazo, '', $row['Identificador']).")";
   } else $identificador = "";

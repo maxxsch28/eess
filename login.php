@@ -1,8 +1,8 @@
 ﻿<?php
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 $titulo = "Ingresar";
-require_once("include/config.php");
+require_once($_SERVER['DOCUMENT_ROOT'].'/include/config.php');
 	
 //Prevent the user visiting the logged in page if he/she is already logged in
 if(isUserLoggedIn()) { header("Location: index.php"); die(); }
@@ -92,7 +92,7 @@ if(!empty($_POST)){
 <!DOCTYPE html>
 <html lang="es">
   <head>
-      <?php include ('/include/head.php')?>
+      <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php')?>
       <style>
             body {
               padding-top: 40px;
@@ -137,7 +137,7 @@ if(!empty($_POST)){
       </style>
   </head>
   <body>
-      <?php include('include/menuSuperior.php') ?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
       <div class="container">
             <!-- Example row of columns -->
             <form class="form-signin" name="newUser" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
@@ -167,9 +167,9 @@ if(!empty($_POST)){
                 <a href="users_register.php">Crear usuario</a> | <a href="users_forgot-password.php">¿Olvidó su contraseña?</a></p>
             </form>
               
-          <?php include ('include/footer.php')?>
+          <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
       </div> <!-- /container -->
-      <?php include('include/termina.php');?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
       <script>
       </script>
   </body>

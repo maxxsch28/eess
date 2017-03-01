@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 $nivelRequerido = 4;
-include('include/inicia.php');
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_NUMERIC, 'Spanish_Spain.28605');
 $titulo = "Carga de datos al cierre 22hs";
 
@@ -36,12 +36,8 @@ if($result = $mysqli->query($sqlUltimaMedicionTanques)){
 $sqlLitrosCalculados = array();
 foreach($tanques as $idTanque => $IdArticulo){
   $sql = "select top 1 FechaHora, IdTanque, IdArticulo, Litros, (Litros - (select sum(cantidad) from dbo.Despachos where Fecha>(select top 1 FechaHora from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada2' and idtanque=$idTanque order by LastUpdated desc) and fecha<='$ultimaFechaCargada2' and IdManguera in (select IdManguera from dbo.Mangueras where IdTanque=$idTanque))) as LitrosTotales from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada2' and idtanque=$idTanque order by LastUpdated desc;";
-  $stmt = sqlsrv_query($mssql, $sql);
-  if( $stmt === false ){
-            echo "Error in executing query.</br>";
-            die( print_r( sqlsrv_errors(), true));
-  }
-  $sqlLitrosCalculados[$idTanque] = (sqlsrv_fetch_array($stmt));
+  $stmt = odbc_exec2($mssql, $sql,__LINE__, __FILE__);
+    $sqlLitrosCalculados[$idTanque] = (odbc_fetch_array($stmt));
   settype($sqlLitrosCalculados[$idTanque]['LitrosTotales'], "int"); 
 }
 
@@ -57,13 +53,10 @@ $sqlTanquesAlCierre = "";
 
 // calculo los litros YER facturados, sirve para comparar contra lo del cierres_cem_aforadores
 $sqlYER = "select IdArticulo, SUM(Cantidad) as q from dbo.MovimientosFac, dbo.MovimientosDetalleFac where dbo.MovimientosFac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac and IdCliente=1283 and Fecha>='".$ultimaFechaCargada->format('Y/m/d')." 22:00:00' AND Fecha<'".$ultimaFechaCargada->modify('+1 day')->format('Y/m/d')." 22:00:00' group by IdArticulo";
-$stmt = sqlsrv_query($mssql, $sqlYER);
-if( $stmt === false ){
-  echo "Error in executing query.</br>";
-  die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2($mssql, $sqlYER,__LINE__, __FILE__);
+
 $arrayYER = array();
-while($rowYER = sqlsrv_fetch_array($stmt)){
+while($rowYER = odbc_fetch_array($stmt)){
   $arrayYER[$rowYER['IdArticulo']] = $rowYER['q'];
 }
 fb($sqlYER);
@@ -72,7 +65,7 @@ fb($arrayYER);
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <?php include ('/include/head.php')?>
+      <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php')?>
       <style>
           .table th{text-align: center}
           .container {
@@ -89,7 +82,7 @@ fb($arrayYER);
     <link href="css/print.css" rel="stylesheet" type="text/css" media="print"/><meta name="viewport" content="width=device-width, initial-scale=1.0">
    </head>
   <body>
-	<?php include('include/menuSuperior.php') ?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php') ?>
     <div class="container">
         <!-- Cargo por la noche la lectura de lo que dice el CEM mas los aforadores al cierre de las 22hs.-->
 		<!-- Example row of columns -->
@@ -135,7 +128,7 @@ fb($arrayYER);
               <h4 class='alert-success'>Euro <span id='totED' class='pull-right'>&nbsp;0.00</span></h4>
               
             </div>
-            <div class='col-md-5'>
+            <div class='col-md-5 well'>
                 <fieldset>
                 <legend>Medición de tanques desde el CEM</legend>  
                 <table class='table' id='tanques'>
@@ -191,9 +184,9 @@ fb($arrayYER);
             <div id='muestraDatos' class='row' style='display:none'>
                 <h2>Resumen información ingresada</h2>
             </div>
-        <?php include ('include/footer.php')?>
+        <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
-	<?php include('include/termina.php');?>
+	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
     <script>
           $(document).ready(function() {
             StartDate = new Date("<?php echo "$fechaCierreAnterior[0]/$fechaCierreAnterior[1]/$fechaCierreAnterior[2]"?>");

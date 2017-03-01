@@ -1,8 +1,8 @@
-﻿<?php
+<?php
 // calculaPromedios.php
 #include_once("e:\htdocs\ypf\include\inicia.php");
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 //Database Information
 $dbtype = "mysqli"; 
@@ -26,7 +26,7 @@ if ($mysqli->connect_error) {
 
 $sql = file_get_contents('BackupCaldenOil.sql');
 //echo $sql;
-$stmt = sqlsrv_query( $mssql, $sql);
+$stmt = odbc_exec( $mssql, $sql);
 if( $stmt === false ){
      echo "Error in executing query.</br>";
      ( print_r( sqlsrv_errors(), true));

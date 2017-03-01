@@ -1,14 +1,14 @@
 ﻿<?php
 // calculaPromedios.php
-include_once('../include/inicia.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
-$limit=11;
-$offset=0;
+$r2 = explode("/", $_REQUEST['rangoFin']);
+$r1 = explode("/", $_REQUEST['rangoInicio']);
+$rangoFin="$r2[1]/$r2[0]/$r2[2]";
+$rangoInicio="$r1[1]/$r1[0]/$r1[2]";
 
-
-
-$rangoFin=($_REQUEST['rangoFin']=='12/31/69')?'12/31/2069':$_REQUEST['rangoFin'];
-$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='{$_REQUEST['rangoInicio']}' AND Fecha<='{$rangoFin} 23:59:59'":'';
+$rangoFin=($rangoFin=='12/31/69')?'12/31/2069':$rangoFin;
+$andFecha=(isset($rangoInicio))?" AND Fecha>='{$rangoInicio}' AND Fecha<='{$rangoFin} 23:59:59'":'';
 
 $fuzziness=(isset($_REQUEST['fuzzy']))?" AND Importe>=".floor(($_REQUEST['importe']-$_REQUEST['fuzziness']))." AND Importe<=".ceil($_REQUEST['importe']+$_REQUEST['fuzziness']):" AND Importe=$_REQUEST[importe]";
 
@@ -26,10 +26,10 @@ $excluyeAnulados=(isset($_REQUEST['excluyeAnulados'])&&$_REQUEST['excluyeAnulado
 
 
 if(!isset($_REQUEST['importe'])||$_REQUEST['importe']==0&&($leyenda||$cuenta)<>''){
-	$fuzziness='';
+  $fuzziness='';
 } elseif(!isset($_REQUEST['importe'])||$_REQUEST['importe']==0&&($leyenda&&$cuenta)==''){
-	echo "<tbody><tr><td colspan='2' class='act'>Ingrese parámetros de búsqueda</td></tr></tbody>";
-	die;
+  echo "<tbody><tr><td colspan='2' class='act'>Ingrese parámetros de búsqueda</td></tr></tbody>";
+  die;
 }
 fb($_POST);
 
@@ -41,8 +41,8 @@ if($_REQUEST['ambito']<>'integral'){
   } else{
     // inserto una nueva búsqueda // 28-09-1977
     $fuzyness = (isset($_REQUEST['fuzzy']))?$_REQUEST['fuzziness']:0;
-    $rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
-    $rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
+    $rangoInicio = substr($rangoInicio, 6).'-'.substr($rangoInicio, 0,2).'-'.substr($rangoInicio, 3,2);
+    $rangoFin = substr($rangoFin, 6).'-'.substr($rangoFin, 0,2).'-'.substr($rangoFin, 3,2);
     $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaEESS, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaEESS'])&&$_REQUEST['cuentaEESS']>0)?$_REQUEST['cuentaEESS']:0)."', $loggedInUser->user_id)";
     fb($sql);
   }
@@ -59,9 +59,9 @@ if($_REQUEST['ambito']<>'integral'){
 $orden=(isset($_REQUEST['ord_imp']))?", Importe DESC":"";
 $conciliando=(isset($_REQUEST['conciliando']))?"<input type='checkbox''>":"";
 
-/* $sqlAsientos = ";WITH Results_CTE AS (SELECT ROW_NUMBER() OVER (ORDER BY dbo.AsientosDetalle.idAsiento) AS RowNum, DISTINCT dbo.AsientosDetalle.idAsiento, , Detalle, Fecha, dbo.ModelosContables.Nombre FROM dbo.AsientosDetalle, dbo.Asientos, dbo.ModelosContables WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento AND dbo.asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable AND Importe=$_REQUEST[importe] AND Detalle NOT LIKE ('Transf. de PLAYA a Tesoreria') $andFecha) SELECT * FROM Results_CTE WHERE RowNum >= $offset AND RowNum < $offset + $limit;"; */
 
 $sqlAsientos = trim("SELECT DISTINCT dbo.AsientosDetalle.idAsiento, Detalle, Fecha FROM dbo.AsientosDetalle, dbo.Asientos WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento{$fuzziness}{$leyenda}{$cuenta} AND (Detalle NOT LIKE ('Transf. de %') OR Detalle is NULL) $andFecha{$excluyeAnulados};");
+//$sqlAsientos = trim("SELECT DISTINCT dbo.AsientosDetalle.idAsiento, Detalle, Fecha FROM dbo.AsientosDetalle, dbo.Asientos WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento{$fuzziness}{$leyenda}{$cuenta} AND (Detalle NOT LIKE ('Transf. de %') OR Detalle is NULL)  AND Fecha>='01/01/17' AND Fecha<='12/31/17 23:59:59';");
 fb($sqlAsientos);
 
 // AND (dbo.asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable OR dbo.asientos.IdModeloContable is NULL)
@@ -72,23 +72,20 @@ fb($sqlAsientos);
 
 //echo $sqlAsientos;
 
-$stmt = sqlsrv_query( $mssql, $sqlAsientos);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlAsientos<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-while($rowAsientos = sqlsrv_fetch_array($stmt)){
+$stmt = odbc_exec2($mssql, $sqlAsientos, __LINE__, __FILE__);
+while($rowAsientos = odbc_fetch_array($stmt)){
 	$sqlDetalles = "SELECT Importe, dbo.asientosdetalle.IdCuentaContable, Descripcion, DebitoCredito, Codigo FROM dbo.asientosdetalle, dbo.CuentasContables WHERE dbo.CuentasContables.IdCuentaContable=dbo.AsientosDetalle.IdCuentaContable AND dbo.AsientosDetalle.idAsiento=$rowAsientos[idAsiento] ORDER BY DebitoCredito ASC$orden;";
 	//echo $sqlDetalles;
-	$stmt2 = sqlsrv_query( $mssql, $sqlDetalles);
+	$stmt2 = odbc_exec( $mssql, $sqlDetalles);
 	if( $stmt2 === false ){
 		 echo "2. Error in executing query.</br>$sqlDetalles<br/>";
-		 die( print_r( sqlsrv_errors(), true));
+		 die( print_r( odbc_errormsg().' -- '.odbc_error(), true));
 	}
-	$fecha = date_format($rowAsientos['Fecha'], "d/m/Y");
+	//$fecha = date_format($rowAsientos['Fecha'], "d/m/Y");
+	$fecha = $rowAsientos['Fecha'];
 	echo "<tbody class='asiento' id='$rowAsientos[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$rowAsientos[Detalle], $fecha</td><td colspan='3'>Nº $rowAsientos[idAsiento]</td></tr>";
 	$debe=$haber=0;
-	while($rowDetalles = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
+	while($rowDetalles = odbc_fetch_array($stmt2)){
 		$monto = sprintf("%.2f",$rowDetalles['Importe']);
 		$monto = number_format(str_replace(',', '.', $monto), 2, ',', '.');
 		if(isset($_REQUEST['fuzzy'])){

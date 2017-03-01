@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // ajaxCargaFacturasComprasSocios.php
 // En base al codigo de socio obtiene el CUIT y con ese CUIT:
 // 1. Busca facturas emitidas de Calden a ese CUIT en ese período
@@ -6,7 +6,7 @@
 // 3. Busca en Setup las facturas y NC emitidas a ese CUIT en ese período
 // 4. Controla de esas facturas cuales no están en MySQL y las incorpora
 
-include('../include/inicia.php');
+include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  print_r($_POST);
 $cuit = $_SESSION['datosSocio'][$_POST['idSocio']];
 $cuitSinGuion = str_replace ("-" , "" , $cuit);
@@ -37,7 +37,7 @@ if(isset($_POST['compras'])){
   echo $sqlSetupFletero."\n\n";
 //   echo $sqlSetupVentasFletero."\n\n";
 
-  $stmt = sqlsrv_query( $mssql, $sqlCalden);
+  $stmt = odbc_exec( $mssql, $sqlCalden);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlCalden<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -45,7 +45,7 @@ if(isset($_POST['compras'])){
   //IdMovimientoFac	IdTipoMovimiento	PuntoVenta	Numero	Fecha	RazonSocial	Total	Cantidad	IdArticulo
   //473236	FAA	8	77650	2016-04-14 09:15:08.983	STIP NESTOR	1968.6577	108.0500	2068
 
-  while($rowFactura = sqlsrv_fetch_array($stmt)){
+  while($rowFactura = odbc_fetch_array($stmt)){
     $sqlIva = "SELECT * FROM iva_comprobantes WHERE idSocio=$_POST[idSocio] AND pv=$rowFactura[PuntoVenta] AND numero=$rowFactura[Numero] AND venta=0";
     echo $sqlIva."\n";
     $result = $mysqli->query($sqlIva);
@@ -110,7 +110,7 @@ if(isset($_POST['compras'])){
     }
   }
 
-  $stmt = sqlsrv_query( $mssql, $sqlCaldenNDA);
+  $stmt = odbc_exec( $mssql, $sqlCaldenNDA);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlCaldenNDA<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -118,7 +118,7 @@ if(isset($_POST['compras'])){
   //IdMovimientoFac	IdTipoMovimiento	PuntoVenta	Numero	Fecha	RazonSocial	Total	Cantidad	IdArticulo
   //473236	FAA	8	77650	2016-04-14 09:15:08.983	STIP NESTOR	1968.6577	108.0500	2068
 
-  while($rowFactura = sqlsrv_fetch_array($stmt)){
+  while($rowFactura = odbc_fetch_array($stmt)){
     $sqlIva = "SELECT * FROM iva_comprobantes WHERE idSocio=$_POST[idSocio] AND pv=$rowFactura[PuntoVenta] AND numero=$rowFactura[Numero] AND venta=0";
     echo $sqlIva."\n";
     $result = $mysqli->query($sqlIva);
@@ -164,7 +164,7 @@ if(isset($_POST['compras'])){
   }
   
 
-  $stmt = sqlsrv_query( $mssql2, $sqlSetup);
+  $stmt = odbc_exec( $mssql2, $sqlSetup);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlSetup<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -174,7 +174,7 @@ if(isset($_POST['compras'])){
   2016-03-01 00:00:00.000	6995	FACTURA	A	7	1855	836.8700	836.87	+	691.63	0.00	21.00	145.2400	691.63	0.00	21.0000	145.2423
   */
 
-  while($rowFactura = sqlsrv_fetch_array($stmt)){
+  while($rowFactura = odbc_fetch_array($stmt)){
     $sqlIva = "SELECT * FROM iva_comprobantes WHERE idSocio=$_POST[idSocio] AND pv=$rowFactura[sucursal] AND numero=$rowFactura[numero] AND venta=0";
     //echo $sqlIva;
     $result = $mysqli->query($sqlIva);
@@ -225,7 +225,7 @@ if(isset($_POST['compras'])){
   }
   
 
-  $stmt = sqlsrv_query( $mssql2, $sqlSetupFletero);
+  $stmt = odbc_exec( $mssql2, $sqlSetupFletero);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlSetup<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -235,7 +235,7 @@ if(isset($_POST['compras'])){
   2016-03-01 00:00:00.000	6995	FACTURA	A	7	1855	836.8700	836.87	+	691.63	0.00	21.00	145.2400	691.63	0.00	21.0000	145.2423
   */
 
-  while($rowFactura = sqlsrv_fetch_array($stmt)){
+  while($rowFactura = odbc_fetch_array($stmt)){
     $sqlIva = "SELECT * FROM iva_comprobantes WHERE idSocio=$_POST[idSocio] AND pv=$rowFactura[sucursal] AND numero=$rowFactura[numero] AND venta=0";
     echo $sqlIva;
     $result = $mysqli->query($sqlIva);
@@ -275,7 +275,7 @@ if(isset($_POST['compras'])){
   $sqlSetupVentasFletero = "select fecha, fletero, comproban, tipo, sucursal, numero, cantidad, importe, signo, neto, iva_factu, ing_bru, idcompcomp FROM dbo.histccfl WHERE fletero=(SELECT fletero FROM dbo.fleteros WHERE cuit='$cuit') and DATEPART(month, fecha) = $mes AND DATEPART(year, fecha)=$anio and (idcompcomp = 1 OR idcompcomp=2 or idcompcomp=3 or idcompcomp=4);";
   echo $sqlSetupVentasFletero."\n\n";
   // cargo las facturas que este socio haya presentado en Setup
-  $stmt = sqlsrv_query( $mssql2, $sqlSetupVentasFletero);
+  $stmt = odbc_exec( $mssql2, $sqlSetupVentasFletero);
   if( $stmt === false ){
       echo "1. Error in executing query.</br>$sqlSetupVentasFletero<br/>";
       die( print_r( sqlsrv_errors(), true));
@@ -285,7 +285,7 @@ if(isset($_POST['compras'])){
   2016-03-01 00:00:00.000	6995	FACTURA	A	7	1855	836.8700	836.87	+	691.63	0.00	21.00	145.2400	691.63	0.00	21.0000	145.2423
   */
 
-  while($rowFactura = sqlsrv_fetch_array($stmt)){
+  while($rowFactura = odbc_fetch_array($stmt)){
     $tipoDocumento = ($rowFactura['idcompcomp']==1||$rowFactura['idcompcomp']==4)?'FAA':(($rowFactura['idcompcomp']==2)?'NCA':'NDA');
     $sqlIva = "SELECT * FROM iva_comprobantes WHERE idSocio=$_POST[idSocio] AND pv=$rowFactura[sucursal] AND numero=$rowFactura[numero] AND tipoDocumento='$tipoDocumento' AND venta=1";
     echo $sqlIva;

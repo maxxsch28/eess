@@ -19,12 +19,14 @@ $sqlGastos = "select distinct razonsocial, sum(Costo*Cantidad*(case when IdTipoM
 
 fb($sqlGastos);
 
-$stmt = odbc_exec( $mssql, $sqlGastos);
+$stmt = odbc_exec2( $mssql, $sqlGastos, __LINE__, __FILE__);
 
 
 $tabla = "";$a=0;$q=0;
 $sumaNoGravado=$sumaFletes=$sumaGastos=$sumaLubricantes=$sumaMercaderias=$sumaCombustibles=0;
-while($fila = odbc_fetch_array($stmt)){
+fb(odbc_next_result($stmt));
+while(odbc_next_result($stmt))
+while($fila = odbc_fetch_array(($stmt))){
     if(!isset($encabezado)){
         //$tabla.="<tr><td colspan=7>&nbsp;</td></tr>";
         //$tabla .= "<tr><td colspan='8'><b>".substr($fila['numeroFactura'],-9)." | ".substr($fila['periodo'],4).'/'.substr($fila['periodo'],0,4)."$socio</b> <a href='/ypf/cargaMovistar.php?id=$fila[idFacturaRecibida]'><i class='glyphicon glyphicon-pencil'></i></a></td></tr>";

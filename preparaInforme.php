@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 4;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-
+$titulo="Prepara informe mensual";
 // acomoda Movistar
 //include('func/acomodaProMovistar.php');
 
@@ -12,8 +12,7 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Prepara informe mensual</title>
-    <?php include ('/include/head.php');?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;

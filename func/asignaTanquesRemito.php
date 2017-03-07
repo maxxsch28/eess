@@ -69,7 +69,7 @@ if(isset($_POST['tipo'])&&$_POST['tipo']=='yer'){
           $inputTq4 = $_POST['totalEd']-$_POST['inputTq1'];
           $inputTq6 = $_POST['totalUD']-$_POST['inputTq2'];
           //substr($_POST['fecha'],-4).substr($_POST['fecha'],3,2).substr($_POST['fecha'],0,2);
-          $sql1 = "INSERT INTO recepcioncombustibles (fecha, remito1, remito2, tq1, tq2, tq3, tq4, tq5, tq6, idOrden) VALUES ('$fecha', '$_POST[remito1]', '$_POST[remito2]', '$_POST[inputTq1]', '$_POST[inputTq2]', '$_POST[inputTq3]', '$inputTq4', '$_POST[inputTq5]', '$inputTq6', '$idOrden')";
+          $sql1 = "INSERT INTO recepcioncombustibles (fecha, remito1, remito2, tq1, tq2, tq3, tq4, tq5, tq6, idOrden) VALUES ('$fecha', '$_POST[remito1]', '$_POST[remito2]', '0$_POST[inputTq1]', '0$_POST[inputTq2]', '0$_POST[inputTq3]', '$inputTq4', '0$_POST[inputTq5]', '$inputTq6', '$idOrden')";
           fb($sql1);
           $res1 = $mysqli->query($sql1);
           

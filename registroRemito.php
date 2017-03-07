@@ -22,7 +22,7 @@ $titulo="Descarga camión | YPF";
     <div class="container">
       <div class='row'>
         <div class="col-md-6">
-          <h2>Recepción de combustible</h2>
+          <h2>Ingreso de Remitos</h2>
           <form class="form-horizontal well formDescarga" role="form" id='formDescarga' name='formDescarga'>
           <input type='hidden' name='tipo' value='remito'/>
           <div class="modal-body" id='formulario'>
@@ -80,9 +80,9 @@ $titulo="Descarga camión | YPF";
         </div>
         
         
-        <div class="col-md-5 pull-right" id='yer'>
+        <div class="col-md-6 pull-right" id='yer'>
           <h2>YPF en Ruta</h2>
-          <form class="form-horizontal formDescarga" role="form" id='formYER' name='formYER'>
+          <form class="form-horizontal formDescarga well" role="form" id='formYER' name='formYER'>
           <input type='hidden' name='tipo' value='yer'/>
           <div class="modal-body" id='formulario2'>
             <div class="form-group">

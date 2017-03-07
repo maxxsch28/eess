@@ -105,7 +105,7 @@ fb($sqlTurnos);
 $stmt = odbc_exec2( $mssql, $sqlTurnos, __LINE__, __FILE__);
 while($rowTurnos = odbc_fetch_array($stmt)){
   /* print_r($rowTurnos); */
-  $fecha = fecha($rowTurnos['Fecha']);
+  $fecha = fecha($rowTurnos['Fecha'], 'dmyH');
   
   $caja = ($rowTurnos['IdCaja']==1)?'<span class="label label-warning">PLAYA</span>':(($rowTurnos['IdCaja']==2)?'<span class="label label-info">SHOP</span>':'<span class="label label-info">ADMIN</span>');
   

@@ -2,12 +2,12 @@
 $nivelRequerido = 3;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_ALL, 'es_ES.utf-8');
+$titulo="Lista comisiones mensuales";
 ?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Lista comisiones mensuales</title>
     <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {

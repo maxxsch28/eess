@@ -328,14 +328,21 @@ function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
   // realiza el query y muestra error unificado en caso de falla
   $stmt = odbc_exec( $db, $sql);
   if( $stmt === false ){
-    fb("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
-    echo "<span class='alert alert-danger'>Error SQL</span>";
-    die();
+    if(odbc_error()==23000){
+      fb("Error SQL, en $script, linea $linea: $sql. INDICE REPETIDO");
+    } else {
+      fb("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
+      echo "<span class='alert alert-danger'>Error SQL</span>";
+      die();
+    }
   }
   return $stmt;
 }
 
 function fecha($fecha, $res='dmy', $tipo='ymd'){
+  if(strlen($fecha)==23){
+    $fecha=substr($fecha, 0, -4);
+  }
   switch($res){
     case "Ym":
     $tmp = substr($fecha, 0,4).substr($fecha, 5,2);

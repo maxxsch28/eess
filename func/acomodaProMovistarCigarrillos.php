@@ -2,7 +2,7 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$fechaDesde = '2016-11-01';
+$fechaDesde = '2017-01-01';
 
 // acomodar asientos que son de movistar carga de documentos para que la cuenta sea la de movistar.
 // idem repsol
@@ -216,15 +216,11 @@ $sql['Donaciones2'] = "update dbo.MovimientosFac set IdCliente=5235 where IdTipo
 
 
 foreach ($sql as $rubro => $acomoda){
-  $stmt = odbc_exec( $mssql, $acomoda);
-  if( $stmt === false ){
-      echo "1. Error in executing query.</br>$acomoda<br/>";
-      die( print_r( sqlsrv_errors(), true));
+  $stmt = odbc_exec2( $mssql, $acomoda, __LINE__, __FILE__);
+  if(odbc_num_rows($stmt)>0){
+    echo "$rubro: ".odbc_num_rows($stmt)." cambios<br><small>$acomoda</small><br><br>";
   } else {
-    if(sqlsrv_rows_affected($stmt)>0){
-    echo "$rubro: ".sqlsrv_rows_affected($stmt)." cambios<br><small>$acomoda</small><br><br>";}
-    else {
-    echo "Sin cambios<br>";}
+    echo "Sin cambios<br>";
   }
 }
 

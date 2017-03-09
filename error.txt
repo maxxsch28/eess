@@ -1,0 +1,1 @@
+bsqlodbc: error -1: SQLConnect: SQL_ERROR: failed

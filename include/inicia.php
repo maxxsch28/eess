@@ -1,5 +1,7 @@
 ﻿<?php 
 // inicia.php
+
+$dbg=1;
 $controlTiempo=microtime();
 //Database Information
 $dbtype = "mysqli"; 
@@ -96,22 +98,65 @@ $database3 = "sqlcoop_dbshared";
 
 /* Connect using SQL Server Authentication. */
 //$mssql = sqlsrv_connect($serverName, $connectionInfo);
+/*
 $mssql = odbc_connect("calden",$uid, $pwd);
 if( $mssql === false ){
      echo "MSSQL - No pudo conectarse:</br>";
      die( print_r( odbc_error().' - '.odbc_errormsg(), true));
 }
-$mssql2 = odbc_connect("dbimplemen",$uid, $pwd);
+$mssql2 = odbc_pconnect("dbimplemen",$uid, $pwd);
 if( $mssql2 === false ){
      echo "MSSQL - No pudo conectarse:</br></br></br>";
      die( print_r( odbc_error().' - '.odbc_errormsg(), true));
 }
-$mssql3 = odbc_connect("dbshared",$uid, $pwd);
+$mssql3 = odbc_pconnect("dbshared",$uid, $pwd);
 if( $mssql3 === false ){
      echo "MSSQL - No pudo conectarse:</br></br></br>";
      die( print_r( odbc_error().' - '.odbc_errormsg(), true));
 }
-      
+$mssql4 = odbc_pconnect("dbimplemen2",$uid, $pwd);
+if( $mssql3 === false ){
+     echo "MSSQL - No pudo conectarse:</br></br></br>";
+     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
+}*/
+
+/* cambio de odbc por nuevo driver MS */
+$serverName = "192.168.1.35";
+$connectionOptions = array(
+    "Database" => "CoopDeTrabajo.Net",
+    "Uid" => "sa",
+    "PWD" => "B8000ftq"
+);
+$connectionOptions2 = array(
+    "Database" => "sqlcoop_dbimplemen",
+    "Uid" => "sa",
+    "PWD" => "B8000ftq"
+);
+$connectionOptions3 = array(
+    "Database" => "sqlcoop_dbshared",
+    "Uid" => "sa",
+    "PWD" => "B8000ftq"
+);
+//Establishes the connection
+$mssql = sqlsrv_connect($serverName, $connectionOptions);
+if( $mssql === false ){
+     echo "MSSQL - No pudo conectarse:</br>";
+     die( print_r( sqlsrv_error().' - '.sqlsrv_errormsg(), true));
+}
+
+$mssql2 = sqlsrv_connect($serverName, $connectionOptions2);
+if( $mssql2 === false ){
+     echo "MSSQL2 - No pudo conectarse:</br>";
+     die( print_r( sqlsrv_error().' - '.sqlsrv_errormsg(), true));
+}
+
+$mssql3 = sqlsrv_connect($serverName, $connectionOptions3);
+if( $mssql3 === false ){
+     echo "MSSQL3 - No pudo conectarse:</br>";
+     die( print_r( sqlsrv_error().' - '.sqlsrv_errormsg(), true));
+}
+
+
 
 $date = array("Sunday"=>"Domingo", "Monday"=>"Lunes", "Tuesday"=>"Martes", "Wednesday"=>"Miércoles","Thursday"=>"Jueves", "Friday"=>"Viernes", "Saturday"=>"Sábado");
 $date2 = array(1=>"Domingo",2=>"Lunes",3=>"Martes",4=>"Miércoles",5=>"Jueves",6=>"Viernes",7=>"Sábado");
@@ -146,7 +191,7 @@ $vendedor=array();
 if(!isset($_SESSION['vendedor'])){
     $sqlVendedores = "select idEmpleado, empleado from dbo.empleados where esVendedor=1 and activo=1 and idgrupovendedores=1;";
     $stmt = odbc_exec2($mssql, $sqlVendedores);
-    while($rowVendedor = odbc_fetch_array($stmt)){
+    while($rowVendedor = sqlsrv_fetch_array($stmt)){
         $apellido = explode(" ", $rowVendedor['empleado']);
         if(strlen($apellido[0])>3){
             $vendedor[$rowVendedor['idEmpleado']]=$apellido[0];
@@ -162,8 +207,9 @@ if(!isset($_SESSION['vendedor'])){
 }
 if(!isset($_SESSION['empleado'])||1){
     $sqlCajeros = "select idEmpleado, empleado, idgrupovendedores from dbo.empleados where esVendedor=1;";
-    $stmt = odbc_exec($mssql, $sqlCajeros);
-    while($rowCajero = odbc_fetch_array($stmt)){
+    //$stmt = odbc_exec($mssql, $sqlCajeros);
+    $stmt = odbc_exec2($mssql, $sqlCajeros);
+    while($rowCajero = sqlsrv_fetch_array($stmt)){
 	//fb($rowCajero);
         $apellido = explode(" ", $rowCajero['empleado']);
         if(strlen($apellido[0])>3){
@@ -181,12 +227,8 @@ if(!isset($_SESSION['empleado'])||1){
 
 
 if(!isset($_SESSION['comision'])){
-    $stmt = odbc_exec($mssql, "select preciopublico from Articulos where Codigo=2472"); // saca precio F10 de litro
-    if( $stmt === false ){
-         echo "1. Error in executing query.</br>$sqlVentas<br/>";
-         die( print_r( odbc_errors(), true));
-    }
-    $rowVentas = odbc_fetch_array($stmt);
+    $stmt = odbc_exec2($mssql, "select preciopublico from Articulos where Codigo=2472"); // saca precio F10 de litro
+    $rowVentas = sqlsrv_fetch_array($stmt);
     $_SESSION['comision']=round($rowVentas[0],2);
 }
 $multiplica = 1;
@@ -198,12 +240,8 @@ $historicoNoAfectadoNoche=1; // 1 histórico es afectado por noches
 
 if(!isset($_SESSION['empleadosZZ'])||1){
     $_SESSION['empleadosZZ'] = "(0";
-    $stmt = odbc_exec($mssql, "select idEmpleado from dbo.empleados where empleado like ('%ZZs%') and activo=0");
-    if( $stmt === false ){
-         //echo "1. Error in executing query.</br>$sqlVentas<br/>";
-         die( print_r( odbc_errors(), true));
-    }
-    while($rowVentas = odbc_fetch_array($stmt)){
+    $stmt = odbc_exec2($mssql, "select idEmpleado from dbo.empleados where empleado like ('%ZZs%') and activo=0");
+    while($rowVentas = sqlsrv_fetch_array($stmt)){
         $_SESSION['empleadosZZ'].=", $rowVentas[0]";
     }
     
@@ -221,7 +259,7 @@ if(!isset($_SESSION['transporte_tipos_comisiones'])){
          echo "1. Error in executing query.</br>tipopedi<br/>";
          die( print_r( odbc_errors(), true));
     }
-    while($rowVentas = odbc_fetch_array($stmt)){
+    while($rowVentas = sqlsrv_fetch_array($stmt)){
         $_SESSION['transporte_tipos_comisiones'][$rowVentas['codigo']]=$rowVentas['nombre'];
         if (preg_match("/(([0-9]+(.)+[0-9]+%)|([0-9]+%))/", $rowVentas['nombre'], $matches)) {
             $percentage = explode('%',$matches[0]);
@@ -236,7 +274,7 @@ if(!isset($_SESSION['transporte_libros_contables'])){
          echo "1. Error in executing query.</br>LIBRASIE<br/>";
          die( print_r( odbc_errors(), true));
     }
-    while($rowVentas = odbc_fetch_array($stmt)){
+    while($rowVentas = sqlsrv_fetch_array($stmt)){
         $_SESSION['transporte_libros_contables'][$rowVentas['codigo']]=trim($rowVentas['detalle']);
     }
 }
@@ -324,14 +362,20 @@ if(isset($nivelRequerido)){
 }
 
 function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
-  global $mssql, $mssql2, $mssql3;
+  //global $mssql, $mssql2, $mssql3, $mssql4;
+  //global $uid, $pwd, $mssql2;
   // realiza el query y muestra error unificado en caso de falla
-  $stmt = odbc_exec( $db, $sql);
+  //$stmt = odbc_exec($db, $sql);
+  $stmt = sqlsrv_query($db, $sql);
   if( $stmt === false ){
     if(odbc_error()==23000){
       fb("Error SQL, en $script, linea $linea: $sql. INDICE REPETIDO");
-    } else {
+    } elseif(odbc_error()==37000){
       fb("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
+      echo "<span class='alert alert-danger'>Error SQL - 37000</span><br/>$sql";
+      die();
+    } else {
+      echo "Error SQL, en $script, linea $linea: $sql || ";print_r(sqlsrv_errors());
       echo "<span class='alert alert-danger'>Error SQL</span>";
       die();
     }

@@ -1,26 +1,13 @@
 <?php
 // calculaPromedios.php
-include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
-fb($_POST, 'POST');
+//fb($_POST, 'POST');
 
 $r2 = explode("/", $_REQUEST['rangoFin']);
 $r1 = explode("/", $_REQUEST['rangoInicio']);
-$rangoFin="$r2[1]/$r2[0]/$r2[2]";
-$rangoInicio="$r1[1]/$r1[0]/$r1[2]";
-
-
-//fb($loggedInUser->user_id);
-
-//if(isset($_))
-
-/*
-
-cod_libro	libro	sucursal	asiento	item	fecha	cuentacont	cuentatota	ordenamien	volcado	debe	haber	signo	cantidad	cotizacion	transaccio	exportacio	moneda	sucutranu	numetranu	suctranglo	idtranglob	idempresa	cuentaaux	impumanual	observacio
-5	IMPUTACIONES	1	158	1	2015-09-07 00:00:00.000	111201	111200	111201	0	0.000	308807.830	+	308807.8300	1.0000	1110	NULL	1	0	0	1	5453	1	0	0	NULL
-5	IMPUTACIONES	1	158	2	2015-09-07 00:00:00.000	340018	230000	602021	0	308807.830	0.000	+	308807.8300	1.0000	1110	NULL	1	0	0	1	5453	1	0	0	NULL*/
-
-
+$rangoFin="$r2[0]/$r2[1]/20$r2[2]";
+$rangoInicio="$r1[0]/$r1[1]/20$r1[2]";
 
 $fuzziness=(isset($_REQUEST['fuzzy']))?" AND dbo.asiecont.cantidad>=".floor(($_REQUEST['importe']-$_REQUEST['fuzziness']))."  AND dbo.concasie.idtranglob in (SELECT idtranglob FROM dbo.asiecont WHERE cantidad>=".floor(($_REQUEST['importe']-$_REQUEST['fuzziness'])).") AND dbo.asiecont.cantidad<=".ceil($_REQUEST['importe']+$_REQUEST['fuzziness'])." AND dbo.concasie.idtranglob in (SELECT idtranglob FROM dbo.asiecont WHERE cantidad<=".floor(($_REQUEST['importe']+$_REQUEST['fuzziness'])).")":" AND dbo.asiecont.cantidad=$_REQUEST[importe] AND dbo.concasie.idtranglob in (SELECT idtranglob FROM dbo.asiecont WHERE cantidad=$_REQUEST[importe])";
 
@@ -42,15 +29,15 @@ if(!isset($_REQUEST['importe'])||$_REQUEST['importe']==0&&($leyenda||$cuenta)<>'
 // tmpBuscaAsiento
 if(isset($_POST['idBuscaAsiento'])){
   // búsqueda basada en una ya grabada
-  $sql = "UPDATE tmpbuscaasientos SET cantidadusos=cantidadusos+1 WHERE id=$_REQUEST[idBuscaAsiento]";
+  $sql = "UPDATE tmpBuscaAsientos SET cantidadusos=cantidadusos+1 WHERE id=$_REQUEST[idBuscaAsiento]";
 } else{
   // inserto una nueva búsqueda // 28-09-1977
   $fuzyness = (isset($_REQUEST['fuzzy']))?$_REQUEST['fuzziness']:0;
   //$rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
   //$rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
-  $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaTransporte, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?$_REQUEST['cuentaTransporte']:0)."', $loggedInUser->user_id)";
-  fb($sql);
+  $sql = "INSERT INTO tmpBuscaAsientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaTransporte, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$r1[2]/$r1[1]/$r1[0]', '$r2[2]/$r2[1]/$r2[0]', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?$_REQUEST['cuentaTransporte']:0)."', $loggedInUser->user_id)";
 }
+fb($sql);
 if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
   $result = $mysqli->query($sql);
   $_SESSION['ultimoSQL']=$sql;
@@ -63,12 +50,14 @@ if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
 $andFecha=(isset($_REQUEST['rangoInicio']))?" AND dbo.concasie.fecha_asie>='{$rangoInicio}' AND dbo.concasie.fecha_asie<='{$rangoFin} 23:59:59'":"";
 
 if($_REQUEST['importe']<>''){
-  $sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} UNION SELECT DISTINCT dbo.diario.asiento, detalle, fecha, diario.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.diario.cod_libro FROM dbo.diario, dbo.concasie WHERE dbo.diario.asiento=dbo.concasie.asiento AND dbo.diario.cod_libro=dbo.concasie.cod_libro{$fuzziness2}{$leyenda}{$cuenta} $andFecha order by fecha asc");
+  $sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle Collate SQL_Latin1_General_CP1253_CI_AI as detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} UNION SELECT DISTINCT dbo.diario.asiento, detalle Collate SQL_Latin1_General_CP1253_CI_AI, fecha, diario.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.diario.cod_libro FROM dbo.diario, dbo.concasie WHERE dbo.diario.asiento=dbo.concasie.asiento AND dbo.diario.cod_libro=dbo.concasie.cod_libro{$fuzziness2}{$leyenda}{$cuenta}{$andFecha} order by fecha asc");
 } else {
-  $sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} order by fecha asc");
+  $sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle Collate SQL_Latin1_General_CP1253_CI_AI as detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} order by fecha asc");
 }
-
+//$sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, fecha, asiecont.transaccio, dbo.concasie.concepto, dbo.concasie.idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}  ");
+$sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle Collate SQL_Latin1_General_CP1253_CI_AI as detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} ");
 fb($sqlAsientos);
+//die;
 // select * from dbo.asiecont, dbo.concasie where cantidad = 308807.83 and dbo.asiecont.asiento=dbo.concasie.asiento and dbo.asiecont.cod_libro=dbo.concasie.cod_libro
 
 // AND (dbo.asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable OR dbo.asientos.IdModeloContable is NULL)
@@ -78,13 +67,13 @@ fb($sqlAsientos);
 //, dbo.ModelosContables.Nombre
 $dbg=0;
 
-if($dbg)echo "<thead ><tr><td colspan=4 style='height:5em'>$sqlAsientos</td></tr></thead>";
+//odbc_free_result($stmt);
 
-$stmt = odbc_exec( $mssql2, $sqlAsientos);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlAsientos<br/>";
-     die( print_r( odbc_errormsg().' -- '.odbc_error(), true));
-}
+if($dbg)echo "<thead ><tr><td colspan=4 style='height:5em'>$sqlAsientos</td></tr></thead>";
+//$stmt = odbc_exec($mssql4, $sqlAsientos);
+//echo $sqlAsientos;
+$stmt = odbc_exec2($mssql4, $sqlAsientos, __LINE__, __FILE__);
+
 while($rowAsientos = odbc_fetch_array($stmt)){
   $sqlDetalles = "SELECT cantidad, [sqlcoop_dbimplemen].[dbo].[asiecont].asiento, [sqlcoop_dbimplemen].[dbo].[concasie].detalle, debe, haber, fecha, [sqlcoop_dbshared].[dbo].[plancuen].nombre, cuentacont, ordenamien, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[asiecont].idtranglob, [sqlcoop_dbimplemen].[dbo].[asiecont].cod_libro FROM [sqlcoop_dbimplemen].[dbo].[asiecont], [sqlcoop_dbimplemen].[dbo].[concasie], [sqlcoop_dbshared].[dbo].[plancuen] WHERE [sqlcoop_dbshared].[dbo].[plancuen].codigo=cuentacont AND [sqlcoop_dbimplemen].[dbo].[asiecont].cod_libro=[sqlcoop_dbimplemen].[dbo].[concasie].cod_libro AND [sqlcoop_dbimplemen].[dbo].[asiecont].asiento=[sqlcoop_dbimplemen].[dbo].[concasie].asiento AND [sqlcoop_dbimplemen].[dbo].[asiecont].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[concasie].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[asiecont].asiento=$rowAsientos[asiento] UNION SELECT cantidad, [sqlcoop_dbimplemen].[dbo].[diario].asiento, [sqlcoop_dbimplemen].[dbo].[concasie].detalle, debe, haber, fecha, [sqlcoop_dbshared].[dbo].[plancuen].nombre, cuentacont, ordenamien, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[diario].idtranglob, [sqlcoop_dbimplemen].[dbo].[diario].cod_libro FROM [sqlcoop_dbimplemen].[dbo].[diario], [sqlcoop_dbimplemen].[dbo].[concasie], [sqlcoop_dbshared].[dbo].[plancuen] WHERE [sqlcoop_dbshared].[dbo].[plancuen].codigo=cuentacont AND [sqlcoop_dbimplemen].[dbo].[diario].cod_libro=[sqlcoop_dbimplemen].[dbo].[concasie].cod_libro AND [sqlcoop_dbimplemen].[dbo].[diario].asiento=[sqlcoop_dbimplemen].[dbo].[concasie].asiento AND [sqlcoop_dbimplemen].[dbo].[diario].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[concasie].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[diario].asiento=$rowAsientos[asiento] ORDER BY debe DESC, haber DESC";
             

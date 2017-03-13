@@ -355,15 +355,15 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
         url:       'func/ajaxBuscaAsientoPorImporte.php',         // override for form's 'action' attribute 
         type:      'post'       // 'get' or 'post', override for form's 'method' attribute 
       };
-      // inside event callbacks 'this' is the DOM element so we first 
-      // wrap it in a jQuery object and then invoke ajaxSubmit 
-      $(this).ajaxSubmit(opciones); 
+      
       var opcionesTransporte= {
         beforeSubmit: mostrarLoaderTransporte, //funcion que se ejecuta antes de enviar el form
         success: mostrarRespuestaTransporte, //funcion que se ejecuta una vez enviado el formulario
         url:       'func/ajaxBuscaAsientoPorImporteTransporte.php',         // override for form's 'action' attribute 
         type:      'post'       // 'get' or 'post', override for form's 'method' attribute 
-      };$(this).ajaxSubmit(opcionesTransporte); 
+      };
+      $(this).ajaxSubmit(opcionesTransporte); 
+      $(this).ajaxSubmit(opciones); 
       // !!! Important !!! 
       // always return false to prevent standard browser submit and page navigation 
       return false; 

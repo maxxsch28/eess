@@ -4,8 +4,10 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 $r2 = explode("/", $_REQUEST['rangoFin']);
 $r1 = explode("/", $_REQUEST['rangoInicio']);
-$rangoFin="$r2[1]/$r2[0]/$r2[2]";
-$rangoInicio="$r1[1]/$r1[0]/$r1[2]";
+// $rangoFin="$r2[1]/$r2[0]/$r2[2]"; //odbc
+// $rangoInicio="$r1[1]/$r1[0]/$r1[2]"; //odbc
+$rangoFin="$r2[2]/$r2[0]/$r2[1]";
+$rangoInicio="$r1[2]/$r1[0]/$r1[1]";
 
 $rangoFin=($rangoFin=='12/31/69')?'12/31/2069':$rangoFin;
 $andFecha=(isset($rangoInicio))?" AND Fecha>='{$rangoInicio}' AND Fecha<='{$rangoFin} 23:59:59'":'';
@@ -73,35 +75,35 @@ fb($sqlAsientos);
 //echo $sqlAsientos;
 
 $stmt = odbc_exec2($mssql, $sqlAsientos, __LINE__, __FILE__);
-while($rowAsientos = odbc_fetch_array($stmt)){
-	$sqlDetalles = "SELECT Importe, dbo.asientosdetalle.IdCuentaContable, Descripcion, DebitoCredito, Codigo FROM dbo.asientosdetalle, dbo.CuentasContables WHERE dbo.CuentasContables.IdCuentaContable=dbo.AsientosDetalle.IdCuentaContable AND dbo.AsientosDetalle.idAsiento=$rowAsientos[idAsiento] ORDER BY DebitoCredito ASC$orden;";
-	//echo $sqlDetalles;
-	$stmt2 = odbc_exec( $mssql, $sqlDetalles);
-	if( $stmt2 === false ){
-		 echo "2. Error in executing query.</br>$sqlDetalles<br/>";
-		 die( print_r( odbc_errormsg().' -- '.odbc_error(), true));
-	}
-	//$fecha = date_format($rowAsientos['Fecha'], "d/m/Y");
-	$fecha = $rowAsientos['Fecha'];
-	echo "<tbody class='asiento' id='$rowAsientos[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$rowAsientos[Detalle], $fecha</td><td colspan='3'>Nº $rowAsientos[idAsiento]</td></tr>";
-	$debe=$haber=0;
-	while($rowDetalles = odbc_fetch_array($stmt2)){
-		$monto = sprintf("%.2f",$rowDetalles['Importe']);
-		$monto = number_format(str_replace(',', '.', $monto), 2, ',', '.');
-		if(isset($_REQUEST['fuzzy'])){
-			$act = (($rowDetalles['Importe']>=floor($_REQUEST['importe']-$_REQUEST['fuzziness'])) && ($rowDetalles['Importe']<=ceil($_REQUEST['importe']+$_REQUEST['fuzziness'])))?" montoBuscado":'';
-		} else {
-			$act = ($rowDetalles['Importe']==$_REQUEST['importe'])?" montoBuscado":'';
-		}
-		if($rowDetalles['DebitoCredito']==0){
-			echo "<tr class='fila'><td class='cuentaD'>($rowDetalles[IdCuentaContable] | $rowDetalles[Codigo]) $rowDetalles[Descripcion]</td><td class='debe$act'>$monto</td><td class='haber'>&nbsp;</td><td>$conciliando</td></tr>";
-			$debe+=$rowDetalles['Importe'];
-		}else{
-			echo "<tr class='fila'><td class='cuentaH'>($rowDetalles[IdCuentaContable] | $rowDetalles[Codigo]) $rowDetalles[Descripcion]</td><td class='debe'>&nbsp;</td><td class='haber$act'>$monto</td><td>$conciliando</td></tr>";
-			$haber+=$rowDetalles['Importe'];
-		}
-	}
-	echo "<tr class='fila'><td class='cuentaH'>&nbsp;</td><td class='debe cierre'>".number_format(str_replace(',', '.', sprintf("%.2f",$debe)), 2, ',', '.')."</td><td class='haber cierre'>".number_format(str_replace(',', '.', sprintf("%.2f",$haber)), 2, ',', '.')."</td><td></td></tr></tbody>";	
+while($rowAsientos = sqlsrv_fetch_array($stmt)){
+  $sqlDetalles = "SELECT Importe, dbo.asientosdetalle.IdCuentaContable, Descripcion, DebitoCredito, Codigo FROM dbo.asientosdetalle, dbo.CuentasContables WHERE dbo.CuentasContables.IdCuentaContable=dbo.AsientosDetalle.IdCuentaContable AND dbo.AsientosDetalle.idAsiento=$rowAsientos[idAsiento] ORDER BY DebitoCredito ASC$orden;";
+  //echo $sqlDetalles;
+  $stmt2 = odbc_exec( $mssql, $sqlDetalles);
+  if( $stmt2 === false ){
+            echo "2. Error in executing query.</br>$sqlDetalles<br/>";
+            die( print_r( odbc_errormsg().' -- '.odbc_error(), true));
+  }
+  //$fecha = date_format($rowAsientos['Fecha'], "d/m/Y");
+  $fecha = $rowAsientos['Fecha'];
+  echo "<tbody class='asiento' id='$rowAsientos[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$rowAsientos[Detalle], $fecha</td><td colspan='3'>Nº $rowAsientos[idAsiento]</td></tr>";
+  $debe=$haber=0;
+  while($rowDetalles = sqlsrv_fetch_array($stmt2)){
+          $monto = sprintf("%.2f",$rowDetalles['Importe']);
+          $monto = number_format(str_replace(',', '.', $monto), 2, ',', '.');
+          if(isset($_REQUEST['fuzzy'])){
+                  $act = (($rowDetalles['Importe']>=floor($_REQUEST['importe']-$_REQUEST['fuzziness'])) && ($rowDetalles['Importe']<=ceil($_REQUEST['importe']+$_REQUEST['fuzziness'])))?" montoBuscado":'';
+          } else {
+                  $act = ($rowDetalles['Importe']==$_REQUEST['importe'])?" montoBuscado":'';
+          }
+          if($rowDetalles['DebitoCredito']==0){
+                  echo "<tr class='fila'><td class='cuentaD'>($rowDetalles[IdCuentaContable] | $rowDetalles[Codigo]) $rowDetalles[Descripcion]</td><td class='debe$act'>$monto</td><td class='haber'>&nbsp;</td><td>$conciliando</td></tr>";
+                  $debe+=$rowDetalles['Importe'];
+          }else{
+                  echo "<tr class='fila'><td class='cuentaH'>($rowDetalles[IdCuentaContable] | $rowDetalles[Codigo]) $rowDetalles[Descripcion]</td><td class='debe'>&nbsp;</td><td class='haber$act'>$monto</td><td>$conciliando</td></tr>";
+                  $haber+=$rowDetalles['Importe'];
+          }
+  }
+  echo "<tr class='fila'><td class='cuentaH'>&nbsp;</td><td class='debe cierre'>".number_format(str_replace(',', '.', sprintf("%.2f",$debe)), 2, ',', '.')."</td><td class='haber cierre'>".number_format(str_replace(',', '.', sprintf("%.2f",$haber)), 2, ',', '.')."</td><td></td></tr></tbody>";	
 }
 if(!isset($sqlDetalles))echo "<tbody><tr><td colspan='3'>No hay resultados EESS</td></tr></tbody>";
 ?>

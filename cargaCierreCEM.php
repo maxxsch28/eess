@@ -6,8 +6,8 @@ $titulo = "Carga de datos al cierre 22hs";
 
 $sqlUltimaMedicion = "SELECT * FROM cierres_cem_aforadores ORDER BY fechaCierre DESC LIMIT 1";
 if($result = $mysqli->query($sqlUltimaMedicion)){
-	$ultimaMedicion = $result->fetch_assoc();
-	$result->close();
+  $ultimaMedicion = $result->fetch_assoc();
+  $result->close();
 }
 $fechaCierre = explode(' ', $ultimaMedicion['fechaCierre']);
 $horaCierreAnterior = $fechaCierre[1];
@@ -16,8 +16,8 @@ $arrayProductos = array('ns','ni','ed','ud');
 
 $sqlPenultimaMedicionTanques = "SELECT * FROM cierres_cem_tanques WHERE fechaCierre='$fechaCierreAnterior[0]-$fechaCierreAnterior[1]-$fechaCierreAnterior[2] 22:00' and turno='Noche'";
 if($result = $mysqli->query($sqlPenultimaMedicionTanques)){
-	$penultimaMedicionTanques = $result->fetch_assoc();
-	$result->close();
+  $penultimaMedicionTanques = $result->fetch_assoc();
+  $result->close();
 }
 
 $ultimaFechaCargada = new DateTime("$fechaCierreAnterior[0]-$fechaCierreAnterior[1]-$fechaCierreAnterior[2] 22:00:00");
@@ -28,8 +28,8 @@ $ultimaFechaCargada2 = $ultimaFechaCargada->format('Y-m-d H:i:s');
 $fecha2 = $ultimaFechaCargada2;
 $sqlUltimaMedicionTanques = "SELECT * FROM cierres_cem_tanques WHERE fechaCierre='$ultimaFechaCargada2' and turno='Noche'";
 if($result = $mysqli->query($sqlUltimaMedicionTanques)){
-	$ultimaMedicionTanques = $result->fetch_assoc();
-	$result->close();
+  $ultimaMedicionTanques = $result->fetch_assoc();
+  $result->close();
 }
 
 
@@ -37,7 +37,7 @@ $sqlLitrosCalculados = array();
 foreach($tanques as $idTanque => $IdArticulo){
   $sql = "select top 1 FechaHora, IdTanque, IdArticulo, Litros, (Litros - (select sum(cantidad) from dbo.Despachos where Fecha>(select top 1 FechaHora from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada2' and idtanque=$idTanque order by LastUpdated desc) and fecha<='$ultimaFechaCargada2' and IdManguera in (select IdManguera from dbo.Mangueras where IdTanque=$idTanque))) as LitrosTotales from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada2' and idtanque=$idTanque order by LastUpdated desc;";
   $stmt = odbc_exec2($mssql, $sql,__LINE__, __FILE__);
-    $sqlLitrosCalculados[$idTanque] = (odbc_fetch_array($stmt));
+  $sqlLitrosCalculados[$idTanque] = (sqlsrv_fetch_array($stmt));
   settype($sqlLitrosCalculados[$idTanque]['LitrosTotales'], "int"); 
 }
 
@@ -56,7 +56,7 @@ $sqlYER = "select IdArticulo, SUM(Cantidad) as q from dbo.MovimientosFac, dbo.Mo
 $stmt = odbc_exec2($mssql, $sqlYER,__LINE__, __FILE__);
 
 $arrayYER = array();
-while($rowYER = odbc_fetch_array($stmt)){
+while($rowYER = sqlsrv_fetch_array($stmt)){
   $arrayYER[$rowYER['IdArticulo']] = $rowYER['q'];
 }
 fb($sqlYER);

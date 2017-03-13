@@ -3,8 +3,10 @@
 // termina
 /* Free statement and connection resources. */
 if(isset($stmt)){
-  odbc_free_result($stmt);
-  odbc_close($mssql);
+  //odbc_free_result($stmt);
+  //odbc_close($mssql);
+  sqlsrv_free_stmt($stmt);
+  sqlsrv_close($mssql);
 }
 $mysqli->close();
 ?>

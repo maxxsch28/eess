@@ -14,8 +14,8 @@ if(isset($_GET['idRemitos'])){
   foreach($idRemitos as $IdMovimientoFac){
     $sqlRemito = "UPDATE dbo.MovimientosFac SET idCliente='$_GET[nuevoCliente]' WHERE IdMovimientoFac=$IdMovimientoFac;";
     $sqlRemitoCancelado = "UPDATE dbo.MovimientosFac SET idCliente='$_GET[nuevoCliente]' WHERE IdMovimientoCancelado=$IdMovimientoFac;";
-    $stmt = odbc_exec( $mssql, $sqlRemito);
-    $stmt = odbc_exec( $mssql, $sqlRemitoCancelado);
+    $stmt = odbc_exec2( $mssql, $sqlRemito, __LINE__, __FILE__);
+    $stmt = odbc_exec2( $mssql, $sqlRemitoCancelado, __LINE__, __FILE__);
   }
   echo "yes";
 } else {

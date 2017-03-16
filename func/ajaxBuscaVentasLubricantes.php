@@ -33,8 +33,8 @@ echo "</tr></thead><tbody align='right'>";
 
 $total = 0;
 for($i = 0; $i < $cuantosMeses+1; $i++){
-  $desde = date("Y-m-d", strtotime("-$i month", strtotime($inicia)));
-  $hasta = date("Y-m-d", strtotime("+1 month", strtotime($desde)));
+  $desde = date("Y-d-m", strtotime("-$i month", strtotime($inicia)));
+  $hasta = date("Y-d-m", strtotime("+1 month", strtotime("-$i month", strtotime($inicia))));
   $mes = date("m", strtotime("-$i month", strtotime(date("Y-m-01")))); //dbo.MovimientosFac.IdTipoMovimiento<>\'REM\'
   $soloElaionGrande = " AND IdGrupoDescuento>0 ";
   $soloElaionGrande = "";
@@ -47,7 +47,7 @@ for($i = 0; $i < $cuantosMeses+1; $i++){
 
   $stmt = odbc_exec2($mssql, $sqlVentas, __LINE__, __FILE__);
 
-  while($rowVentas = odbc_fetch_array($stmt)){
+  while($rowVentas = sqlsrv_fetch_array($stmt)){
     if($rowVentas['turnoTriple']==1){
       // borro a Federico de la ecuacion
       if($rowVentas['IdEmpleado2']==$tercerEmpleado){
@@ -94,7 +94,7 @@ $promedioMensualSinPonderacion = $totalVentasMesSinPonderacion / $cuantosMeses;
 $totalMes = $promedioMes = $qEmpleados = $premioTotal = 0;
 
 if(!isset($_POST['sinNoche'])){
-    $promedioMensual = (!$historicoNoAfectadoNoche)?$promedioMensualSinPonderacion:$promedioMensual;
+  $promedioMensual = (!$historicoNoAfectadoNoche)?$promedioMensualSinPonderacion:$promedioMensual;
 }
 
 $total5meses = 0;

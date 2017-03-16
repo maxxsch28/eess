@@ -681,15 +681,12 @@ while($aforadores = sqlsrv_fetch_array($stmt)){
     }
     if(!isset($ultimoCierreAyer))$ultimoCierreAyer = $aforadores['Fecha'];
 }
-$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-m-d H:i:s')."' group by IdArticulo; ";
+$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-d-m H:i:s')."' group by IdArticulo; ";
 //$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer."' group by IdArticulo; ";
 //fb($sqlVentasDesdeAyer);
 //echo $sqlVentasDesdeUltimoCierre;
-$stmt = odbc_exec2($mssql, $sqlVentasDesdeUltimoCierre);
-if( $stmt === false ){
-	 echo "Error in executing query.</br>";
-	 die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2($mssql, $sqlVentasDesdeUltimoCierre, __LINE__, __FILE__);
+
 while($ventasDesdeUltimoCierre = sqlsrv_fetch_array($stmt)){
   $sumaProductoElectronico[$ventasDesdeUltimoCierre[0]] += $ventasDesdeUltimoCierre[1];
   $sumaProductoMecanico[$ventasDesdeUltimoCierre[0]] += $ventasDesdeUltimoCierre[1];

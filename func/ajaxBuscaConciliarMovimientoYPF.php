@@ -17,8 +17,8 @@ if(isset($_POST['id'])){
     case 'VP':
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('RV', 'VP') AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
     fb($sqlCalden);
-    $stmt = odbc_exec( $mssql, $sqlCalden);
-    $rowCalden = odbc_fetch_array($stmt);
+    $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+    $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
       $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdMovimientoPro], $id, 'rv')";
     }
@@ -28,8 +28,8 @@ if(isset($_POST['id'])){
     // cheque rebotado
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor='NDI' AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
     fb($sqlCalden);
-    $stmt = odbc_exec( $mssql, $sqlCalden);
-    $rowCalden = odbc_fetch_array($stmt);
+    $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+    $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
       $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdMovimientoPro], $id, 'ndi')";
     }
@@ -42,8 +42,8 @@ if(isset($_POST['id'])){
     $numero = explode('A', $rowYPF['Referencia']);
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('FAA', 'NDA') AND Numero=$numero[1] AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
     fb($sqlCalden);
-    $stmt = odbc_exec( $mssql, $sqlCalden);
-    $rowCalden = odbc_fetch_array($stmt);
+    $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+    $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
       $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdMovimientoPro], $id, '".strtolower($rowCalden[IdTipoMovimientoProveedor])."')";
     }
@@ -54,8 +54,8 @@ if(isset($_POST['id'])){
     $numero = explode('A', $rowYPF['Referencia']);
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('NCA') AND Numero=$numero[1] AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
     fb($sqlCalden);
-    $stmt = odbc_exec( $mssql, $sqlCalden);
-    $rowCalden = odbc_fetch_array($stmt);
+    $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+    $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
       $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdMovimientoPro], $id, '".strtolower($rowCalden[IdTipoMovimientoProveedor])."')";
     }
@@ -64,8 +64,8 @@ if(isset($_POST['id'])){
     // cheque rebotado
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor='AJU' AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
     fb($sqlCalden);
-    $stmt = odbc_exec( $mssql, $sqlCalden);
-    $rowCalden = odbc_fetch_array($stmt);
+    $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+    $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
       $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdMovimientoPro], $id, 'av')";
     }
@@ -77,8 +77,8 @@ if(isset($_POST['id'])){
       $rowYPF['clase']='Visa';
       $sqlCalden = "select IdTransferenciaBancaria FROM dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor=4 AND o.IdOrdenPago=t.IdOrdenPago AND t.Fecha>=dateadd(day, -2, '$ano-$mes-$dia') AND t.Fecha<=dateadd(day, +1, '$ano-$mes-$dia') AND Importe=".abs($rowYPF['Importe']).";";
       fb($sqlCalden);
-      $stmt = odbc_exec( $mssql, $sqlCalden);
-      $rowCalden = odbc_fetch_array($stmt);
+      $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+      $rowCalden = sqlsrv_fetch_array($stmt);
       if(is_array($rowCalden)){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdTransferenciaBancaria], $id, 'visa')";
       }
@@ -87,8 +87,8 @@ if(isset($_POST['id'])){
       // busco primero pagos en efectivo
       $sqlCalden = "select TOP 1 IdOrdenPago, TotalAPagar, PagoEfectivo FROM dbo.OrdenesPago as o WHERE o.IdProveedor=4 AND  o.Fecha>=dateadd(day, -2, '$ano-$mes-$dia') AND o.Fecha<dateadd(day, +1, '$ano-$mes-$dia')  AND PagoEfectivo=".abs($rowYPF['Importe'])." ORDER BY o.Fecha DESC;";
       fb($sqlCalden);
-      $stmt = odbc_exec( $mssql, $sqlCalden);
-      $rowCalden = odbc_fetch_array($stmt);
+      $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+      $rowCalden = sqlsrv_fetch_array($stmt);
       if(is_array($rowCalden)){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdOrdenPago], $id, 'op')";
       }
@@ -99,16 +99,16 @@ if(isset($_POST['id'])){
         
         
         fb($sqlCalden);
-        $stmt = odbc_exec( $mssql, $sqlCalden);
-        $rowCalden = odbc_fetch_array($stmt);
+        $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+        $rowCalden = sqlsrv_fetch_array($stmt);
         if(is_array($rowCalden)){
           $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdChequeTercero], $id, 'cheque')";
         } else {
           // no fue cheque, busco epago
           $sqlCalden = "select IdTransferenciaBancaria FROM dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor=4 AND o.IdOrdenPago=t.IdOrdenPago AND t.Fecha>=dateadd(day, -2, '$ano-$mes-$dia') AND t.Fecha<dateadd(day, +1, '$ano-$mes-$dia')  AND Importe=".abs($rowYPF['Importe']).";";
           fb($sqlCalden);
-          $stmt = odbc_exec( $mssql, $sqlCalden);
-          $rowCalden = odbc_fetch_array($stmt);
+          $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+          $rowCalden = sqlsrv_fetch_array($stmt);
           if(is_array($rowCalden)){
             $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden) VALUES ($rowCalden[IdTransferenciaBancaria], $id, 'epago')";
           }

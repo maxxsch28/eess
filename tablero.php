@@ -1,6 +1,6 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-
+$titulo = "Tablero";
 
 
 ?>
@@ -8,7 +8,6 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Tablero</title>
     <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {

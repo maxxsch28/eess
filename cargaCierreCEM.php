@@ -25,6 +25,7 @@ $fecha1 = $ultimaFechaCargada;
 //echo 'date before day adding: ' . $ultimaFechaCargada->format('Y-m-d H:i:s'); 
 $ultimaFechaCargada->modify('+1 day');
 $ultimaFechaCargada2 = $ultimaFechaCargada->format('Y-m-d H:i:s');
+$ultimaFechaCargada3 = $ultimaFechaCargada->format('Y-d-m H:i:s');
 $fecha2 = $ultimaFechaCargada2;
 $sqlUltimaMedicionTanques = "SELECT * FROM cierres_cem_tanques WHERE fechaCierre='$ultimaFechaCargada2' and turno='Noche'";
 if($result = $mysqli->query($sqlUltimaMedicionTanques)){
@@ -35,7 +36,7 @@ if($result = $mysqli->query($sqlUltimaMedicionTanques)){
 
 $sqlLitrosCalculados = array();
 foreach($tanques as $idTanque => $IdArticulo){
-  $sql = "select top 1 FechaHora, IdTanque, IdArticulo, Litros, (Litros - (select sum(cantidad) from dbo.Despachos where Fecha>(select top 1 FechaHora from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada2' and idtanque=$idTanque order by LastUpdated desc) and fecha<='$ultimaFechaCargada2' and IdManguera in (select IdManguera from dbo.Mangueras where IdTanque=$idTanque))) as LitrosTotales from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada2' and idtanque=$idTanque order by LastUpdated desc;";
+  $sql = "select top 1 FechaHora, IdTanque, IdArticulo, Litros, (Litros - (select sum(cantidad) from dbo.Despachos where Fecha>(select top 1 FechaHora from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada3' and idtanque=$idTanque order by LastUpdated desc) and fecha<='$ultimaFechaCargada3' and IdManguera in (select IdManguera from dbo.Mangueras where IdTanque=$idTanque))) as LitrosTotales from dbo.TanquesMediciones where LastUpdated<='$ultimaFechaCargada3' and idtanque=$idTanque order by LastUpdated desc;";
   $stmt = odbc_exec2($mssql, $sql,__LINE__, __FILE__);
   $sqlLitrosCalculados[$idTanque] = (sqlsrv_fetch_array($stmt));
   settype($sqlLitrosCalculados[$idTanque]['LitrosTotales'], "int"); 
@@ -52,15 +53,15 @@ $sqlTanquesAlCierre = "";
 
 
 // calculo los litros YER facturados, sirve para comparar contra lo del cierres_cem_aforadores
-$sqlYER = "select IdArticulo, SUM(Cantidad) as q from dbo.MovimientosFac, dbo.MovimientosDetalleFac where dbo.MovimientosFac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac and IdCliente=1283 and Fecha>='".$ultimaFechaCargada->format('Y/m/d')." 22:00:00' AND Fecha<'".$ultimaFechaCargada->modify('+1 day')->format('Y/m/d')." 22:00:00' group by IdArticulo";
+$sqlYER = "select IdArticulo, SUM(Cantidad) as q from dbo.MovimientosFac, dbo.MovimientosDetalleFac where dbo.MovimientosFac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac and IdCliente=1283 and Fecha>='".$ultimaFechaCargada->format('Y/d/m')." 22:00:00' AND Fecha<'".$ultimaFechaCargada->modify('+1 day')->format('Y/d/m')." 22:00:00' group by IdArticulo";
 $stmt = odbc_exec2($mssql, $sqlYER,__LINE__, __FILE__);
 
 $arrayYER = array();
 while($rowYER = sqlsrv_fetch_array($stmt)){
   $arrayYER[$rowYER['IdArticulo']] = $rowYER['q'];
 }
-fb($sqlYER);
-fb($arrayYER);
+//fb($sqlYER);
+//fb($arrayYER);
 ?>
 <!DOCTYPE html>
 <html lang="en">

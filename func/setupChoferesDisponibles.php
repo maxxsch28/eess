@@ -56,15 +56,15 @@ $comision=array();
 $totalAComisionar = array();
 //var_dump($flecha);
 fb($flecha);
-while($fila = odbc_fetch_array($stmt)){
+while($fila = sqlsrv_fetch_array($stmt)){
   $problemaVencimiento=false;
   $choferConFlecha = false;
   $desactivado = false;
   $datosViaje = "";
   // verifico que el chofer no esté con viaje sin cumplir
   $sqlChoferDisponible = "SELECT sucursal_e, parte, loc_origen, loc_desti, salida  FROM [sqlcoop_dbimplemen].[dbo].[partes] WHERE chofer=$fila[codigo] AND cumplido=0 AND anulado=0 ORDER BY salida DESC";
-  $stmt2 = odbc_exec2( $mssql2, $sqlChoferDisponible, __LINE__, __FILE__);
-  $filaViaje = odbc_fetch_array($stmt2);
+  $stmt2 = odbc_exec2($mssql2, $sqlChoferDisponible, __LINE__, __FILE__);
+  $filaViaje = sqlsrv_fetch_array($stmt2);
   if(is_array($filaViaje)){
     // El chofer tiene viaje sin cumplir
     $desactivado = true;

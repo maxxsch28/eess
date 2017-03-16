@@ -7,13 +7,14 @@ include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(!isset($_SESSION['empleados'])){
   $s = "SELECT IdEmpleado, Empleado FROM empleados ORDER BY IdEmpleado";
   $q = odbc_exec2($mssql, $s, __LINE__, __FILE__);
-  while($r = odbc_fetch_array($q)){
+  while($r = sqlsrv_fetch_array($q)){
     $rr[$r['IdEmpleado']]=$r['Empleado'];
   }
   $_SESSION['empleados']=$rr;
 }
 
-$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='$_REQUEST[rangoInicio]' AND Fecha<='$_REQUEST[rangoFin] 23:59:59'":'';
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='".fecha($_REQUEST['rangoInicio'], 'sql')."' AND Fecha<='".fecha($_REQUEST['rangoFin'], 'sql')." 23:59:59'":'';
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='".($_REQUEST['rangoInicio'])."' AND Fecha<='".($_REQUEST['rangoFin'])." 23:59:59'":'';
 if(isset($_REQUEST['mes'])&&$_REQUEST['mes']<>''){
   $mesFin= date("Y-m-t", strtotime($_REQUEST['mes']));
   $andFecha=" AND Fecha>='$_REQUEST[mes]' AND Fecha<='$mesFin'";
@@ -49,10 +50,10 @@ $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno IN (SELECT idCierreTurno FROM dbo.Table_1 where IdCierreCajaTesoreria IS NULL);";
 $stmt0 = odbc_exec2( $mssql, $sqlTurnos0, __LINE__, __FILE__);
 //fb($sqlTurnos0);
-while($rowTurnos0 = odbc_fetch_array($stmt0)){
+while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
   //fb($rowTurnos0);var_dump($rowTurnos0);
   if(isset($rowTurnos0['IdCierreCajaTesoreria'])){
-    $dmd = odbc_fetch_array(odbc_exec( $mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]"));
+    $dmd = sqlsrv_fetch_array(odbc_exec2($mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]", __LINE__, __FILE__));
     //var_dump($dmd);
     fb("SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]");
     if($dmd == NULL){
@@ -73,9 +74,9 @@ while($rowTurnos0 = odbc_fetch_array($stmt0)){
 
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno NOT IN (SELECT idCierreTurno FROM dbo.Table_1);";
 $stmt0 = odbc_exec2( $mssql, $sqlTurnos0, __LINE__, __FILE__);
-while($rowTurnos0 = odbc_fetch_array($stmt0)){
+while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
   if(isset($rowTurnos0['IdCierreCajaTesoreria'])){
-    $dmd = odbc_fetch_array(odbc_exec($mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]"));
+    $dmd = sqlsrv_fetch_array(odbc_exec2($mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]", __LINE__, __FILE__));
     //var_dump($dmd);
     if($dmd == NULL){
       $sqlInsert = "INSERT INTO dbo.Table_1 (idCierreTurno, idCierreCajaTesoreria) VALUES ($rowTurnos0[IdCierreTurno], $rowTurnos0[IdCierreCajaTesoreria]);";
@@ -88,7 +89,7 @@ while($rowTurnos0 = odbc_fetch_array($stmt0)){
   }
   //echo $sqlInsert;
   //var_dump($rowTurnos0['IdCierreCajaTesoreria']);
-  $stmt2 = odbc_exec2( $mssql, $sqlInsert, __LINE__, __FILE__);
+  $stmt2 = odbc_exec2($mssql, $sqlInsert, __LINE__, __FILE__);
 }
 
 
@@ -102,8 +103,8 @@ $sqlTurnos = "SELECT {$top}dbo.CierresTurno.IdCierreTurno, Fecha, IdCaja, IdEmpl
 
 fb($sqlTurnos);
 
-$stmt = odbc_exec2( $mssql, $sqlTurnos, __LINE__, __FILE__);
-while($rowTurnos = odbc_fetch_array($stmt)){
+$stmt = odbc_exec2($mssql, $sqlTurnos, __LINE__, __FILE__);
+while($rowTurnos = sqlsrv_fetch_array($stmt)){
   /* print_r($rowTurnos); */
   $fecha = fecha($rowTurnos['Fecha'], 'dmyH');
   

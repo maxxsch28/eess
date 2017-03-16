@@ -2,12 +2,12 @@
 $nivelRequerido = 5;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 $sqlClientes = "SELECT IdCliente, Codigo, RazonSocial, Identificador, EmiteRemito, IdPeriodicidadFacturacionRemito, IdClienteAsociado FROM dbo.clientes WHERE IdPeriodicidadFacturacionRemito IS NOT NULL AND EmiteRemito<>0 AND Activo=1 ORDER BY RazonSocial, Identificador";
-$stmt = odbc_exec( $mssql, $sqlClientes);
+$stmt = odbc_exec2($mssql, $sqlClientes, __LINE__, __FILE__);
 
 if(!isset($_SESSION['clientesRemitos'])){
   $_SESSION['clientesRemitos']='';
   $_SESSION['clientesRemitosInternos']='';
-  while($rowCuentas = odbc_fetch_array($stmt)){
+  while($rowCuentas = sqlsrv_fetch_array($stmt)){
     if($rowCuentas['IdPeriodicidadFacturacionRemito']==3||$rowCuentas['IdPeriodicidadFacturacionRemito']==12||$rowCuentas['IdClienteAsociado']!=NULL){
       $_SESSION['clientesRemitosInternos'].="<option value='$rowCuentas[IdCliente]'>$rowCuentas[Codigo] - ".(($rowCuentas['Identificador']<>"")?"<b>$rowCuentas[Identificador]</b> / ".substr($rowCuentas['RazonSocial'],0,15):"<b>$rowCuentas[RazonSocial]</b>")."</option>";
       
@@ -24,7 +24,6 @@ $titulo = "Remitos Municipalidad";
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title></title>
     <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {

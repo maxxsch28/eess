@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 4;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-
+$titulo = "Tracking ventas CEM/CaldenOil";
 //include('func/acomodaProMovistar.php');
 
 //select Fecha, Anio, IdTipoMovimientoProveedor, puntoventa, numero, razonsocial, netoNoGravado, NetoMercaderias, NetoCombustibles, NetoLubricantes, NetoGastos, NetoFletes, Total, idasiento, dbo.cuentasgastos.Descripcion as CuentaGasto, dbo.MovimientosDetallePro.Descripcion  from dbo.MovimientosPro, dbo.CuentasGastos, dbo.MovimientosDetallePro where Fecha>='2015-04-01' and Fecha<'2015-05-01' and dbo.MovimientosDetallePro.IdCuentaGastos=dbo.CuentasGastos.IdCuentaGastos and dbo.MovimientosPro.IdMovimientoPro=dbo.MovimientosDetallePro.IdMovimientoPro and (IdTipoMovimientoProveedor<>'RV' AND IdTipoMovimientoProveedor<>'VP') and dbo.movimientosdetallepro.IdCuentaGastos<>43 order by CuentaGasto asc, RazonSocial asc
@@ -11,7 +11,6 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Tracking ventas CEM/CaldenOil</title>
   <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
   <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
   <style type="text/css">

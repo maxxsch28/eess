@@ -9,7 +9,7 @@ $offset=0;
 if(!isset($_SESSION['empleados'])){
   $s = "SELECT IdEmpleado, Empleado FROM empleados ORDER BY IdEmpleado";
   $q = odbc_exec2($mssql, $s);
-  while($r = odbc_fetch_array($q)){
+  while($r = sqlsrv_fetch_array($q)){
           $rr[$r['IdEmpleado']]=$r['Empleado'];
   }
   $_SESSION['empleados']=$rr;
@@ -26,7 +26,7 @@ $sqlAsiento = "SELECT Fecha, Concepto, dbo.ModelosContables.Nombre, dbo.Asientos
 
 $stmt = odbc_exec2( $mssql, $sqlAsiento, __LINE__, __FILE__);
 
-$rowAsiento = odbc_fetch_array($stmt);
+$rowAsiento = sqlsrv_fetch_array($stmt);
 if(is_array($rowAsiento))
 foreach($rowAsiento as $key=>$value){
   if(is_string($value))
@@ -63,7 +63,7 @@ switch($tipo){
     } else {
       $sqlMovimiento = "SELECT * FROM dbo.MovimientosFac WHERE IdAsiento=$_GET[idAsiento]";
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-      $rowMovimiento = odbc_fetch_array($stmt2);
+      $rowMovimiento = sqlsrv_fetch_array($stmt2);
       echo ", $rowMovimiento[IdTipoMovimiento] $rowMovimiento[PuntoVenta]-$rowMovimiento[Numero], emitida el ".$rowMovimiento['FechaEmision'];
       echo "<br/><br/>$rowMovimiento[RazonSocial] ($rowMovimiento[IdCliente]), CUIT $rowMovimiento[NumeroDocumento]<br/><br/>";
   //     echo "<span class='pull-right'>";
@@ -104,7 +104,7 @@ switch($tipo){
       //echo $sqlMovimiento;
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
       // hacer loop;
-      while($rowMovimiento = odbc_fetch_array($stmt2)){
+      while($rowMovimiento = sqlsrv_fetch_array($stmt2)){
         if(!isset($encabezado)){
           $encabezado=1;
           echo "<br/>Número $rowMovimiento[Numero], acreditada el ".date_format($rowMovimiento['FechaAcreditacion'], "d/m/Y H:i:s");
@@ -125,7 +125,7 @@ switch($tipo){
       //echo $sqlMovimiento;
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
       // hacer loop;
-      while($rowMovimiento = odbc_fetch_array($stmt2)){
+      while($rowMovimiento = sqlsrv_fetch_array($stmt2)){
         if(!isset($encabezado)){
           $encabezado=1;
           echo "<br/>Número $rowMovimiento[Numero], acreditada el ".date_format($rowMovimiento['FechaAcreditacion'], "d/m/Y H:i:s");
@@ -146,7 +146,7 @@ switch($tipo){
       if(!isset($_SESSION['TipoManejoTarjetasCredito'])||$_SESSION['TipoManejoTarjetasCredito']==0){
         $sqlMovimiento = "select LotePrefijo, LoteNumero, dbo.LotesTarjetasCredito.Fecha, dbo.CierresTurno.Fecha as fechaTurno, dbo.CierresTurno.IdCaja, Importe, Nombre from dbo.LotesTarjetasCredito, dbo.CierresTurno, dbo.TarjetasCredito where  dbo.LotesTarjetasCredito.IdCierreTurno=dbo.CierresTurno.IdCierreTurno AND  dbo.LotesTarjetasCredito.IdTarjeta=dbo.TarjetasCredito.IdTarjeta AND  dbo.LotesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
         $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-        $rowMovimiento = odbc_fetch_array($stmt2);
+        $rowMovimiento = sqlsrv_fetch_array($stmt2);
         
         echo "<br/>$rowMovimiento[Nombre] Lote $rowMovimiento[LotePrefijo]-$rowMovimiento[LoteNumero], ingresado en turno ".(($rowMovimiento['IdCaja']==1)?'PLAYA':'SHOP')." ".$rowMovimiento['fechaTurno']." por $$rowMovimiento[Importe]";
         // select * from dbo.LotesAcreditados where IdLoteTarjetasCredito=135755
@@ -157,13 +157,13 @@ switch($tipo){
       } elseif($_SESSION['TipoManejoTarjetasCredito']==1) {
         $sqlMovimiento = "select * from dbo.CuponesTarjetasCredito where IdAsiento=$_GET[idAsiento]";
         $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-        $rowMovimiento = odbc_fetch_array($stmt2);
+        $rowMovimiento = sqlsrv_fetch_array($stmt2);
         echo "<br/>Número $rowMovimiento[NumeroCupon], ingresa en";
 
         if($rowMovimiento['idCliente']>0){
           $sql3 = "select * from dbo.Recibos where IdRecibo=$rowMovimiento[IdRecibo]";
           $stmt3 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-          $row3 = odbc_fetch_array($stmt2);
+          $row3 = sqlsrv_fetch_array($stmt2);
           echo " recibo a <b>$rowMovimiento[RazonSocial]</b><br/>"; 
         } else {
           echo " turno <b>$rowMovimiento[RazonSocial]</b><br/>"; 
@@ -178,7 +178,7 @@ switch($tipo){
     if(trim($rowAsiento['Nombre'])=='COBRANZAS01'){
       $sqlMovimiento = "select * from dbo.Recibos where IdAsiento=$_GET[idAsiento]";
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-      $rowMovimiento = odbc_fetch_array($stmt2);
+      $rowMovimiento = sqlsrv_fetch_array($stmt2);
       /* print_r($rowMovimiento); */
       echo " ($rowMovimiento[IdCliente])<br/><br/>Recibo $rowMovimiento[PuntoVenta]-$rowMovimiento[Numero], cobrado el ".fecha(fecha($rowMovimiento['Fecha']), 'dmyH');
       
@@ -186,7 +186,7 @@ switch($tipo){
       
       $sqlCheque = "select * from dbo.ChequesTerceros where IdRecibo=$rowMovimiento[IdRecibo]";
       $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-      while($rowCheque = odbc_fetch_array($stmt3)){
+      while($rowCheque = sqlsrv_fetch_array($stmt3)){
         if(!isset($tituloChequesPropios)){
           $tituloChequesPropios=true;
           echo "<br/><br/>Cheques de terceros:<br/>";
@@ -199,7 +199,7 @@ switch($tipo){
       }
       $sqlCheque = "select * from dbo.CuponesTarjetasCredito where IdRecibo=$rowMovimiento[IdRecibo]";
       $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-      while($rowCheque = odbc_fetch_array($stmt3)){
+      while($rowCheque = sqlsrv_fetch_array($stmt3)){
         if(!isset($tituloTarjetas)){
           $tituloTarjetas=true;
           echo "<br/><br/>Cupones de tarjetas:<br/>";
@@ -212,19 +212,19 @@ switch($tipo){
       $sqlMovimiento = "select *, dbo.CuponesTarjetasCredito.IdCierreTurno as cierre, dbo.CuponesTarjetasCredito.Importe as Importe2 from dbo.CuponesTarjetasCredito,  dbo.LotesTarjetasCredito where dbo.LotesTarjetasCredito.IdLoteTarjetasCredito=dbo.CuponesTarjetasCredito.IdLoteTarjetasCredito AND dbo.CuponesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
       //$sqlMovimiento = "select *, dbo.CuponesTarjetasCredito.IdCierreTurno as cierre from dbo.CuponesTarjetasCredito where dbo.CuponesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-      $rowMovimiento = odbc_fetch_array($stmt2);
+      $rowMovimiento = sqlsrv_fetch_array($stmt2);
       if($rowMovimiento){
         //print_r2($rowMovimiento);
         echo "<br/><br/>Ingresa en";
         if(is_int($rowMovimiento["IdCliente"]) && $rowMovimiento["IdCliente"]>0){
           $sql3 = "select * from dbo.Recibos where IdRecibo=$rowMovimiento[IdRecibo]";
           $stmt3 = odbc_exec2( $mssql, $sql3, __LINE__, __FILE__);
-          $row3 = odbc_fetch_array($stmt3);
+          $row3 = sqlsrv_fetch_array($stmt3);
           echo " recibo a <b>$rowMovimiento[RazonSocial]</b><br/>";
         } else {
           $sql3 = "select * from dbo.cierresTurno where IdCierreTurno=$rowMovimiento[cierre]";
           $stmt3 = odbc_exec2( $mssql, $sql3, __LINE__, __FILE__);
-          $row3 = odbc_fetch_array($stmt3);
+          $row3 = sqlsrv_fetch_array($stmt3);
           echo " turno <b>".date_format($row3['Fecha'], "d/m/Y H:i:s").",</b> (".(($row3['IdEmpleado2']>0)?'+'.$_SESSION['empleados'][$row3['IdEmpleado2']]:'')." ".(($row3['IdEmpleado3']>0)?'+'.$_SESSION['empleados'][$row3['IdEmpleado3']]:'').")<br/>"; 
         }
         echo "<br/><span class='".((($rowMovimiento['Importe2']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowMovimiento['Importe2']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowMovimiento['Importe2']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Cupón Nº$rowMovimiento[NumeroCupon]: $$rowMovimiento[Importe2]</span><br/>";
@@ -232,18 +232,18 @@ switch($tipo){
       }
       $sqlCheque = "select * from dbo.ChequesTerceros where IdAsiento=$_GET[idAsiento]";
       $stmt2 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-      $rowCheque = odbc_fetch_array($stmt2);
+      $rowCheque = sqlsrv_fetch_array($stmt2);
       if($rowCheque){
         echo "<br/><br/>Ingresa en";
         if($rowCheque['IdCliente']>0){
           $sql3 = "select * from dbo.Recibos where IdRecibo=$rowCheque[IdRecibo]";
           $stmt3 = odbc_exec2( $mssql, $sql3, __LINE__, __FILE__);
-          $row3 = odbc_fetch_array($stmt3);
+          $row3 = sqlsrv_fetch_array($stmt3);
           echo " recibo a <b>$rowMovimiento[RazonSocial]</b><br/>";
         } else {
           $sql3 = "select * from dbo.cierresTurno where IdCierreTurno=$rowCheque[IdCierreTurno]";
           $stmt3 = odbc_exec2( $mssql, $sql3, __LINE__, __FILE__);
-          $row3 = odbc_fetch_array($stmt3);
+          $row3 = sqlsrv_fetch_array($stmt3);
           echo " turno <b>".date_format($row3['Fecha'], "d/m/Y H:i:s").",</b> (".(($row3['IdEmpleado2']>0)?'+'.$_SESSION['empleados'][$row3['IdEmpleado2']]:'')." ".(($row3['IdEmpleado3']>0)?'+'.$_SESSION['empleados'][$row3['IdEmpleado3']]:'').")<br/>"; 
         }
         echo "<br/><span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
@@ -261,17 +261,17 @@ switch($tipo){
     echo $rowAsiento['Descripcion'].', '.$rowAsiento['Concepto'];
     $sqlMovimiento = "select IdMovimientoBancario, IdCuentaBancaria, FechaContable, TiposMovimientoBancario.Descripcion, Detalle, NumeroComprobante, Importe, dbo.CierresCajaTesoreria.Numero, dbo.CierresCajaTesoreria.FechaCierre from dbo.MovimientosBancarios, TiposMovimientoBancario, dbo.CierresCajaTesoreria where dbo.MovimientosBancarios.IdCierreCajaTesoreria=dbo.CierresCajaTesoreria.IdCierreCajaTesoreria AND dbo.MovimientosBancarios.IdTipoMovimientoBancario=dbo.TiposMovimientoBancario.IdTipoMovimientoBancario AND IdAsiento=$_GET[idAsiento]";
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-    $rowMovimiento = odbc_fetch_array($stmt2);
+    $rowMovimiento = sqlsrv_fetch_array($stmt2);
     echo "<br/>$rowMovimiento[Detalle]<br/>";
     if($rowMovimiento['FechaContable'])
-        {echo "<br/>Cargado el ".$rowMovimiento['FechaContable'].'<br/>';}
+        {echo "<br/>Cargado el ".fecha($rowMovimiento['FechaContable']).'<br/>';}
     else 
         {echo "<br/>Cargado manualmente, no tiene fecha (REVISAR)<br/>";}
     echo "<br/>Movimiento: $rowMovimiento[Descripcion], en Caja Nº $rowMovimiento[Numero] del ".fecha($rowMovimiento['FechaCierre'], "dmyH").'<br/>';
     $sqlCheque = "select * from dbo.ChequesTerceros, dbo.Bancos where IdMovimientoBancario=$rowMovimiento[IdMovimientoBancario] AND dbo.ChequesTerceros.IdBanco=dbo.Bancos.IdBanco";
     $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
     $totalCheques=0;
-    while($rowCheque = odbc_fetch_array($stmt3)){
+    while($rowCheque = sqlsrv_fetch_array($stmt3)){
       if(!isset($tituloChequesPropios)){
         $tituloChequesPropios=true;
         echo "<br/>Cheques de terceros:<br/><table style='width:100%'>";
@@ -293,7 +293,7 @@ switch($tipo){
     $sqlMovimiento = "select * from dbo.MovimientosPro where IdAsiento=$_GET[idAsiento]";
 //     //echo $sqlMovimiento;
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-    $rowMovimiento = odbc_fetch_array($stmt2);
+    $rowMovimiento = sqlsrv_fetch_array($stmt2);
     if(is_array($rowMovimiento)){
       echo ", $rowMovimiento[IdTipoMovimientoProveedor] <b>$rowMovimiento[PuntoVenta]-$rowMovimiento[Numero]</b>, cargada el ".fecha($rowMovimiento['Fecha']);
       echo "<br/><br/>$rowMovimiento[RazonSocial] ($rowMovimiento[IdProveedor]), CUIT $rowMovimiento[NumeroDocumento]<br/><br/>";
@@ -341,7 +341,7 @@ switch($tipo){
       $sqlMovimiento2 = "select * from dbo.MovimientosDetallePro where IdMovimientoPro=$rowMovimiento[IdMovimientoPro]";
       //echo $sqlMovimiento2;
       $stmt3 = odbc_exec2( $mssql, $sqlMovimiento2, __LINE__, __FILE__);
-      while($rowMovimiento2 = odbc_fetch_array($stmt3)){
+      while($rowMovimiento2 = sqlsrv_fetch_array($stmt3)){
         echo "<br>Descripcion: <b>$rowMovimiento2[Descripcion]</b><br/>";if(strlen($rowMovimiento2['Descripcion'])<4)echo "<i>(Te mataste con el detalle)</i>";
       }
       
@@ -349,7 +349,7 @@ switch($tipo){
       // está anulado
       $sqlAnulado = "SELECT IdAsiento FROM dbo.asientos WHERE IdAsientoAnulado=$_GET[idAsiento]";
       $stmt3 = odbc_exec2( $mssql, $sqlAnulado, __LINE__, __FILE__);
-      $rowAnulado = odbc_fetch_array($stmt3);
+      $rowAnulado = sqlsrv_fetch_array($stmt3);
       echo "<br/><b>ANULADO CON ASIENTO $rowAnulado[IdAsiento]</b>";
     }
     break;
@@ -360,7 +360,7 @@ switch($tipo){
     echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
     $sqlMovimiento = "select * from dbo.OrdenesPago where IdAsiento=$_GET[idAsiento]";echo "<br>$sqlMovimiento<br>";
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-    $rowMovimiento = odbc_fetch_array($stmt2);
+    $rowMovimiento = sqlsrv_fetch_array($stmt2);
     echo " ($rowMovimiento[IdProveedor])<br/><br/>";
     echo "Orden de pago Nº $rowMovimiento[Numero], emitida ".(fecha($rowMovimiento['Fecha'], 'dmy'))."<br>";
     if($rowMovimiento['TotalRetencionIIBB']>0)echo "Retencion IIBB: $$rowMovimiento[TotalRetencionIIBB]<br/>";
@@ -371,7 +371,7 @@ switch($tipo){
     }
     $sqlCheque = "select * from dbo.ChequesPropios where IdOrdenPago=$rowMovimiento[IdOrdenPago]";
     $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-    while($rowCheque = odbc_fetch_array($stmt3)){
+    while($rowCheque = sqlsrv_fetch_array($stmt3)){
       if(!isset($tituloChequesPropios)){
         $tituloChequesPropios=true;
         echo "<br/>Cheques propios:<br/>";
@@ -384,7 +384,7 @@ switch($tipo){
     }
     $sqlCheque = "select * from dbo.ChequesTerceros where IdOrdenPago=$rowMovimiento[IdOrdenPago]";
     $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-    while($rowCheque = odbc_fetch_array($stmt3)){
+    while($rowCheque = sqlsrv_fetch_array($stmt3)){
       if(!isset($tituloChequesPropios)){
         $tituloChequesPropios=true;
         echo "<br/>Cheques de terceros:<br/>";
@@ -406,7 +406,7 @@ switch($tipo){
 
     $sqlMovimiento = "select * from dbo.OtrosMovimientosStock, dbo.MotivosStock where MotivosStock.IdMotivoStock=OtrosMovimientosStock.IdMotivo AND IdAsiento=$_GET[idAsiento];";
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-    $rowMovimiento = odbc_fetch_array($stmt2);
+    $rowMovimiento = sqlsrv_fetch_array($stmt2);
             
     echo "<br/>Movimiento: $rowMovimiento[Descripcion], Número $rowMovimiento[IdTipoMovimiento]-$rowMovimiento[Numero]<br/>";
     break;
@@ -414,13 +414,13 @@ switch($tipo){
     echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
     $sqlMovimiento = "select dbo.OtrosMovimientosCajaTesoreria.IdOtroMovimientoCajaTesoreria, dbo.OtrosMovimientosCajaTesoreria.Fecha, Detalle, Importe, Efectivo, Descripcion, dbo.CierresCajaTesoreria.Numero, dbo.CierresCajaTesoreria.FechaCierre from dbo.OtrosMovimientosCajaTesoreria, dbo.GruposOtrosMovimientosCajaTesoreria, dbo.CierresCajaTesoreria where dbo.GruposOtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria=dbo.OtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria AND dbo.CierresCajaTesoreria.IdCierreCajaTesoreria=dbo.OtrosMovimientosCajaTesoreria.IdCierreCajaTesoreria AND IdAsiento=$_GET[idAsiento]";
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-    $rowMovimiento = odbc_fetch_array($stmt2);
+    $rowMovimiento = sqlsrv_fetch_array($stmt2);
     echo "<br/>$rowMovimiento[Detalle]<br/>";
     echo "<br/>Cargado el ".fecha($rowMovimiento['Fecha'], 'dmyH').'<br/>';
     echo "<br/>Movimiento: $rowMovimiento[Descripcion], en Caja Nº $rowMovimiento[Numero] del ".fecha($rowMovimiento['FechaCierre'], "dmYH").'<br/>';
     $sqlCheque = "select * from dbo.ChequesPropios where IdOtroMovimientoCajaTesoreriaSalida=$rowMovimiento[IdOtroMovimientoCajaTesoreria]";
     $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-    while($rowCheque = odbc_fetch_array($stmt3)){
+    while($rowCheque = sqlsrv_fetch_array($stmt3)){
       if(!isset($tituloChequesPropios)){
         $tituloChequesPropios=true;
         echo "<br/>Cheques propios:<br/>";
@@ -433,7 +433,7 @@ switch($tipo){
     }
     $sqlCheque = "select * from dbo.ChequesTerceros where IdOtroMovimientoCajaTesoreriaEntrada=$rowMovimiento[IdOtroMovimientoCajaTesoreria] OR IdOtroMovimientoCajaTesoreriaSalida=$rowMovimiento[IdOtroMovimientoCajaTesoreria]";
     $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
-    while($rowCheque = odbc_fetch_array($stmt3)){
+    while($rowCheque = sqlsrv_fetch_array($stmt3)){
       if(!isset($tituloChequesTerceros)){
         $tituloChequesTerceros=true;
         echo "<br/>Cheques de terceros:<br/>";
@@ -448,7 +448,7 @@ switch($tipo){
           echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
           $sqlMovimiento = "select * from dbo.OtrosMovimientosCajaTesoreria where IdAsiento=$_GET[idAsiento]";
           $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-          $rowMovimiento = odbc_fetch_array($stmt2);
+          $rowMovimiento = sqlsrv_fetch_array($stmt2);
           print_r($rowMovimiento);
           echo "$tipo";
           break;
@@ -456,7 +456,7 @@ switch($tipo){
           echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
           $sqlMovimiento = "select * from dbo.OtrosMovimientosCajaTesoreria where IdAsiento=$_GET[idAsiento]";
           $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-          $rowMovimiento = odbc_fetch_array($stmt2);
+          $rowMovimiento = sqlsrv_fetch_array($stmt2);
           print_r($rowMovimiento);
           echo "$tipo";
           break;
@@ -464,7 +464,7 @@ switch($tipo){
           echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
           $sqlMovimiento = "select * from dbo.OtrosMovimientosCajaTesoreria where IdAsiento=$_GET[idAsiento]";
           $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
-          $rowMovimiento = odbc_fetch_array($stmt2);
+          $rowMovimiento = sqlsrv_fetch_array($stmt2);
           print_r($rowMovimiento);
           echo "$tipo";
           break;

@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 4;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-
+$titulo = "Control de stock en tanques";
 if(isset($_GET['calden'])){
   $origen = 'calden';
 } else {
@@ -12,7 +12,6 @@ if(isset($_GET['calden'])){
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Control de stock en tanques</title>
   <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
   <link rel="stylesheet" href="css/jquery.modal.css" type="text/css" media="screen" />
   <style type="text/css">

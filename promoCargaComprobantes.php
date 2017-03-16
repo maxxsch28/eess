@@ -130,7 +130,11 @@ setlocale(LC_ALL, 'es_ES');
             $('.multi').click(function(){
               $.post('func/ajaxBuscaDatosTicket.php', { IdMovimientoFac: $(this).val() }, function(data) {
                 $('#datosTicket').html(data.message).removeClass('alert alert-danger');
-                $('#fcanje').val(data.fecha);
+                if(data.fCanje){
+                  $('#fcanje').val(data.fCanje);
+                } else {
+                  $('#fcanje').val(data.fecha);
+                }
                 $('#pv').val(data.pv);
                 $('#IdMovimientoFac').val(data.IdMovimientoFac);
                 $('#FechaTicket').val(data.FechaTicket);

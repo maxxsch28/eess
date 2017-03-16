@@ -4,28 +4,29 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 if(!isset($_SESSION['ultimosMeses'])||1){
-	$_SESSION['ultimosMeses']='';
-	$currentMonth = (int)date('m');
-	for($x = $currentMonth; $x > $currentMonth-6; $x--) {
-		$_SESSION['ultimosMeses'] .= "<option value='".date('Y-m-01', mktime(0, 0, 0, $x, 1))."'>".date('F, Y', mktime(0, 0, 0, $x, 1))."</option>";
-	}
+  $_SESSION['ultimosMeses']='';
+  $currentMonth = (int)date('m');
+  for($x = $currentMonth; $x > $currentMonth-6; $x--) {
+    $_SESSION['ultimosMeses'] .= "<option value='".date('Y-m-01', mktime(0, 0, 0, $x, 1))."'>".date('F, Y', mktime(0, 0, 0, $x, 1))."</option>";
+  }
 }
 if(!isset($_SESSION['ultimosCierresTesoreria'])){
-	// carga los datos de esta orden
-	$sqlCajas = "SELECT IdCierreCajaTesoreria, FechaCierre FROM dbo.CierresCajaTesoreria WHERE FechaCierre>=DATEADD(month, -1, GETDATE()) ORDER BY FechaCierre desc;";
-	$stmt = odbc_exec( $mssql, $sqlCajas);
-	$_SESSION['ultimosCierresTesoreria']='';
-	while($rowCuentas = odbc_fetch_array($stmt)){
-		$_SESSION['ultimosCierresTesoreria'].="<option value='$rowCuentas[IdCierreCajaTesoreria]'>".date_format($rowCuentas['FechaCierre'], "d/m/Y H:i:s")."</option>";
-	}
+  // carga los datos de esta orden
+  $sqlCajas = "SELECT IdCierreCajaTesoreria, FechaCierre FROM dbo.CierresCajaTesoreria WHERE FechaCierre>=DATEADD(month, -1, GETDATE()) ORDER BY FechaCierre desc;";
+  $stmt = odbc_exec2( $mssql, $sqlCajas, __LINE__, __FILE__);
+  $_SESSION['ultimosCierresTesoreria']='';
+  while($rowCuentas = sqlsrv_fetch_array($stmt)){
+    $_SESSION['ultimosCierresTesoreria'].="<option value='$rowCuentas[IdCierreCajaTesoreria]'>".date_format($rowCuentas['FechaCierre'], "d/m/Y H:i:s")."</option>";
+  }
 }
 if(!isset($_SESSION['tarjetasCredito'])||1){
   $sqlTarjetas = "SELECT IdTarjeta, Nombre, IdCuentaContable_Presentacion FROM dbo.tarjetasCredito WHERE Activa=1 ORDER BY Nombre ASC;";
-  $stmt = odbc_exec( $mssql, $sqlTarjetas);
+  fb($sqlTarjetas);
+  $stmt = odbc_exec2( $mssql, $sqlTarjetas, __LINE__, __FILE__);
   $_SESSION['tarjetasCredito']=array();
-  while($rowTarjetas = odbc_fetch_array($stmt)){
-     $_SESSION['tarjetasCredito'][$rowTarjetas['IdTarjeta']] = $rowTarjetas['Nombre'];
-     $_SESSION['tarjetasCreditoCuenta'][$rowTarjetas['IdTarjeta']] = $rowTarjetas['IdCuentaContable_Presentacion'];
+  while($rowTarjetas = sqlsrv_fetch_array($stmt)){
+    $_SESSION['tarjetasCredito'][$rowTarjetas['IdTarjeta']] = $rowTarjetas['Nombre'];
+    $_SESSION['tarjetasCreditoCuenta'][$rowTarjetas['IdTarjeta']] = $rowTarjetas['IdCuentaContable_Presentacion'];
   }
 }
 ?>
@@ -55,9 +56,9 @@ if(!isset($_SESSION['tarjetasCredito'])||1){
             <label class="control-label" for="rangoFechas">Rango de fechas</label>
             <div class="controls">
             <div class="input-group" id='rop'>
-              <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="<?php echo date("m/d/y", mktime(0, 0, 0, date("m", strtotime("-1 month")), 1, date("Y", strtotime("-1 month"))));?>" data-date-format="mm/dd/yy"  data-plus-as-tab='true'/>
+              <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="<?php echo date("d/m/y", mktime(0, 0, 0, date("m", strtotime("-1 month")), 1, date("Y", strtotime("-1 month"))));?>" data-date-format="dd/mm/yy"  data-plus-as-tab='true' placeholder='dd/mm/aa'/>
               <span class="input-group-addon">a</span>
-              <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="<?php echo date("m/d/y");?>" data-date-format="mm/dd/yy" data-plus-as-tab='true'/>
+              <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="<?php echo date("d/m/y");?>" data-date-format="dd/mm/yy" data-plus-as-tab='true' placeholder='dd/mm/aa'/>
               <span class="input-group-addon presetAnio btn" id="<?php echo date('y', strtotime("-1 year"))?>"><?php echo date('Y', strtotime("-1 year"))?></span>
               <span class="input-group-addon presetAnio btn" id="<?php echo date('y')?>"><?php echo date('Y')?></span>
             </div></div></div>
@@ -175,7 +176,7 @@ if(!isset($_SESSION['tarjetasCredito'])||1){
                 $('.presetAnio').removeClass('label-success');
                 $(this).addClass('label-success');
                 $('#rangoInicio').val('01/01/'+year);
-                $('#rangoFin').val('12/31/'+year);
+                $('#rangoFin').val('31/12/'+year);
             });
 		
 			// definimos las opciones del plugin AJAX FORM

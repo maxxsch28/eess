@@ -16,12 +16,8 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //fb($_GET);
 if(isset($_GET['IdLoteTarjetasCredito'])&&isset($_GET['IdTarjeta'])&&isset($_GET['LoteNumero'])&&isset($_GET['IdCuentaContable_presentacion'])&&is_numeric($_GET['IdLoteTarjetasCredito'])&&is_numeric($_GET['IdTarjeta'])&&is_numeric($_GET['LoteNumero'])&&is_numeric($_GET['IdCuentaContable_presentacion'])){
   $sqlLoteOriginal = "SELECT * FROM dbo.LotesTarjetasCredito WHERE IdLoteTarjetasCredito=$_GET[IdLoteTarjetasCredito]";
-  $stmt = odbc_exec( $mssql, $sqlLoteOriginal);
-  if( $stmt === false ){
-      echo "1. Error in executing query.</br>$sqlLoteOriginal<br/>";
-      die( print_r( sqlsrv_errors(), true));
-  }
-  $loteOriginal = odbc_fetch_array($stmt);
+  $stmt = odbc_exec2($mssql, $sqlLoteOriginal, __LINE__, __FILE__);
+  $loteOriginal = sqlsrv_fetch_array($stmt);
   if(is_array($loteOriginal)){
     $sqlAsientos = array();
     if($loteOriginal['IdTarjeta']<>$_GET['IdTarjeta']){
@@ -42,10 +38,10 @@ if(isset($_GET['IdLoteTarjetasCredito'])&&isset($_GET['IdTarjeta'])&&isset($_GET
       $sqlAsientos[] = "UPDATE dbo.LotesTarjetasCredito SET LoteNumero=$_GET[LoteNumero] WHERE IdLoteTarjetasCredito=$_GET[IdLoteTarjetasCredito]";
     }
     if(count($sqlAsientos)>0){
-      print_r($sqlAsientos);
+      fb($sqlAsientos);
       foreach($sqlAsientos as $sql){
-        $stmt = odbc_exec( $mssql, $sql);
-        $stmt = odbc_exec( $mssql, "UPDATE dbo.LotesTarjetasCredito SET SinCierreDeLote=1 WHERE IdCierreTurno=$_GET[IdCierreTurno] AND Importe=0 and IdAsiento is NULL AND SinCierreDeLote=0");
+        $stmt = odbc_exec2($mssql, $sql, __LINE__, __FILE__);
+        $stmt = odbc_exec2($mssql, "UPDATE dbo.LotesTarjetasCredito SET SinCierreDeLote=1 WHERE IdCierreTurno=$_GET[IdCierreTurno] AND Importe=0 and IdAsiento is NULL AND SinCierreDeLote=0", __LINE__, __FILE__);
         //echo "UPDATE dbo.LotesTarjetasCredito SET SinCierreDeLote=1 WHERE IdCierreTurno=$_GET[IdCierreTurno] AND Importe=0 and IdAsiento is NULL AND SinCierreDeLote=0";
       }
       echo "1";
@@ -61,13 +57,12 @@ if(isset($_GET['IdLoteTarjetasCredito'])&&isset($_GET['IdTarjeta'])&&isset($_GET
 } else {
   echo "1";
    die;
-
 }
 
 
 
 
-print_r($_GET);
+fb($_GET);
 die;
 //print_r($_GET);
  // $array=array();
@@ -84,7 +79,7 @@ if(isset($_GET['idTurno'])&&is_numeric($_GET['idTurno'])){
 
   echo "<form name='modificacionLotesTarjetas' id='modificacionLotesTarjetas'><table class='table table-striped table-bordered'><thead><tr><th width='5%'>idLote</th><th>Tarjeta</th><th colspan=2>Prefijo y Lote</th><th>Importe</th><th>Asiento</th><th></th></tr></thead><tbody><tr>";
   
-  while($rowLotesIngresados = odbc_fetch_array($stmt)){
+  while($rowLotesIngresados = sqlsrv_fetch_array($stmt)){
       //print_r($rowLotesIngresados);
       //Array ( [0] => 129889 [IdLoteTarjetasCredito] => 129889 [1] => VISA DEBITO [Nombre] => VISA DEBITO [2] => 2 [Loteprefijo] => 2 [3] => 257 [LoteNumero] => 257 [4] => 1193.5000 [Importe] => 1193.5000 [5] => 714 [idCuentaContable_presentacion] => 714 [6] => 616219 [idAsiento] => 616219 ) 
       $selectorTarjeta = "<select name='selectorTarjeta' id='selectorTarjeta_$rowLotesIngresados[IdLoteTarjetasCredito]'>";

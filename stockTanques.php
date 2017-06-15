@@ -72,13 +72,20 @@ if(isset($_GET['calden'])){
             <ul class="nav nav-tabs" role="tablist" id="myTab" style='height:3.1em;'>
               <li>
                 <form class='form-horizontal'><select name='periodo' id='periodo'>
-                <option value='2016'>2016</option>
+                <?php
+                  echo "<option value='".date('Y')."' >".date('Y')."</option>";
+                  echo "<option value='".(date('Y')-1)."' >".(date('Y')-1)."</option>";
+                ?>
                 <?php 
                 for ($abc = 11; $abc >= 0; $abc--) {
                     $mes = date("F y", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                     $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
-                    echo "<option value='$valorMes' ".(($abc==0)?' selected="selected"':'').">$mes</option>";
+                    //echo "<option value='$valorMes' ".(($abc==0)?' selected="selected"':'').">$mes</option>";
+                    echo "<option value='$valorMes' >$mes</option>";
                 }?>
+                <option value='30d' selected="selected">30 días</option>
+                <option value='365d'>365 días</option>
+                
                 </select></form>
               </li><li>&nbsp;  &nbsp;</li>
               <?php foreach($tanques as $id => $idArticulo){

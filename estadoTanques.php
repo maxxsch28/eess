@@ -51,16 +51,26 @@ class Tanques{
 
 class Picos{
   public function Picos(){
-  
-    
+  global $dbg, $mssql;
+    $this->pico = array();
+    // obtengo datos de tanques de CaldenOil
+    $sqlTanques = "SELECT IdManguera, IdArticulo, IdSurtidor, IdTanque FROM dbo.mangueras ORDER BY IdManguera ASC;";
+    $stmt = odbc_exec2($mssql, $sqlTanques);
+    while($pico = sqlsrv_fetch_array($stmt)){
+      $this->pico[$pico['IdManguera']]['idArticulo']=$pico['IdArticulo'];
+      $this->pico[$pico['IdManguera']]['surtidor']=$pico['IdSurtidor'];
+      $this->pico[$pico['IdManguera']]['tanque']=$pico['IdTanque'];
+    }
   }
 }
        
 $tanques = new Tanques();
 $combustibles = new Combustibles();
+$picos = new Picos();
 fb($tanques);
 fb($combustibles);
-       
+fb($picos);
+       fb("hola");
        
        
        
@@ -211,12 +221,12 @@ function muestraDetalleTanques(){
 function recepcionMensual(){
     global $mysqli;
     global $articulo, $mes;
-    //$sql="SELECT sum( ns ) , sum( np ) , sum( ud ) , sum( ed ) FROM `ventasdiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) AND MONTH( fecha ) = MONTH( CURDATE( ) ) ";
+    //$sql="SELECT sum( ns ) , sum( np ) , sum( ud ) , sum( ed ) FROM `ventasDiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) AND MONTH( fecha ) = MONTH( CURDATE( ) ) ";
     
     $sql1 = "SELECT month(fecha) as mes,  sum( tq3 ) as l2078, sum( tq5 ) as l2076, sum( tq2 + tq6 ) as l2069, sum( tq1 + tq4 ) as l2068, count(remito2) as cuantoscamiones FROM `recepcioncombustibles` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR (YEAR(fecha)=YEAR(CURDATE())-1 AND MONTH(fecha)>=MONTH(CURDATE())-1) group by year(fecha),month(fecha)";
     
 
-    //$sqlVentasMensuales = "SELECT month(fecha) as mes,  sum( ns ) as l2078, sum( np ) as l2076, sum( ud ) as l2069, sum( ed ) as l2068 FROM `ventasdiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR YEAR(fecha)=YEAR(CURDATE())-1 group by year(fecha),month(fecha)";
+    //$sqlVentasMensuales = "SELECT month(fecha) as mes,  sum( ns ) as l2078, sum( np ) as l2076, sum( ud ) as l2069, sum( ed ) as l2068 FROM `ventasDiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR YEAR(fecha)=YEAR(CURDATE())-1 group by year(fecha),month(fecha)";
     
     $result = $mysqli->query($sql1);
     if($result&&$result->num_rows>0 &&!$_SESSION['esMovil']){
@@ -254,13 +264,13 @@ if(isset($_GET['m'])){
 // Despachos extraidos de la tabla de despachos, contiene todo lo que salió de los surtidores y no solo lo facturado
 if(date('H')>22&&false){
   $sqlDespachos = "select IdArticulo, SUM(Cantidad), count(IdDespacho) from dbo.Despachos WHERE Fecha>='".date("Y-m-d 22:00:00")."' GROUP BY IdArticulo;";
-  $sqlDespachos = "select IdArticulo, SUM(Cantidad), count(IdDespacho) from dbo.Despachos WHERE Fecha>='".date("Y-d-m 22:00:00")."' GROUP BY IdArticulo;";
+  //$sqlDespachos = "select IdArticulo, SUM(Cantidad), count(IdDespacho) from dbo.Despachos WHERE Fecha>='".date("Y-d-m 22:00:00")."' GROUP BY IdArticulo;";
 } else {
   $sqlDespachos = "select IdArticulo, SUM(Cantidad), count(IdDespacho) from dbo.Despachos WHERE Fecha>='".date("Y-m-d")."' GROUP BY IdArticulo;";
-  $sqlDespachos = "select IdArticulo, SUM(Cantidad), count(IdDespacho) from dbo.Despachos WHERE Fecha>='".date("Y-d-m")."' GROUP BY IdArticulo;";
+  //$sqlDespachos = "select IdArticulo, SUM(Cantidad), count(IdDespacho) from dbo.Despachos WHERE Fecha>='".date("Y-d-m")."' GROUP BY IdArticulo;";
 }
 
-$stmt = odbc_exec2( $mssql, $sqlDespachos);
+$stmt = odbc_exec2( $mssql, $sqlDespachos, __LINE__, __FILE__);
 while($row = sqlsrv_fetch_array($stmt)){
   $despachos[$row[0]]=$row[1];
   $despachos['d'.$row[0]]=$row[2];
@@ -270,14 +280,13 @@ while($row = sqlsrv_fetch_array($stmt)){
 // Promedio historico
 // metodo nuevo (2014-11-17), lo calcula en base a la información de los cierres de turno
 
-$sqlPromedioHistorico = "SELECT avg(ns) as l2078, avg(np) as l2076, avg(ud) as l2069, avg(ed) as l2068 FROM `ventasdiarias` WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' AND month(fecha)=month(curdate()) ";
-fb($sqlPromedioHistorico);
+$sqlPromedioHistorico = "SELECT avg(ns) as l2078, avg(np) as l2076, avg(ud) as l2069, avg(ed) as l2068 FROM `ventasDiarias` WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' AND month(fecha)=month(curdate()) ";
 $resultPromedioHistorico = $mysqli->query($sqlPromedioHistorico);
 $promedioHistorico = $resultPromedioHistorico->fetch_assoc();
 
 // Promedio diario
 // metodo nuevo (2014-11-17), lo calcula en base a la información de los cierres de turno
-$sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2069, avg(ed) as l2068, diaSemana FROM `ventasdiarias`  WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' AND month(fecha)=month(curdate()) GROUP BY diaSemana";
+$sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2069, avg(ed) as l2068, diaSemana FROM `ventasDiarias`  WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' AND month(fecha)=month(curdate()) GROUP BY diaSemana";
 $result = $mysqli->query($sqlPromedioDiario);
 if($result && $result->num_rows>0 && !$_SESSION['esMovil']){
     $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
@@ -286,7 +295,7 @@ if($result && $result->num_rows>0 && !$_SESSION['esMovil']){
         //Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio
         //Array ( [0] => Wednesday [] => 1084 [1] => 76340.9271 [2] => 2068 [IdArticulo] => 2068 [3] => 1084 )
         $tablaPromedioDiaSemana.="<tr class='".
-                (((date("N")+1==$rowPromedioDiaSemana['diaSemana'])||(date("N")==0))?'label-warning':'').
+                (((date("N")==$rowPromedioDiaSemana['diaSemana'])||(date("N")==0))?'label-warning':'').
                 "'><td>".$date2[$rowPromedioDiaSemana['diaSemana']]
                 ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2068'])
                 ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2069'])
@@ -373,7 +382,7 @@ while($rowDespachosDesdeUltimoCierre = sqlsrv_fetch_array($stmt)){
 
 // Obtengo descargas de YPF efectuadas en el día
 $sqlDespachosCALDEN = "SELECT IdTanque, IdArticulo, Descarga FROM dbo.CierresDetalleTanques WHERE Descarga>0 AND IdCierreTurno IN (SELECT idCierreTurno FROM  dbo.CierresTurno WHERE Fecha>='".date("Y-m-d")."')";
-$sqlDespachosCALDEN = "SELECT IdTanque, IdArticulo, Descarga FROM dbo.CierresDetalleTanques WHERE Descarga>0 AND IdCierreTurno IN (SELECT idCierreTurno FROM  dbo.CierresTurno WHERE Fecha>='".date("Y-d-m")."')";
+//$sqlDespachosCALDEN = "SELECT IdTanque, IdArticulo, Descarga FROM dbo.CierresDetalleTanques WHERE Descarga>0 AND IdCierreTurno IN (SELECT idCierreTurno FROM  dbo.CierresTurno WHERE Fecha>='".date("Y-d-m")."')";
 $stmt = odbc_exec2($mssql, $sqlDespachosCALDEN, __LINE__, __FILE__);
 // verifico si hubo descargas en Calden, si las hubo las cotejo contra las OP cargadas en mysql, si no las hubo reviso si hay alguna descarga en mysql en este día para incorporarlas
 while($descarga = sqlsrv_fetch_array($stmt)){
@@ -405,10 +414,6 @@ if( $stmt === false ){
 while($tanque = sqlsrv_fetch_array($stmt)){
   $sqlTelemedicion = "SELECT TOP 1 Litros, NivelAgua, Nivel from dbo.tanquesmediciones WHERE idTanque=$tanque[IdTanque] ORDER BY LastUpdated DESC";
   $stmtTelemedicion = odbc_exec2($mssql, $sqlTelemedicion);
-  if( $stmt === false ){
-        echo "Error in executing query.</br>";
-        die( print_r( sqlsrv_errors(), true));
-  }
   $telemedido[$tanque['IdTanque']] = sqlsrv_fetch_array($stmtTelemedicion);
   $stockActual = $telemedido[$tanque['IdTanque']]['Litros'];
   if(in_array($tanque['IdTanque'], $CFG->tanquesATomarMilimetrosDesdeTablas)){
@@ -531,24 +536,20 @@ if(!isset($_SESSION['despachosHorariosHistoricos'])){
   // saca promedio general desde el día 0 hasta hoy
   // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora; 
   $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()) as q from dbo.Despachos group by datepart(HOUR, Fecha) order by hora;"; 
-  $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos);
-  if( $stmt === false ){
-    echo "Error in executing query. $sqlDespachosHorariosHistoricos</br>";
-    die( print_r( sqlsrv_errors(), true));
-  }
+  $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos, __FILE__, __LINE__);
+
   $despachosHorariosHistoricos = array();
   while($row = sqlsrv_fetch_array($stmt)){
+    if($row['hora']>5)
     $despachosHorariosHistoricos[$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosHistoricos']=$despachosHorariosHistoricos;
   $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'2011-10-12',getdate()) as q from dbo.Despachos group by datepart(HOUR, Fecha) order by hora;";
-  $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos);
-  if( $stmt === false ){
-    echo "Error in executing query. $sqlLitrosHorariosHistoricos</br>";
-    die( print_r( sqlsrv_errors(), true));
-  }
+  $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos, __FILE__, __LINE__);
+
   $litrosHorariosHistoricos = array();
   while($row = sqlsrv_fetch_array($stmt)){
+    if($row['hora']>5)
     $litrosHorariosHistoricos[$row['hora']] = round($row['q'],1);
   }
   $_SESSION['litrosHorariosHistoricos']=$litrosHorariosHistoricos;
@@ -558,24 +559,20 @@ if(!isset($_SESSION['despachosHorariosHistoricosDiarios'][date('w')])){
   // saca promedio general desde el día 0 hasta hoy
   // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora; 
   $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, (count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()))*7 as q from dbo.Despachos WHERE DATEPART(dw,Fecha)=".(date('w')+1)." group by datepart(HOUR, Fecha) order by hora;"; 
-  $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos);
-  if( $stmt === false ){
-    echo "Error in executing query. $sqlDespachosHorariosHistoricos</br>";
-    die( print_r( sqlsrv_errors(), true));
-  }
+  $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos, __FILE__, __LINE__);
+
   $despachosHorariosHistoricos = array();
   while($row = sqlsrv_fetch_array($stmt)){
+    if($row['hora']>5)
     $despachosHorariosHistoricos[date('w')][$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosHistoricosDiarios']=$despachosHorariosHistoricos;
   $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'2011-10-12',getdate())*7 as q from dbo.Despachos WHERE DATEPART(dw,Fecha)=".(date('w')+1)." group by datepart(HOUR, Fecha) order by hora;";
-  $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos);
-  if( $stmt === false ){
-    echo "Error in executing query. $sqlLitrosHorariosHistoricos</br>";
-    die( print_r( sqlsrv_errors(), true));
-  }
+  $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos, __FILE__, __LINE__);
+
   $litrosHorariosHistoricos = array();
   while($row = sqlsrv_fetch_array($stmt)){
+    if($row['hora']>5)
     $litrosHorariosHistoricos[date('w')][$row['hora']] = round($row['q'],1);
   }
   $_SESSION['litrosHorariosHistoricosDiarios']=$litrosHorariosHistoricos;
@@ -587,12 +584,10 @@ if(!isset($_SESSION['despachosHorariosHistoricosDiarios'][date('w')])){
 // despachos por hora
 $sqlDespachosHorariosActuales = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha)) as q from dbo.Despachos where CONVERT(date, Fecha)=CONVERT(date, Getdate()) group by datepart(HOUR, Fecha) order by hora;";
 
-$stmt = odbc_exec2($mssql, $sqlDespachosHorariosActuales);
-if( $stmt === false ){
-  echo "Error in executing query. $sqlDespachosHorariosActuales</br>";
-  die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2($mssql, $sqlDespachosHorariosActuales, __FILE__, __LINE__);
+
 while($row = sqlsrv_fetch_array($stmt)){
+  if($row['hora']>5)
   $despachosHorariosActuales[$row['hora']]=$row['q'];
 }
 @fb($despachosHorariosActuales);
@@ -611,12 +606,10 @@ $maximo = max($max1, $max2)+10;
 // litros por hora
 $sqlLitrosHorariosActuales = "select datepart(HOUR, Fecha) as hora, sum(Cantidad) as q from dbo.Despachos where CONVERT(date, Fecha)=CONVERT(date, Getdate()) group by datepart(HOUR, Fecha) order by hora;";
 
-$stmt = odbc_exec2($mssql, $sqlLitrosHorariosActuales);
-if( $stmt === false ){
-  echo "Error in executing query. $sqlLitrosHorariosActuales</br>";
-  die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2($mssql, $sqlLitrosHorariosActuales, __FILE__, __LINE__);
+
 while($row = sqlsrv_fetch_array($stmt)){
+  if($row['hora']>5)
   $litrosHorariosActuales[$row['hora']]=round($row['q'],1);
 }
 //fb($litrosHorariosActuales);
@@ -631,14 +624,11 @@ $max2 = max($litrosHorariosActuales);
 $maximo2 = max($max1, $max2)+100;
 
 
-$sql="SELECT sum( ns ) , sum( np ) , sum( ud ) , sum( ed ) FROM `ventasdiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) AND MONTH( fecha ) = MONTH( CURDATE( ) ) ";
+$sql="SELECT sum( ns ) , sum( np ) , sum( ud ) , sum( ed ) FROM `ventasDiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) AND MONTH( fecha ) = MONTH( CURDATE( ) ) ";
 
 $sqlMangueras = "SELECT idManguera, IdArticulo FROM dbo.mangueras";
-$stmt = odbc_exec2($mssql, $sqlMangueras);
-if( $stmt === false ){
-	 echo "Error in executing query.</br>";
-	 die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2($mssql, $sqlMangueras, __FILE__, __LINE__);
+
 $mangueras = array();
 while($manguera = sqlsrv_fetch_array($stmt)){
     $mangueras[$manguera['idManguera']] = $manguera['IdArticulo'];
@@ -649,19 +639,15 @@ while($manguera = sqlsrv_fetch_array($stmt)){
 $year = date("Y");
 
 
-$ultimoDiaMesAnterior = date('Y-d-m', strtotime('last day of previous month'));
-$ultimoCierre22 = (date('H')>22)?date('Y-m-d'):date('Y-d-m', strtotime('yesterday'));
+$ultimoDiaMesAnterior = date('Y-m-d', strtotime('last day of previous month'));
+$ultimoCierre22 = (date('H')>22)?date('Y-m-d'):date('Y-m-d', strtotime('yesterday'));
 
 $sqlAforadoresAlUltimoTurnoMesAnterior = "select IdManguera, AforadorElectronico, AforadorMecanico, d.IdCierreSurtidores, Fecha from dbo.CierresDetalleSurtidores as d, dbo.cierressurtidores as s where d.IdCierreSurtidores=s.IdCierreSurtidores AND d.IdCierreSurtidores=(select IdCierreSurtidores from dbo.CierresSurtidores where Fecha>='$ultimoDiaMesAnterior 19:00:00' and Fecha<'$ultimoDiaMesAnterior 23:59:59') UNION select IdManguera, AforadorElectronico, AforadorMecanico, d.IdCierreSurtidores, Fecha from dbo.CierresDetalleSurtidores as d, dbo.cierressurtidores as s where d.IdCierreSurtidores=s.IdCierreSurtidores AND d.IdCierreSurtidores=(select IdCierreSurtidores from dbo.CierresSurtidores where Fecha>='$ultimoCierre22 19:00:00' and Fecha<'$ultimoCierre22 23:59:59') order by IdCierreSurtidores desc";
 
 
 //$sqlAforadoresAlUltimoTurnoMesAnterior = "select IdManguera, AforadorElectronico, AforadorMecanico, IdCierreSurtidores from dbo.CierresDetalleSurtidores where IdCierreSurtidores=(select top 1 IdCierreSurtidores from dbo.CierresSurtidores where Fecha<'".date("Y-m-01")."' order by Fecha desc) OR IdCierreSurtidores=(select top 1 IdCierreSurtidores from dbo.CierresSurtidores order by Fecha desc)  order by IdCierreDetalleSurtidores desc";
 // echo $sqlAforadoresAlUltimoTurnoMesAnterior;
-$stmt = odbc_exec2($mssql, $sqlAforadoresAlUltimoTurnoMesAnterior);
-if( $stmt === false ){
-	 echo "Error in executing query.</br>";
-	 die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2($mssql, $sqlAforadoresAlUltimoTurnoMesAnterior, __LINE__, __FILE__);
 $signo = 1;
 $sumaProductoElectronico = Array();
 $sumaProductoMecanico = array();
@@ -681,7 +667,7 @@ while($aforadores = sqlsrv_fetch_array($stmt)){
     }
     if(!isset($ultimoCierreAyer))$ultimoCierreAyer = $aforadores['Fecha'];
 }
-$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-d-m H:i:s')."' group by IdArticulo; ";
+$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-m-d H:i:s')."' group by IdArticulo; ";
 //$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer."' group by IdArticulo; ";
 //fb($sqlVentasDesdeAyer);
 //echo $sqlVentasDesdeUltimoCierre;
@@ -693,7 +679,7 @@ while($ventasDesdeUltimoCierre = sqlsrv_fetch_array($stmt)){
 }
 
 
-$sqlVentasMensuales = "SELECT month(fecha) as mes,  sum( ns ) as l2078, sum( np ) as l2076, sum( ud ) as l2069, sum( ed ) as l2068, year(fecha) as anio FROM `ventasdiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR (YEAR(fecha)=YEAR(CURDATE())-1 AND MONTH(fecha)>=MONTH(CURDATE())-1) group by year(fecha),month(fecha)";
+$sqlVentasMensuales = "SELECT month(fecha) as mes,  sum( ns ) as l2078, sum( np ) as l2076, sum( ud ) as l2069, sum( ed ) as l2068, year(fecha) as anio FROM `ventasDiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR (YEAR(fecha)=YEAR(CURDATE())-1 AND MONTH(fecha)>=MONTH(CURDATE())-1) group by year(fecha),month(fecha)";
 $result = $mysqli->query($sqlVentasMensuales);
 if($result&&$result->num_rows>0 ){//&& !$_SESSION['esMovil']
     $tablaVentasMensuales="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th><th>Total</th></tr></thead><tbody>";
@@ -995,9 +981,9 @@ function muestraProyeccion(){
 		<div class="row">
             <div class='col-md-5'>
                 <div class="panel panel-primary" id='combustibles'>
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Combustibles <?php echo date("d/m/y H:i:s")?></span></h3>
-                                  </div>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Combustibles <?php echo date("d/m/y H:i:s")?></span></h3>
+                      </div>
                      <div class="panel-body">
                         <table class='table'><thead><tr><th></th><th>Ventas</th><th>Actual</th><th>Lleno</th><th>Vacío</th></tr></thead>
                         <tbody>
@@ -1145,8 +1131,10 @@ function muestraProyeccion(){
                 name: "Histórico", 
                 dataPoints: [
                 <?php foreach($_SESSION['despachosHorariosHistoricos'] as $hora => $despachos){
+                  if($hora>5){
                   if(isset($coma1))echo","; else $coma1=1;
                   echo "{ x: $hora, y: $despachos }";
+                  }
                 }?>
                 ]
               },
@@ -1158,8 +1146,10 @@ function muestraProyeccion(){
                 axisYType:"secondary",
                 dataPoints: [
                 <?php foreach($despachosHorariosActuales as $hora => $despachos){
+                  if($hora>5){
                   if(isset($coma2))echo","; else $coma2=1;
                   echo "{ x: $hora, y: $despachos }";
+                  }
                 }?>
                 ]
               },
@@ -1171,8 +1161,10 @@ function muestraProyeccion(){
                 axisYType:"secondary",
                 dataPoints: [
                 <?php foreach($_SESSION['despachosHorariosHistoricosDiarios'][date('w')] as $hora => $despachos){
+                  if($hora>5){
                   if(isset($coma5))echo","; else $coma5=1;
                   echo "{ x: $hora, y: $despachos }";
+                  }
                 }?>
                 ]
               }

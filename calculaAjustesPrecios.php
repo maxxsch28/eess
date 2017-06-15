@@ -1,27 +1,23 @@
 <?php
 $nivelRequerido = 5;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-
 // prepara array clientes con movimientos en cuenta en los últimos 2 años
-if(!isset($_SESSION['clientesCuentaCorriente'])||1){
+if(!isset($_SESSION['clientesCuentaCorriente'])){
   unset($_SESSION['clientesCuentaCorriente']);
   $sql = "SELECT IdCliente, RazonSocial, Identificador FROM dbo.Clientes WHERE IdCondicionVenta=2 AND Activo=1 AND (IdCliente IN (SELECT IdCliente FROM dbo.movimientosCta WHERE Fecha>'2015-01-01' GROUP BY IdCliente) OR IdClienteAsociado IN (SELECT IdCliente FROM dbo.movimientosCta WHERE Fecha>'2015-01-01' GROUP BY IdCliente)) AND Identificador NOT LIKE ('%ORDEN%') ORDER BY RazonSocial ASC";
   $stmt = odbc_exec2( $mssql, $sql, __LINE__, __FILE__);
-  while($rowRemito = odbc_fetch_array($stmt)){
+  while($rowRemito = sqlsrv_fetch_array($stmt)){
     $_SESSION['clientesCuentaCorriente'][$rowRemito['IdCliente']] = $rowRemito;
   }
 }
-
-
+$titulo = "Calcula ajustes de precios";
 ?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Calcula ajustes de precios</title>
     <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
-      
       body {
         padding-top: 60px;
         padding-bottom: 40px;

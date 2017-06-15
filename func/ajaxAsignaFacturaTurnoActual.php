@@ -8,13 +8,9 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //IdMovimientoFac=' + IdMovimientoFac
 if(isset($_GET['IdMovimientoFac'])&&is_numeric($_GET['IdMovimientoFac'])){
   // actualizo base
-  $sql = "UPDATE dbo.movimientosDetalleFac SET ExcluidoDeTurno=0 WHERE IdMovimientoFac=$_GET[IdMovimientoFac]";
-
-  $stmt = odbc_exec( $mssql, $sql);
-  if( $stmt === false ){
-      echo "1. Error in executing query.</br>$sql<br/>";
-      die( print_r( sqlsrv_errors(), true));
-  }
+  $sql = "UPDATE dbo.movimientosDetalleFac SET ExcluidoDeTurno=0, IdCierreTurno = NULL WHERE IdMovimientoFac=$_GET[IdMovimientoFac]";
+  fb($sql);
+  $stmt = odbc_exec2( $mssql, $sql, __LINE__, __FILE__);
   echo "ok";
 }
 

@@ -9,12 +9,10 @@ $offset=0;
 
 $sqlFactura = "select * from dbo.MovimientosFac where puntoVenta=$_POST[prefijo] and numero=$_POST[numero];";
 
-$stmt = odbc_exec( $mssql, $sqlFactura);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlFactura<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
-$facturaTotal = odbc_fetch_array($stmt);
+$stmt = odbc_exec2( $mssql, $sqlFactura, __LINE__, __FILE__);
+
+
+$facturaTotal = sqlsrv_fetch_array($stmt);
 $importeRastrear = round($facturaTotal['Total'] - $_POST['importe'],2);
 if($importeRastrear==0){
     $fecha=true;
@@ -32,13 +30,10 @@ echo $sqlMovimientos;
 //echo $sqlFactura;
 
 
-$stmt = odbc_exec( $mssql, $sqlMovimientos);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlMovimientos<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2( $mssql, $sqlMovimientos, __LINE__, __FILE__);
+
 echo "<tbody class='turno'>";
-while($rowImporte = odbc_fetch_array($stmt)){
+while($rowImporte = sqlsrv_fetch_array($stmt)){
     //print_r($rowImporte); 
 	$fecha = date_format($rowImporte['Fecha'], "d/m/Y H:i:s");
 	
@@ -48,12 +43,8 @@ while($rowImporte = odbc_fetch_array($stmt)){
     if($rowImporte['IdTipoMovimiento']=='REC'){
         // muestra número de recibo
         $sqlRecibo = "select * from dbo.Recibos where IdRecibo=$rowImporte[IdRecibo];";
-        $stmt = odbc_exec( $mssql, $sqlRecibo);
-        if( $stmt === false ){
-             echo "1. Error in executing query.</br>$sqlRecibo<br/>";
-             die( print_r( sqlsrv_errors(), true));
-        }
-        $rowRecibo = odbc_fetch_array($stmt);
+        $stmt = odbc_exec2( $mssql, $sqlRecibo, __LINE__, __FILE__);
+        $rowRecibo = sqlsrv_fetch_array($stmt);
         echo "<tr class='fila'><td class='cuentaD' colspan=3>Recibo $rowRecibo[PuntoVenta] - $rowRecibo[Numero]</td></tr>";
         //echo $sqlRecibo;
     }

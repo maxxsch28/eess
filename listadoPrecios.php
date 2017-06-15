@@ -5,20 +5,20 @@ $titulo = "Listado de precios para góndolas";
 
 if(!isset($_SESSION['selectGrupos'])){
   $sqlGrupos = "select dbo.GruposArticulos.IdGrupoArticulo, dbo.GruposArticulos.Descripcion, count(IdArticulo) as q from dbo.GruposArticulos, dbo.Articulos WHERE dbo.GruposArticulos.activo=1 AND dbo.Articulos.activo=1 AND dbo.GruposArticulos.IdGrupoArticulo=dbo.Articulos.IdGrupoArticulo GROUP BY dbo.GruposArticulos.IdGrupoArticulo, dbo.GruposArticulos.Descripcion ORDER BY dbo.GruposArticulos.Descripcion;";
-  $stmt = odbc_exec( $mssql, $sqlGrupos);
+  $stmt = odbc_exec2($mssql, $sqlGrupos, __LINE__, __FILE__);
   $_SESSION['selectGrupos'] = '';
-  while($rowCuentas = odbc_fetch_array($stmt)){
+  while($rowCuentas = sqlsrv_fetch_array($stmt)){
     if($rowCuentas['q']>1&&substr($rowCuentas['Descripcion'],0,2)<>"Z "){
     $_SESSION['selectGrupos'].="<option value='$rowCuentas[IdGrupoArticulo]'>$rowCuentas[Descripcion] ($rowCuentas[q])</option>";}
   }
 }
 
 
-if(!isset($_SESSION['selectUbicacion'])||1){
+if(!isset($_SESSION['selectUbicacion'])){
   $sqlGrupos = "select Ubicacion, count(idArticulo) as q from dbo.articulos where Ubicacion<>'' AND Ubicacion<>'0' AND Activo=1 GROUP BY Ubicacion ORDER BY Ubicacion;";
-  $stmt = odbc_exec( $mssql, $sqlGrupos);
+  $stmt = odbc_exec2($mssql, $sqlGrupos, __LINE__, __FILE__);
   $_SESSION['selectUbicacion'] = '';
-  while($rowCuentas = odbc_fetch_array($stmt)){
+  while($rowCuentas = sqlsrv_fetch_array($stmt)){
     if($rowCuentas['q']>1&&strlen(trim($rowCuentas['Ubicacion']))>3){
     $_SESSION['selectUbicacion'].="<option value='$rowCuentas[Ubicacion]'>$rowCuentas[Ubicacion] ($rowCuentas[q])</option>";}
   }

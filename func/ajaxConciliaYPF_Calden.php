@@ -11,10 +11,10 @@ $andFecha=(isset($_REQUEST['rangoInicio']))?" AND femision>='$_REQUEST[rangoInic
 $andConciliado = (isset($_POST['conciliado']))?" AND conciliado=1":"";
 if(!isset($_POST['anio'])){
   $inicio = '2016-01-01';
-  $fin = "2016-31-12";
+  $fin = "2017-12-31";
 } else {
   $inicio = $_POST['anio'].'-01-01';
-  $fin = $_POST['anio']."-31-12";
+  $fin = $_POST['anio']."-12-31";
 }
 
 $sqlCalden = "select m.IdMovimientoPro as id, Fecha, IdTipoMovimientoProveedor as Tipo, PuntoVenta as pv, Numero, Total, Total as PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado from dbo.movimientospro as m where IdProveedor=4 and m.fecha>='$inicio' and m.fecha<='$fin' UNION select IdOrdenPago as id, Fecha, 'OP' as Tipo, Prefijo as pv, Numero, TotalAPagar as Total, PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado from dbo.OrdenesPago where idproveedor=4 and fecha>='$inicio' and fecha<='$fin' UNION select IdChequeTercero as id, o.Fecha, 'Cheque' as Tipo, IdBanco as pv, o.Numero, Importe as Total, Importe as PagoEfectivo, ReemplazaRechazado, Rechazado from dbo.ChequesTerceros as c, dbo.OrdenesPago as o WHERE o.IdProveedor=4 AND c.IdOrdenPago=o.IdOrdenPago AND o.Fecha>='$inicio' AND o.Fecha<='$fin' UNION select IdTransferenciaBancaria as id, t.Fecha, 'Banco' as Tipo, IdCuentaBancaria as pv, o.Numero, Importe as Total, Importe as PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado from dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor=4 AND o.IdOrdenPago=t.IdOrdenPago AND o.Fecha>='$inicio' AND o.Fecha<='$fin' ORDER BY Fecha ASC;";
@@ -28,20 +28,31 @@ $tabla = "";$a=0;$q=0;
 echo "<tbody>";
 while($rowCalden = sqlsrv_fetch_array($stmt)){
   $rowCalden['Tipo']=trim($rowCalden['Tipo']);
+  $rowCalden['MuestraTipo']=$rowCalden['Tipo'];
   if(trim($rowCalden['Tipo'])=='OP'&&$rowCalden['PagoEfectivo']==0){
     
     // no hago nada.
   } else {
-    $clase = ($rowCalden['Tipo']=='OP'||$rowCalden['Tipo']=='Cheque'||$rowCalden['Tipo']=='Banco'||$rowCalden['Tipo']=='AJU')?"success":'danger';
-    if($rowCalden['Tipo']=='AJU')$rowCalden['Tipo']='AV';
+    $clase = ($rowCalden['Tipo']=='OP'||$rowCalden['Tipo']=='Cheque'||$rowCalden['Tipo']=='Banco'||$rowCalden['Tipo']=='AJU'||$rowCalden['Tipo']=='AJU'||$rowCalden['Tipo']=='VP')?"success":'danger';
+    
+    $negativo = ($rowCalden['Tipo']=='OP'||$rowCalden['Tipo']=='Cheque'||$rowCalden['Tipo']=='Banco'||$rowCalden['Tipo']=='AJU')?'':'neg';
+    if($rowCalden['Tipo']=='AJU'||$rowCalden['Tipo']=='AJN')$rowCalden['Tipo']='AV';
+    if($rowCalden['Tipo']=='VP'){
+      $rowCalden['Tipo']='RV';
+    }/* elseif($rowCalden['Tipo']=='NDI'){
+      $rowCalden['Tipo']='faa';
+    }*/
     if($rowCalden['Tipo']=='Banco'){
       // muestro que banco es
-      if($rowCalden['pv']==1){
+      if($rowCalden['pv']==1||$rowCalden['pv']==5||$rowCalden['pv']==16){
         // epago
         $rowCalden['Tipo']='ePago';
       } elseif($rowCalden['pv']==13){
         // visa
         $rowCalden['Tipo']='Visa';
+      } elseif($rowCalden['pv']==16){
+        // visa
+        $rowCalden['Tipo']='Banco';
       } 
     }
     if(trim($rowCalden['Tipo'])=='RV'){
@@ -49,27 +60,29 @@ while($rowCalden = sqlsrv_fetch_array($stmt)){
       $rowCalden['Numero'] = sprintf('%06d', $rowCalden['Numero']);
     }
     // busco si está conciliado o no
-    $sqlConciliacion = "SELECT * FROM conciliacion WHERE idCalden=$rowCalden[id] AND tipoCalden in ('".strtolower($rowCalden['Tipo'])."','banco')";
-    if($rowCalden['id']==13139){
+    $sqlConciliacion = "SELECT * FROM conciliacion WHERE idCalden=$rowCalden[id] AND (tipoCalden in ('".strtolower($rowCalden['Tipo'])."','banco','visa') OR (tipoCalden='op' AND auto=0) OR (tipoCalden='av' AND auto=0) OR (tipoCalden='VP'))";
+    if($rowCalden['id']==21763){
+      fb($sqlConciliacion);
       fb($rowCalden);
-      print_r($rowCalden);
+      //print_r($rowCalden);
     }
     $result3 = $mysqli3->query($sqlConciliacion);
     $rowConciliado = $result3->fetch_assoc();
     //fb($rowConciliado);
+    $cuantos++;
     if($rowConciliado['idConciliado']==0){
       // aun no conciliado
       $classConciliado='noConciliado2';
       $clase=(isset($_POST['soloNoConciliado'])&&$rowConciliado['idConciliado']<>0)?'info':$clase;
-      $tdConciliado = "<td class=''><input type='checkbox' name='idcalden[]' value='$rowCalden[id]' class='calden' rel='$rowCalden[PagoEfectivo]'/> $rowCalden[id]</td>";
+      $tdConciliado = "<td class=''>$cuantos<input type='checkbox' name='idcalden[]' value='$rowCalden[id]' class='calden $negativo' rel='$rowCalden[PagoEfectivo]'/> $rowCalden[id]</td>";
     } else {
       $classConciliado="conciliado_$rowConciliado[idConciliado]";
       $tdConciliado = "<td class='m$rowConciliado[idConciliado]'><span class='label label-info mConciliado'>$rowConciliado[idConciliado]</label></td>";
     }
     if(isset($_POST['soloNoConciliado'])&&$rowConciliado['idConciliado']<>0){
-
+      $cuantos--;
     } else {
-      echo "<tr class='alert alert-$clase $classConciliado' id='calden_$rowCalden[id]'>$tdConciliado<td>".fecha($rowCalden['Fecha'])."</td><td>$rowCalden[Tipo]</td><td>$rowCalden[pv] $rowCalden[Numero]</td><td id='i$rowCalden[id]'>$".number_format($rowCalden['PagoEfectivo'], 2, ",", ".")."</td><td>$rowCalden[Rechazado]</td></tr>";
+      echo "<tr class='alert alert-$clase $classConciliado' id='calden_$rowCalden[id]'>$tdConciliado<td>".fecha($rowCalden['Fecha'])."</td><td>$rowCalden[MuestraTipo]</td><td>$rowCalden[pv] $rowCalden[Numero]</td><td id='i$rowCalden[id]'>$".number_format($rowCalden['PagoEfectivo'], 2, ",", ".")."</td><td>".(($rowCalden['Rechazado'])?'Rech':'')."</td></tr>";
     }            
   }
 }

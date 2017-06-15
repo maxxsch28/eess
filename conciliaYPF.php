@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-$titulo = "Conciliar Cuenta Corriente YPF - CaldenOil";
+$titulo = "Conciliar Cuenta Corriente YPF - CaldenOil (conciliatutti)";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -115,8 +115,14 @@ $titulo = "Conciliar Cuenta Corriente YPF - CaldenOil";
       function recalculate(){
           var sum = 0;
           $("input[type=checkbox]:checked.calden").each(function(){
-            sum += parseFloat($(this).attr("rel"));
+          if($(this).attr('class')=='calden neg'){
+              var resta=-1;
+            } else {
+              var resta=1;
+            }
+            sum += resta * parseFloat($(this).attr("rel"));
           });
+          var sum = sum.toFixed(2);
           $('#sumaCalden').html(sum);
           if($('#sumaYPF').html()!=$('#sumaCalden').html()){
             $('#enviar').addClass('disabled1');
@@ -127,8 +133,14 @@ $titulo = "Conciliar Cuenta Corriente YPF - CaldenOil";
       function recalculate2(){
           var sum = 0;
           $("input[type=checkbox]:checked.ypf").each(function(){
-            sum += parseFloat($(this).attr("rel"));
+            if($(this).attr('class')=='ypf neg'){
+              var resta=-1;
+            } else {
+              var resta=1;
+            }
+            sum += resta * parseFloat($(this).attr("rel"));
           });
+          var sum = sum.toFixed(2);
           $('#sumaYPF').html(sum);
           if($('#sumaYPF').html()!=$('#sumaCalden').html()){
             $('#enviar').addClass('disabled1');

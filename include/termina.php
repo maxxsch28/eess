@@ -1,5 +1,4 @@
 <?php
-
 // termina
 /* Free statement and connection resources. */
 if(isset($stmt)){
@@ -25,3 +24,5 @@ $mysqli->close();
 <script src="js/bootstrap-switch.js"></script>
 <script src="js/bootstrap-datepicker.js"></script>
 <script src="js/bootstrap-datepicker.es.js"></script>
+<script src="js/jquery.ui.position.min.js"></script>
+<script src="js/jquery.contextMenu.min.js"></script>

@@ -13,8 +13,8 @@ if(!isset($_SESSION['empleados'])){
   $_SESSION['empleados']=$rr;
 }
 
-$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='".fecha($_REQUEST['rangoInicio'], 'sql')."' AND Fecha<='".fecha($_REQUEST['rangoFin'], 'sql')." 23:59:59'":'';
-$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='".($_REQUEST['rangoInicio'])."' AND Fecha<='".($_REQUEST['rangoFin'])." 23:59:59'":'';
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='20".fecha($_REQUEST['rangoInicio'], 'sql')."' AND Fecha<='20".fecha($_REQUEST['rangoFin'], 'sql')." 23:59:59'":'';
+//$andFecha=(isset($_REQUEST['rangoInicio']))?" AND Fecha>='".($_REQUEST['rangoInicio'])."' AND Fecha<='".($_REQUEST['rangoFin'])." 23:59:59'":'';
 if(isset($_REQUEST['mes'])&&$_REQUEST['mes']<>''){
   $mesFin= date("Y-m-t", strtotime($_REQUEST['mes']));
   $andFecha=" AND Fecha>='$_REQUEST[mes]' AND Fecha<='$mesFin'";
@@ -48,7 +48,7 @@ if(is_array($_REQUEST['idCierreCajaTesoreria'])&&$_REQUEST['idCierreCajaTesoreri
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno NOT IN (SELECT idCierreTurno FROM dbo.Table_1 where IdCierreTurno IS NOT NULL);";
 
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno IN (SELECT idCierreTurno FROM dbo.Table_1 where IdCierreCajaTesoreria IS NULL);";
-$stmt0 = odbc_exec2( $mssql, $sqlTurnos0, __LINE__, __FILE__);
+$stmt0 = odbc_exec2($mssql, $sqlTurnos0, __LINE__, __FILE__);
 //fb($sqlTurnos0);
 while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
   //fb($rowTurnos0);var_dump($rowTurnos0);

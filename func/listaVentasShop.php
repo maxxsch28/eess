@@ -71,15 +71,15 @@ while($rowVentas = odbc_fetch_array($stmt)){
   /*IdCierreTurno	Fecha	                  IdEmpleado1	IdEmpleado2	IdEmpleado3	sumaTurno
     7688	        2015-11-29 22:49:20.000	   NULL	           15	             29	         3705.00000000*/
   if($rowVentas['IdEmpleado1']>0){
-    $empleado[$rowVentas['IdEmpleado1']][$mes]]+=$rowVentas['sumaTurno']/2;
+    $empleado[$rowVentas['IdEmpleado1']][$mes]+=$rowVentas['sumaTurno']/2;
     $empleado[$rowVentas['IdEmpleado1']]['cantidadTurnos']++;
   }
   if($rowVentas['IdEmpleado2']>0){
-    $empleado[$rowVentas['IdEmpleado3']][$mes]]+=$rowVentas['sumaTurno']/2;
+    $empleado[$rowVentas['IdEmpleado3']][$mes]+=$rowVentas['sumaTurno']/2;
     $empleado[$rowVentas['IdEmpleado2']]['cantidadTurnos']++;
   }
   if($rowVentas['IdEmpleado3']>0){
-    $empleado[$rowVentas['IdEmpleado3']][$mes]]+=$rowVentas['sumaTurno']/2;
+    $empleado[$rowVentas['IdEmpleado3']][$mes]+=$rowVentas['sumaTurno']/2;
     $empleado[$rowVentas['IdEmpleado3']]['cantidadTurnos']++;
   }
   $sumaTotal += $rowVentas['sumaTurno']/2;

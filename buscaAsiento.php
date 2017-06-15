@@ -2,15 +2,18 @@
 //xdebug_disable();
 $nivelRequerido = 5;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-$titulo="Busca asiento 2.0";
+$titulo="Busca asiento 2.2";
+$changelog = "2.2: Toma valores negativos o formateados con coma como separador decimal.";
+
 $ambito['activo']['eess'] = $ambito['activo']['transporte'] = $ambito['activo']['integral'] = "";
 $ambito['checked']['eess'] = $ambito['checked']['transporte'] = $ambito['checked']['integral'] = "";
 if(isset($_GET['id'])&&is_numeric($_GET['id'])){
-  $sqlBusqueda = "SELECT * FROM tmpbuscaasientos WHERE id=$_GET[id]";
+  $sqlBusqueda = "SELECT * FROM tmpBuscaAsientos WHERE id=$_GET[id]";
   //fb($sqlBusqueda);
   $result = $mysqli->query($sqlBusqueda);
   if($result){
-    $mysqli->query("UPDATE tmpbuscaasientos SET cantidadusos=cantidadusos+1 WHERE id=$_GET[id]");
+    $mysqli->query("UPDATE tmpBuscaAsientos SET cantidadusos=cantidadusos+1 WHERE id=$_GET[id]");
+    fb("UPDATE tmpBuscaAsientos SET cantidadusos=cantidadusos+1 WHERE id=$_GET[id]");
     $rowHistorico = $result->fetch_assoc();
     $ambito['activo'][$rowHistorico['ambito']] = " active";
     $ambito['checked'][$rowHistorico['ambito']] = " checked";
@@ -52,7 +55,7 @@ if((!isset($_SESSION['cuentasContablesTransporte'])||(isset($rowHistorico['cuent
   /*if(isset($rowHistorico)){
     fb("SELECT orden, nombre FROM [sqlcoop_dbshared].[dbo].[plancuen] WHERE imputable='S' AND orden=$rowHistorico[cuentaTransporte] ORDER BY Nombre;");
   }*/
-  while($rowCuentas = odbc_fetch_array($stmt)){
+  while($rowCuentas = sqlsrv_fetch_array($stmt)){
     $selectedTransporte = (isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']==trim($rowCuentas['orden']))?" selected='selected'":"";
     $_SESSION['cuentasContablesTransporte'].="<option value='".trim($rowCuentas['orden'])."'$selectedTransporte>".utf8_encode($rowCuentas['nombre'])."</option>";
     /*if((isset($rowHistorico['cuentaTransporte'])&&$rowHistorico['cuentaTransporte']==trim($rowCuentas['orden']))){
@@ -65,11 +68,11 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
   $sqlCuentas = "SELECT IdCuentaContable, Descripcion FROM dbo.CuentasContables WHERE Imputable=1 ORDER BY Descripcion;";
   $stmt = odbc_exec2( $mssql, $sqlCuentas, __LINE__, __FILE__);
   $_SESSION['cuentasContables']='';
-  while($rowCuentas = odbc_fetch_array($stmt)){
+  while($rowCuentas = sqlsrv_fetch_array($stmt)){
     $selectedEESS = (isset($rowHistorico['cuentaEESS'])&&$rowHistorico['cuentaEESS']==$rowCuentas['IdCuentaContable'])?" selected='selected'":"";
     $_SESSION['cuentasContables'].="<option value='$rowCuentas[IdCuentaContable]'$selectedEESS>$rowCuentas[Descripcion]</option>";
   }
-}
+} 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -81,6 +84,7 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
     width:1400px;
   }
   </style>
+  <link rel="stylesheet" href="css/jquery.contextMenu.min.css">
 </head>
 <body>
 <?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
@@ -107,7 +111,7 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
             <div class="form-group" id='rop'> 
               <div class="controls">
                 <div class="input-group">
-                  <input type='text' name='importe' id='importe' class="input-sm form-control col-md-5" pattern="[0-9\.]{1,}" maxlength="12" data-plus-as-tab='true' plasceholder='Importe' <?php if(isset($rowHistorico)&&$rowHistorico['importe']<>0){echo "value='$rowHistorico[importe]'";}?>/><span class="input-group-addon" id='errorFactura'>$</span>
+                  <input type='text' name='importe' id='importe' class="input-sm form-control col-md-5" pattern="-?[0-9\.]{1,}" maxlength="12" data-plus-as-tab='true' plasceholder='Importe' <?php if(isset($rowHistorico)&&$rowHistorico['importe']<>0){echo "value='$rowHistorico[importe]'";}?>/><span class="input-group-addon" id='errorFactura'>$</span>
                 </div>
               </div>
             </div>
@@ -247,6 +251,12 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
 <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 <script>
   $(document).ready(function() {
+    $('#importe').change(function(){
+      var numero = $(this).val();
+      numero = coma(numero);
+      $('#importe').val(numero);
+    });
+    
     $('#rangoInicio').datepicker();
     $('#rangoFin').datepicker();
     $('#fuzzy').click(function() {
@@ -305,6 +315,7 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
         $('#ladoDerecho').addClass('col-md-6');
         $('#ladoIzquierdo').removeClass('col-md-4');
         $('#ladoIzquierdo').addClass('col-md-6');
+        var ambito = 'eess';
       } else if($(this).val()==='transporte'){
         $('#listaAsientosTransporte').show();
         $('#listaAsientosEESS').hide();
@@ -316,6 +327,7 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
         $('#ladoDerecho').addClass('col-md-6');
         $('#ladoIzquierdo').removeClass('col-md-4');
         $('#ladoIzquierdo').addClass('col-md-6');
+        var ambito = 'transporte';
       } else {
         $('#container').addClass('containerIntegral');
         $('#listaAsientosTransporte').show();
@@ -328,23 +340,18 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
         $('#ladoDerecho').addClass('col-md-8');
         $('#ladoIzquierdo').removeClass('col-md-6');
         $('#ladoIzquierdo').addClass('col-md-4');
+        var ambito = 'integral';
       }
     });
     muestraHistorico();
     setInterval(function(){
       muestraHistorico();
-    }, 10000);
+    }, 20000);
     
     $('#alternoMiosTodos').click(function(){
       muestraHistorico(1);
     });
 
-    /* $("#importe").change(function() {
-      $.get('func/buscaAsientoPorImporte.php?importe='+$(this).val()+'&rangoInicio='+$('#rangoInicio').val()+'&rangoFin='+$('#rangoFin').val(), function(data) {
-        $('#libroDiario').html(data).fadeIn();
-        $('#botonEnvio').fadeIn();
-      });
-    }); */
     
     // definimos las opciones del plugin AJAX FORM
 
@@ -415,6 +422,7 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
       $('#botonEnviando').hide();
       $('#botonEnvio').fadeIn();
       $('#libroDiario').html(responseText).slideDown('slow');
+
       $('.asiento').click(function() {
         $('.asiento').removeClass('act');
         $('.recibo').removeClass('act');
@@ -466,6 +474,45 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
         });
       });
     }
+    function coma(numero){
+      if(numero<0){
+        numero = -1*numero;
+      }
+      if(isNaN(numero)){
+        numero = numero.toString().replace(/,/g , "__COMMA__").replace(/\./g, '').replace(/__COMMA__/g, '.');
+      }
+      return numero;
+    }
+    /* contextMenu */
+    $.contextMenu({
+      selector: '.x', 
+      callback: function(key, options) {
+        var n = (this).html();
+        if(key == 'repetir'){
+          $('#importe').val(coma(n));
+          $('#enviar').click();
+        } else {
+          $('#importe').val(coma(n));
+          $('#fuzzy').prop('checked', false);
+          $('#buscaLeyenda').prop('checked', false);
+          $('#cuentaEESS').prop('checked', false);
+          $('#cuentaTransporte').prop('checked', false);
+          $('#enviar').click();
+        }
+      },
+      items: {
+        "repetir": {name: "Repetir búsqueda con este importe", icon: "copy"},
+        "buscar": {name: "Buscar este importe", icon: "paste"},
+      }
+    });
+
+    $('.x').on('click', function(e){
+      console.log('clicked', this);
+    })    
+    
+    
+    
+    
     <?php if(isset($_POST['srch-term'])){  // viene del search header ?>
       $('#importe').val(<?php echo $_POST['srch-term'];?>);
       $('#enviar').click();

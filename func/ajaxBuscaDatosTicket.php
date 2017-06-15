@@ -1,11 +1,12 @@
 <?php
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
+$maximoMesesAtras = 2;
 //fb($_POST);
 if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
-  $sqlTicket = "select PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -3, GETDATE());";
+  $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND IdCierreTurno IS NOT NULL;";
 
- //fb($sqlTicket);
+  //fb($sqlTicket);
   $stmt = odbc_exec2( $mssql, $sqlTicket, __LINE__, __FILE__);
   $tmp=array();
   //fb(sqlsrv_num_rows($stmt));
@@ -18,22 +19,50 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
       // multiple
       $devuelve = '';
       foreach($tmp as $rowTicket){
-        $devuelve.="<input type='radio' name='multi' class='multi' value='$rowTicket[6]'> $rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (".$rowTicket[2]->format('d/m/Y').")<br/>";
+        $sqlYaAsignado = "SELECT IdMovimientoFac, IdEmpleado, fechaCanje from coop.dbo.promoDesayunos WHERE IdMovimientoFac=$rowTicket[6];";
+        $stmt2 = odbc_exec2( $mssql, $sqlYaAsignado, __LINE__, __FILE__);
+        if($stmt2 && sqlsrv_has_rows($stmt2)){
+          // ya está tomado ese documento, mínimamente aviso
+          $devuelve.="<input type='radio' name='multi' class='multi' value='$rowTicket[6]' disabled='disabled'><span class='text-danger'> $rowTicket[7] $rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (".$rowTicket[2]->format('d/m/Y').")</span><br/>";
+        } else {
+          $devuelve.="<input type='radio' name='multi' class='multi' value='$rowTicket[6]'> $rowTicket[7] $rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (".$rowTicket[2]->format('d/m/Y').")<br/>";
+        }
       }
       echo json_encode(array('status' => 'multiple','message'=> $devuelve, 'fecha' => '', 'pv'=> ''));
     } else {
       // single
       $rowTicket=$tmp[0];
       $_SESSION['esNafta'] = (($rowTicket['IdArticulo']==2076)?1:0);
-      $devuelve = "$rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (".$rowTicket[2]->format('d/m/Y').")";
       $fCanje = (isset($_SESSION['fCanje']))?$_SESSION['fCanje']:false;
-      echo json_encode(array('status' => 'single','message'=> $devuelve, 'fecha'=>$rowTicket[2]->format('d/m'), 'pv'=> $rowTicket[0], 'IdMovimientoFac'=> $rowTicket[6], 'FechaTicket'=>$rowTicket[2]->format('d/m/Y'), 'fCanje'=>$fCanje));
+      $resalta = "";
+      if($fCanje){
+        //fb("fCanje");
+        // si la fecha de canje que tengo cargada es anterior a la fecha del ticket la pone en rojo
+        //$resaltaFecha = ();
+        //fb(($rowTicket[2]->format('d/m/Y')));
+        $fCanje2 = explode("/", $fCanje);
+        $fechaCanje = new DateTime("$fCanje2[1]/$fCanje2[0]/$fCanje2[2] 23:59:59");
+        if($fechaCanje<$rowTicket[2]){
+          fb("fecha imposible");
+          $resalta = "label label-danger";
+        }
+      }
+      $sqlYaAsignado = "SELECT IdMovimientoFac, IdEmpleado, fechaCanje from coop.dbo.promoDesayunos WHERE IdMovimientoFac=$rowTicket[6];";
+      $stmt2 = odbc_exec2( $mssql, $sqlYaAsignado, __LINE__, __FILE__);
+      if($stmt2 && sqlsrv_has_rows($stmt2)){
+        $ticketCanjeado = sqlsrv_fetch_array($stmt2);
+        $devuelve = "<span class='text-danger'>$rowTicket[0]-$rowTicket[1], $rowTicket[5]</span> lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (<span class='$resalta'>".$rowTicket[2]->format('d/m/Y')."</span>) - <span class='text-danger'>Asignado a {$empleado[1][$ticketCanjeado[1]]} el ".$ticketCanjeado[2]->format('d/m/Y')."</span>";
+        echo json_encode(array('status' => 'single','message'=> $devuelve, 'fecha'=>$rowTicket[2]->format('d/m'), 'pv'=> $rowTicket[0], 'IdMovimientoFac'=> $rowTicket[6], 'FechaTicket'=>$rowTicket[2]->format('d/m/Y'), 'fCanje'=>$fCanje));
+      } else {
+        $devuelve = "$rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (<span class='$resalta'>".$rowTicket[2]->format('d/m/Y')."</span>)";
+        echo json_encode(array('status' => 'single','message'=> $devuelve, 'fecha'=>$rowTicket[2]->format('d/m'), 'pv'=> $rowTicket[0], 'IdMovimientoFac'=> $rowTicket[6], 'FechaTicket'=>$rowTicket[2]->format('d/m/Y'), 'fCanje'=>$fCanje));
+      }
     }
   } else {
     echo json_encode(array('status' => 'error','message'=> 'Por favor complete los datos solicitados', 'fecha'=> '', 'pv'=> ''));
   }
 } elseif(is_numeric($_POST['IdMovimientoFac'])){
-  $sqlTicket = "select PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND dbo.MovimientosDetalleFac.IdMovimientoFac=$_POST[IdMovimientoFac] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -3, GETDATE());";
+  $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND dbo.MovimientosDetalleFac.IdMovimientoFac=$_POST[IdMovimientoFac] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND IdCierreTurno IS NOT NULL;";
 
   //fb($sqlTicket);
   $stmt = odbc_exec2( $mssql, $sqlTicket, __LINE__, __FILE__);

@@ -1,6 +1,6 @@
 <?php
-// cargaUltimasFacturasCliente.php
-// recibe datos del form y los procesa en mysql
+// setupProductosPorClientes.php
+// Muestra IVA Ventas completo
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
@@ -11,7 +11,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(!isset($_SESSION['productosTransporte'])){
   $sqlProductos = "SELECT codigo, nombre FROM dbo.PRODUCTO order by codigo";
   $stmt = odbc_exec2($mssql2, $sqlProductos, __LINE__, __FILE__);
-  while($producto = odbc_fetch_array($stmt)){
+  while($producto = sqlsrv_fetch_array($stmt)){
     $_SESSION['productosTransporte'][$producto['codigo']] = trim($producto['nombre']);
   }
 }
@@ -24,7 +24,9 @@ if(isset($_POST['mes'])){
   $anio = substr($_POST['mes'], 0, 4);
   $mes = substr($_POST['mes'], 5, 2);
   if(!isset($_POST['soloExternos'])||$_POST['soloExternos']==0){
-    $sqlClientes = "SELECT libro, concasie.sucursal, asiento, dbo.concasie.detalle, dbo.concasie.idtranglob, dbo.detaosvt.comprobant, dbo.detaosvt.sucursal, dbo.detaosvt.numero, p.codigo, p.detalle, dbo.detaosvt.precio_vta, monto, dbo.detaosvt.importe, dbo.detaosvt.iva, dbo.detaosvt.ingbruto, aliporiva, neto_grava, neto_nogra, total_item, percepib, dbo.clientes.nombre  as clienteNombre, p.cuentacont, dbo.clientes.codigo as clienteCodigo, fecha_asie, dbo.detaosvt.cantidad, producto FROM dbo.concasie, dbo.detaosvt, [SqlCoop_DBSHARED].dbo.PRODUCTO p, dbo.histvtam, dbo.clientes WHERE DBO.histvtam.idtranglob=dbo.concasie.idtranglob and dbo.histvtam.cliente=dbo.clientes.codigo AND datepart(year, dbo.concasie.fecha_asie)='$anio' AND datepart(month, dbo.concasie.fecha_asie)='$mes' AND dbo.detaosvt.producto=p.codigo AND dbo.concasie.idtranglob=dbo.detaosvt.idtranglob UNION SELECT libro, concasie.sucursal, asiento, dbo.concasie.detalle, dbo.concasie.idtranglob, dbo.detavtas.comprobant, dbo.detavtas.sucursal, dbo.detavtas.numero, p.codigo, p.detalle, dbo.detavtas.precio_vta, monto, dbo.detavtas.importe, dbo.detavtas.iva, dbo.detavtas.ingbruto, aliporiva, neto_grava, neto_nogra, total_item, percepib, dbo.clientes.nombre  as clienteNombre, p.cuentacont, dbo.clientes.codigo as clienteCodigo, fecha_asie, dbo.detavtas.cantidad, producto FROM dbo.concasie, dbo.detavtas, [SqlCoop_DBSHARED].dbo.PRODUCTO p, dbo.histvtam, dbo.clientes WHERE DBO.histvtam.idtranglob=dbo.concasie.idtranglob and dbo.histvtam.cliente=dbo.clientes.codigo AND datepart(year, dbo.concasie.fecha_asie)='$anio' AND datepart(month, dbo.concasie.fecha_asie)='$mes' AND dbo.detavtas.producto=p.codigo AND dbo.concasie.idtranglob=dbo.detavtas.idtranglob ORDER BY producto  ;";
+    $sqlClientes = "SELECT libro, concasie.sucursal, asiento, dbo.concasie.detalle Collate SQL_Latin1_General_CP1253_CI_AI as detalle, dbo.concasie.idtranglob, dbo.detaosvt.comprobant, dbo.detaosvt.sucursal, dbo.detaosvt.numero, producto.codigo, producto.detalle, dbo.detaosvt.precio_vta, monto, dbo.detaosvt.importe, dbo.detaosvt.iva, dbo.detaosvt.ingbruto, aliporiva, neto_grava, neto_nogra, total_item, percepib, dbo.clientes.nombre Collate SQL_Latin1_General_CP1253_CI_AI as clienteNombre, dbo.producto.cuentacont, dbo.clientes.codigo as clienteCodigo, fecha_asie, dbo.detaosvt.cantidad, producto FROM dbo.concasie, dbo.detaosvt, dbo.PRODUCTO, dbo.histvtam, dbo.clientes WHERE DBO.histvtam.idtranglob=dbo.concasie.idtranglob and dbo.histvtam.cliente=dbo.clientes.codigo AND datepart(year, dbo.concasie.fecha_asie)='$anio' AND datepart(month, dbo.concasie.fecha_asie)='$mes' AND dbo.detaosvt.producto=dbo.PRODUCTO.codigo AND dbo.concasie.idtranglob=dbo.detaosvt.idtranglob UNION ALL SELECT libro, concasie.sucursal, asiento, dbo.concasie.detalle, dbo.concasie.idtranglob, dbo.detavtas.comprobant, dbo.detavtas.sucursal, dbo.detavtas.numero, producto.codigo, producto.detalle, dbo.detavtas.precio_vta, monto, dbo.detavtas.importe, dbo.detavtas.iva, dbo.detavtas.ingbruto, aliporiva, neto_grava, neto_nogra, total_item, percepib, dbo.clientes.nombre as clienteNombre, dbo.producto.cuentacont, dbo.clientes.codigo as clienteCodigo, fecha_asie, dbo.detavtas.cantidad, producto FROM dbo.concasie, dbo.detavtas, dbo.PRODUCTO, dbo.histvtam, dbo.clientes WHERE DBO.histvtam.idtranglob=dbo.concasie.idtranglob and dbo.histvtam.cliente=dbo.clientes.codigo AND datepart(year, dbo.concasie.fecha_asie)='$anio' AND datepart(month, dbo.concasie.fecha_asie)='$mes' AND dbo.detavtas.producto=dbo.PRODUCTO.codigo AND dbo.concasie.idtranglob=dbo.detavtas.idtranglob ORDER BY producto;";
+    
+    
   } elseif($_POST['soloExternos']==1){
     // Solo Fleteros
     $sqlClientes = "SELECT libro, concasie.sucursal, asiento, dbo.concasie.detalle, dbo.concasie.idtranglob, dbo.detaosvt.comprobant, dbo.detaosvt.sucursal, dbo.detaosvt.numero, producto.codigo, producto.detalle, dbo.detaosvt.precio_vta, monto, dbo.detaosvt.importe, dbo.detaosvt.iva, dbo.detaosvt.ingbruto, aliporiva, neto_grava, neto_nogra, total_item, percepib, dbo.clientes.nombre as clienteNombre, dbo.producto.cuentacont, dbo.clientes.codigo as clienteCodigo, fecha_asie, dbo.detaosvt.cantidad FROM  dbo.concasie, dbo.detaosvt, dbo.PRODUCTO, dbo.histvtam, dbo.clientes WHERE DBO.histvtam.idtranglob=dbo.concasie.idtranglob and dbo.histvtam.cliente=dbo.clientes.codigo AND datepart(year, dbo.concasie.fecha_asie)='$anio' AND datepart(month, dbo.concasie.fecha_asie)='$mes' AND dbo.detaosvt.producto=dbo.PRODUCTO.codigo AND dbo.concasie.idtranglob=dbo.detaosvt.idtranglob ORDER BY producto;";
@@ -35,8 +37,8 @@ if(isset($_POST['mes'])){
 } else {
   die;
 }
-
-$stmt = odbc_exec2( $mssql2, $sqlClientes, __LINE__, __FILE__);
+fb($sqlClientes);
+$stmt = odbc_exec2($mssql2, $sqlClientes, __LINE__, __FILE__);
 $tabla = "";$a=0;
 $totalB = 0;
 $totalA = 0;
@@ -44,7 +46,7 @@ $totalNeto = $totalIVA = $totalPrecio = $cantidadFacturas = $cantidadClientes = 
 $comision=array();
 $totalAComisionar = array();
 $comprobantePorLibro = array();
-while($fila = odbc_fetch_array($stmt)){
+while($fila = sqlsrv_fetch_array($stmt)){
   // evita duplicación por comprobantes que aparecen en ambos libros
   if(isset($comprobantePorLibro[$fila['idtranglob']]['INGRESOS'])&&$fila['libro']=='VENTAS'){
     //evita duplicado

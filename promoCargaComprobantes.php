@@ -48,11 +48,11 @@ setlocale(LC_ALL, 'es_ES');
                     </select></td>
                     <td><input type='hidden' name='IdMovimientoFac' id='IdMovimientoFac'/><input type='text' name='pv' id='pv' data-plus-as-tab='true'  placeholder='PV' class='input-sm form-control' disabled='disabled'/></td>
                     <td><input type='text' name='ticket' id='ticket' data-plus-as-tab='true'  placeholder='Nº Ticket' class='input-sm form-control'/></td>
-                    <td><input type='hidden' name='FechaTicket' id='FechaTicket'/><input type='text' name='fcanje' id='fcanje' data-plus-as-tab='true'  placeholder='Canje' class='input-sm form-control'/></td>
+                    <td><input type='hidden' name='FechaTicket' id='FechaTicket'/><input type='text' name='fcanje' id='fcanje' data-plus-as-tab='true'  placeholder='Canje' class='input-sm form-control' <?php if(isset($_SESSION['fCanje']))echo "value='$_SESSION[fCanje]'";?>/></td>
                     <td><span id='datosTicket'></span></td>
                     <td><select name='mesAsignado' id='mesAsignado' data-plus-as-tab='true' >
                       <?php 
-                      for ($abc = 2; $abc >= 0; $abc--) {
+                      for ($abc = 3; $abc >= 0; $abc--) {
                           $mes = date("m/y", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                           $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                           echo "<option value='$valorMes' ".(((date('d')>10&&$abc==0)||(date('d')<10&&$abc==1))?' selected="selected"':'').">$mes</option>";
@@ -100,14 +100,17 @@ setlocale(LC_ALL, 'es_ES');
         $.post('func/ajaxBuscaDatosTicket.php', { ticket: $(this).val() }, function(data) {
           if(data.status === 'single'){
             $('#datosTicket').html(data.message).removeClass('alert alert-danger');
-            $('#fcanje').val(data.fecha);
             $('#pv').val(data.pv);
             $('#IdMovimientoFac').val(data.IdMovimientoFac);
             $('#FechaTicket').val(data.FechaTicket);
+            if(data.fCanje){
+              $('#fcanje').val(data.fCanje);
+            } else {
+              $('#fcanje').val(data.fecha);
+            }
+            //var debug=0;
             $('#fcanje').focusout(function(){
               
-            });
-            $('#mesAsignado').focusin(function(){
               var d = new Date();
               if($('#fcanje').val().length<3){
                 // solo el día, el mes es el actual
@@ -118,9 +121,10 @@ setlocale(LC_ALL, 'es_ES');
                 var dia = $('#fcanje').val()+'/'+d.getFullYear();
                 $('#fcanje').val(dia);
               }
-              $.post('func/ajaxBuscaDatosTicketMesAsignado.php', { fechaTicket: data.FechaTicket, fechaCanje: $('#fcanje').val() }, function(data2) {
-                $('#mesAsignado').val(data2.mesAsignado).change();
-              }, "json");
+              //mesAsignado( data.FechaTicket, $('#fcanje').val());
+              //debug = debug +1 ;
+              //alert (debug);
+              $('#mesAsignado').val(mesAsignado( data.FechaTicket, $('#fcanje').val())).change();
             });
             $('#fcanje').dblclick(function(){
               $('#fcanje').val('');
@@ -149,9 +153,10 @@ setlocale(LC_ALL, 'es_ES');
                     var dia = $('#fcanje').val()+'/'+d.getFullYear();
                     $('#fcanje').val(dia);
                   }
-                  $.post('func/ajaxBuscaDatosTicketMesAsignado.php', { fechaTicket: data.FechaTicket, fechaCanje: $(this).val() }, function(data2) {
-                    $('#mesAsignado').val(data2.mesAsignado).change();
-                  }, "json");
+                  $('#mesAsignado').val(mesAsignado( data.FechaTicket, $('#fcanje').val())).change();
+                  //$.post('func/ajaxBuscaDatosTicketMesAsignado.php', { fechaTicket: data.FechaTicket, fechaCanje: $(this).val() }, function(data2) {
+                  //  $('#mesAsignado').val(data2.mesAsignado).change();
+                 // }, "json");
                 });
                 $('#fcanje').dblclick(function(){
                   $('#fcanje').val('');
@@ -161,8 +166,7 @@ setlocale(LC_ALL, 'es_ES');
           } else {
             $('#datosTicket').html(data.message).addClass('alert alert-danger');
           }
-          }, "json");
-        
+        }, "json");
       });
       $('.graba').click(function(){
         $('#graba').hide();
@@ -187,6 +191,21 @@ setlocale(LC_ALL, 'es_ES');
         },"json");
       });
     });
+    function mesAsignado(emision, canje){
+      var d1 = emision.split('/');
+      var d2 = canje.split('/');
+      var datetime1 = new Date(d1[2], d1[1], d1[0]);
+      var datetime2 = new Date(d2[2], d2[1], d2[0]);
+      var interval = new Date(datetime2.getTime() - datetime1.getTime());
+      //fb($interval->days);
+      if((interval.getUTCDate()-1)<=15){
+        // mes de ticket
+        var mesAsignado= d1[2]+d1[1];
+      } else {
+        var mesAsignado= d2[2]+d2[1];
+      }
+      return(mesAsignado);
+    }
   </script>
   </body>
 </html>

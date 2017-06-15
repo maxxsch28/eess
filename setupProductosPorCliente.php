@@ -49,7 +49,7 @@ $titulo="Detalle productos por Fleteros";
           <input type="hidden" name='muestraSoloExternos' value='0' id='muestraSoloExternos'/>
           <input type="hidden" name='muestraComprimido' value='0' id='muestraComprimido'/>
           <div class="form-group">
-            <label for='periodo' class="control-label">Detalle de: <select name='periodo' id='periodo' class='input-sm '>
+            <label for='periodo' class="control-label">Detalle de: <select name='periodo' id='periodo' class=''>
             <?php 
             for ($abc = 12; $abc >= 0; $abc--) {
               $mes = date("F Y", mktime(0, 0, 0, date("m")-$abc, 1, date("Y")));

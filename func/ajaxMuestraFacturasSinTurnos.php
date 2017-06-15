@@ -7,13 +7,10 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //$_POST['mes']='201411';
 
 
-$sql = "select dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, PuntoVenta, Numero, Fecha, RazonSocial, Total, Cantidad, IdArticulo from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idtipomovimiento IN ('FAA','FAB') AND IdCliente>0 AND IdCondicionVenta=1 AND NetoCombustibles>0 AND Consignado=1 AND DocumentoAnticipado=0 AND DocumentoCancelado=0 AND IdCierreTurno IS NULL AND ExcluidoDeTurno=1 AND Fecha>'2012-01-01' order by dbo.MovimientosFac.IdMovimientoFac desc";
+$sql = "select dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, PuntoVenta, Numero, Fecha, RazonSocial, Total, Cantidad, IdArticulo from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idtipomovimiento IN ('FAA','FAB') AND IdCliente>0 AND IdCondicionVenta=1 AND NetoCombustibles>0 AND Consignado=1 AND DocumentoAnticipado=0 AND DocumentoCancelado=0 AND IdCierreTurno IS NULL AND ExcluidoDeTurno=1 AND Fecha>'2016-01-01' order by dbo.MovimientosFac.IdMovimientoFac desc";
 
-$stmt = odbc_exec( $mssql, $sql);
-if( $stmt === false ){
-    echo "1. Error in executing query.</br>$sql<br/>";
-    die( print_r( sqlsrv_errors(), true));
-}
+$stmt = odbc_exec2( $mssql, $sql, __FILE__, __LINE__);
+
 $row_count = sqlsrv_num_rows( $stmt );
 // var_dump(sqlsrv_has_rows($stmt));
 // var_dump($row_count);
@@ -22,7 +19,7 @@ $row_count = sqlsrv_num_rows( $stmt );
 
 echo "<form name='listaFacturasExcluidas' id='listaFacturasExcluidas'><table class='table table-striped table-bordered IdCierreTurno'><thead><tr><th><b>$row_count</b>  --  Socio</th><th>Documento</th><th>Fecha</th><th>Articulos</th><th>Importe</th></tr></thead><tbody>";
 $sumaLote = 0;
-while($rowFacturasExluidas = odbc_fetch_array($stmt)){
+while($rowFacturasExluidas = sqlsrv_fetch_array($stmt)){
   //print_r($rowFacturasExluidas);
   //Array ( [0] => 129889 [IdLoteTarjetasCredito] => 129889 [1] => VISA DEBITO [Nombre] => VISA DEBITO [2] => 2 [Loteprefijo] => 2 [3] => 257 [LoteNumero] => 257 [4] => 1193.5000 [Importe] => 1193.5000 [5] => 714 [idCuentaContable_presentacion] => 714 [6] => 616219 [idAsiento] => 616219 ) 
   $fecha = date_format($rowFacturasExluidas['Fecha'], "d/m/Y");

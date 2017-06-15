@@ -29,7 +29,7 @@ if(isset($_POST['soloResultados'])){
 
   $dia = explode('/', $_POST['fcanje']);
   $fCanje = $dia[2].$dia[1].$dia[0];
-
+  $_SESSION['fCanje']=$dia[0].'/'.$dia[1].'/'.$dia[2];
 
   $sqlGraba = "INSERT INTO [coop].[dbo].[promoDesayunos] (IdMovimientoFac, esNafta, fechaCanje, esDespacho, IdEmpleado, mesAsignado) VALUES ('$_POST[IdMovimientoFac]', '$_SESSION[esNafta]', '$fCanje', '$esDespacho', '$_POST[IdEmpleado]', '$_POST[mesAsignado]')";
 

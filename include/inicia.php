@@ -120,7 +120,7 @@ if( $mssql3 === false ){
 }*/
 
 /* cambio de odbc por nuevo driver MS */
-$serverName = "192.168.1.35";
+$serverName = "192.168.1.13";
 $connectionOptions = array(
     "Database" => "CoopDeTrabajo.Net",
     "Uid" => "sa",
@@ -128,13 +128,13 @@ $connectionOptions = array(
 );
 $connectionOptions2 = array(
     "Database" => "sqlcoop_dbimplemen",
-    "Uid" => "coop",
-    "PWD" => "MarcosPaz3876"
+    "Uid" => "sa",
+    "PWD" => "B8000ftq"
 );
 $connectionOptions3 = array(
     "Database" => "sqlcoop_dbshared",
-    "Uid" => "coop",
-    "PWD" => "MarcosPaz3876"
+    "Uid" => "sa",
+    "PWD" => "B8000ftq"
 );
 //Establishes the connection
 $mssql = sqlsrv_connect($serverName, $connectionOptions);
@@ -156,7 +156,7 @@ if( $mssql3 === false ){
 }
 
 $date = array("Sunday"=>"Domingo", "Monday"=>"Lunes", "Tuesday"=>"Martes", "Wednesday"=>"Miércoles","Thursday"=>"Jueves", "Friday"=>"Viernes", "Saturday"=>"Sábado");
-$date2 = array(1=>"Domingo",2=>"Lunes",3=>"Martes",4=>"Miércoles",5=>"Jueves",6=>"Viernes",7=>"Sábado");
+$date2 = array(7=>"Domingo",1=>"Lunes",2=>"Martes",3=>"Miércoles",4=>"Jueves",5=>"Viernes",6=>"Sábado");
 $mes = array(1=>"Enero",2=>"Febrero",3=>"Marzo",4=>"Abril",5=>"Mayo",6=>"Junio",7=>"Julio",8=>"Agosto",9=>"Septiembre",10=>"Octubre",11=>"Noviembre",12=>"Diciembre");
 // codigo Calden para los combustibles
 $articulo = array(2068=>"Infinia D.",2069=>"Ultra",2076=>"Infinia",2078=>"Super");
@@ -371,6 +371,7 @@ function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
 
 function fecha($fecha, $res='dmy', $tipo='ymd'){
   if(is_object($fecha)){
+    //fb('Fecha es objeto');
     // fecha es objeto
     switch($res){
       case "Ym":
@@ -386,9 +387,11 @@ function fecha($fecha, $res='dmy', $tipo='ymd'){
         break;
     }
   } else {
+    fb('Fecha NO es objeto');
     if(strlen($fecha)==23){
       $fecha=substr($fecha, 0, -4);
-    }
+    } 
+    fb('Tipo de fecha esperada: '.$res);
     switch($res){
       case "Ym":
       $tmp = substr($fecha, 0,4).substr($fecha, 5,2);
@@ -398,7 +401,7 @@ function fecha($fecha, $res='dmy', $tipo='ymd'){
       break;
       case "sql":
       $tmp2 = explode('/', $fecha);
-      $tmp = $tmp2[2].'/'.$tmp2[1].'/'.$tmp2[0];
+      $tmp = ((strlen($tmp2[2]<3)?'20':'')).$tmp2[2].'/'.$tmp2[1].'/'.$tmp2[0];
       break;
       case "dmy":
       case "dmY":
@@ -410,6 +413,10 @@ function fecha($fecha, $res='dmy', $tipo='ymd'){
   return $tmp;
 }
 
+function is_decimal( $val )
+{
+    return is_numeric( $val ) && floor( $val ) != $val;
+}
 
 if (!function_exists('stats_standard_deviation')) {
   /**

@@ -2,8 +2,6 @@
 // calculaPromedios.php
 include_once('../include/inicia.php');
 
-$limit=11;
-$offset=0;
 fb($_POST, 'POST');
 
 
@@ -17,7 +15,7 @@ $fuzziness2=(isset($_REQUEST['fuzzy']))?" AND dbo.diario.cantidad>=".floor(($_RE
 
 $leyenda=(isset($_REQUEST['leyenda'])&&strlen($_REQUEST['leyenda'])>1)?" AND detalle LIKE ('%".ms_escape_string($_REQUEST['leyenda'])."%')":'';
 
-$cuenta=(isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?" AND cuentacont=$_REQUEST[cuentaTransporte]":'';
+$cuenta=(isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?" AND ordenamien=$_REQUEST[cuentaTransporte]":'';
 
 if(!isset($_REQUEST['importe'])||$_REQUEST['importe']==0&&($leyenda||$cuenta)<>''){
   $fuzziness='';
@@ -30,13 +28,18 @@ if(!isset($_REQUEST['importe'])||$_REQUEST['importe']==0&&($leyenda||$cuenta)<>'
 // tmpBuscaAsiento
 if(isset($_POST['idBuscaAsiento'])){
   // búsqueda basada en una ya grabada
-  $sql = "UPDATE tmpbuscaasientos SET cantidadusos=cantidadusos+1 WHERE id=$_REQUEST[idBuscaAsiento]";
+  $sql = "UPDATE tmpBuscaAsientos SET cantidadusos=cantidadusos+1 WHERE id=$_REQUEST[idBuscaAsiento]";
 } else{
   // inserto una nueva búsqueda // 28-09-1977
   $fuzyness = (isset($_REQUEST['fuzzy']))?$_REQUEST['fuzziness']:0;
-  $rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
-  $rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
-  $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaTransporte, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?$_REQUEST['cuentaTransporte']:0)."', $loggedInUser->user_id)";
+  $fInicio = explode('/', $_REQUEST['rangoInicio']);
+  $fFinal = explode('/', $_REQUEST['rangoFin']);
+  $rangoInicio = (($fInicio[2]=='69')?'1969':"20$fInicio[2]").'-'.$fInicio[1].'-'.$fInicio[0];
+  $rangoFin = $fFinal[2].'-'.$fFinal[1].'-'.$fFinal[0];
+  //$rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
+  //$rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
+  
+  $sql = "INSERT INTO tmpBuscaAsientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaTransporte, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?$_REQUEST['cuentaTransporte']:0)."', $loggedInUser->user_id)";
   fb($sql);
 }
 if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
@@ -49,6 +52,7 @@ if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
 
 
 $andFecha=(isset($_REQUEST['rangoInicio']))?" AND dbo.concasie.fecha_asie>='{$_REQUEST['rangoInicio']}' AND dbo.concasie.fecha_asie<='{$_REQUEST['rangoFin']} 23:59:59'":"";
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND dbo.concasie.fecha_asie>='20$fInicio[2]-$fInicio[1]-$fInicio[0]' AND dbo.concasie.fecha_asie<='20$fFinal[2]-$fFinal[1]-$fFinal[0] 23:59:59'":"";
 
 if($_REQUEST['importe']<>''){
   $sqlAsientos = trim("SELECT DISTINCT dbo.asiecont.asiento, detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro{$fuzziness}{$leyenda}{$cuenta}{$andFecha} UNION SELECT DISTINCT dbo.diario.asiento, detalle, fecha, diario.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.diario.cod_libro FROM dbo.diario, dbo.concasie WHERE dbo.diario.asiento=dbo.concasie.asiento AND dbo.diario.cod_libro=dbo.concasie.cod_libro{$fuzziness2}{$leyenda}{$cuenta} $andFecha order by fecha asc");
@@ -121,7 +125,7 @@ while($rowAsientos = sqlsrv_fetch_array($stmt)){
       break;
     case 1024:
       // deposito bancario
-      $arrayDetalle=explode("Observación:", utf8_encode($rowAsientos['detalle']));
+      $arrayDetalle=explode("Observación:", ($rowAsientos['detalle']));
       $detalle=$arrayDetalle[0];
       $nombre=$arrayDetalle[1];
       break;
@@ -195,7 +199,7 @@ while($rowAsientos = sqlsrv_fetch_array($stmt)){
   }
   //(var_dump($rowAsientos['concepto']));
 //select * from dbo.ctafle where idtranglob=6472
-    
+  $detalle = str_replace('Comprobante', '', $detalle);
   $label = ($_SESSION['transporte_libros_contables'][$rowAsientos['cod_libro']]=='DIARIO')?'danger':'success';
   echo "<tbody class='asientoTransporte' id='$rowAsientos[idtranglob]_$rowAsientos[concepto]'>
   <tr class='encabezaAsiento encabezado2' style='line-height:12em;' title='".$rowAsientos['concepto']."-{$_SESSION['concepto'][$rowAsientos['concepto']]}'><td align='left' rowspan='".((isset($nombre))?'1':'2')."'>$detalle</td><td colspan='2'>($fecha) Nº $rowAsientos[asiento]</td></tr>
@@ -211,14 +215,14 @@ while($rowAsientos = sqlsrv_fetch_array($stmt)){
       $act = ($rowDetalles['cantidad']==$_REQUEST['importe'])?" montoBuscado":'';
     }
     if($rowDetalles['debe']<>0){
-      echo "<tr class='fila'><td class='cuentaD'>($rowDetalles[cuentacont]) $rowDetalles[nombre]</td><td class='debe$act'>$monto</td><td class='haber'>&nbsp;</td></tr>";
+      echo "<tr class='fila'><td class='cuentaD'>($rowDetalles[cuentacont]) $rowDetalles[nombre]</td><td class='debe$act x'>$monto</td><td class='haber'>&nbsp;</td></tr>";
       $debe+=$rowDetalles['cantidad'];
     }else{
-      echo "<tr class='fila'><td class='cuentaH'>($rowDetalles[cuentacont]) $rowDetalles[nombre]</td><td class='debe'></td>&nbsp;<td class='haber$act'>$monto</td></tr>";
+      echo "<tr class='fila'><td class='cuentaH'>($rowDetalles[cuentacont]) $rowDetalles[nombre]</td><td class='debe'></td>&nbsp;<td class='haber$act x'>$monto</td></tr>";
       $haber+=$rowDetalles['cantidad'];
     }
   }
-  echo "<tr class='fila'><td class='cuentaH'>&nbsp;</td><td class='debe cierre'>".number_format(str_replace(',', '.', sprintf("%.2f",$debe)), 2, ',', '.')."</td><td class='haber cierre'>".number_format(str_replace(',', '.', sprintf("%.2f",$haber)), 2, ',', '.')."</td></tr></tbody>";	
+  echo "<tr class='fila'><td class='cuentaH'>&nbsp;</td><td class='debe cierre x'>".number_format(str_replace(',', '.', sprintf("%.2f",$debe)), 2, ',', '.')."</td><td class='haber cierre x'>".number_format(str_replace(',', '.', sprintf("%.2f",$haber)), 2, ',', '.')."</td></tr></tbody>";	
 }
 
 if(!isset($sqlDetalles))echo "<tbody><tr><td colspan='2'>No hay resultados TRANSPORTE</td></tr></tbody>";

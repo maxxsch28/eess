@@ -25,7 +25,7 @@ $fecha1 = $ultimaFechaCargada;
 //echo 'date before day adding: ' . $ultimaFechaCargada->format('Y-m-d H:i:s'); 
 $ultimaFechaCargada->modify('+1 day');
 $ultimaFechaCargada2 = $ultimaFechaCargada->format('Y-m-d H:i:s');
-$ultimaFechaCargada3 = $ultimaFechaCargada->format('Y-d-m H:i:s');
+//$ultimaFechaCargada3 = $ultimaFechaCargada->format('Y-d-m H:i:s');
 $fecha2 = $ultimaFechaCargada2;
 $sqlUltimaMedicionTanques = "SELECT * FROM cierres_cem_tanques WHERE fechaCierre='$ultimaFechaCargada2' and turno='Noche'";
 if($result = $mysqli->query($sqlUltimaMedicionTanques)){
@@ -53,7 +53,7 @@ $sqlTanquesAlCierre = "";
 
 
 // calculo los litros YER facturados, sirve para comparar contra lo del cierres_cem_aforadores
-$sqlYER = "select IdArticulo, SUM(Cantidad) as q from dbo.MovimientosFac, dbo.MovimientosDetalleFac where dbo.MovimientosFac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac and IdCliente=1283 and Fecha>='".$ultimaFechaCargada->format('Y/d/m')." 22:00:00' AND Fecha<'".$ultimaFechaCargada->modify('+1 day')->format('Y/d/m')." 22:00:00' group by IdArticulo";
+$sqlYER = "select IdArticulo, SUM(Cantidad) as q from dbo.MovimientosFac, dbo.MovimientosDetalleFac where dbo.MovimientosFac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac and IdCliente=1283 and Fecha>='".$ultimaFechaCargada->format('Y/m/d')." 22:00:00' AND Fecha<'".$ultimaFechaCargada->modify('+1 day')->format('Y/m/d')." 22:00:00' group by IdArticulo";
 $stmt = odbc_exec2($mssql, $sqlYER,__LINE__, __FILE__);
 
 $arrayYER = array();
@@ -126,7 +126,10 @@ while($rowYER = sqlsrv_fetch_array($stmt)){
               <h4 class='bg-primary'>Super <span id='totNS' class='pull-right'>&nbsp;0.00</span></h4>
               <h4 class='alert-warning'>Ultra <span id='totUD' class='pull-right'>&nbsp;0.00</span></h4>
               <h4 class='alert-info'>Infinia <span id='totNI' class='pull-right'>&nbsp;0.00</span></h4>
-              <h4 class='alert-success'>Euro <span id='totED' class='pull-right'>&nbsp;0.00</span></h4>
+              <h4 class='alert-success'>Infinia Diesel <span id='totED' class='pull-right'>&nbsp;0.00</span></h4>
+              <h4>&nbsp;</h4>
+              <h4 class='alert-info'>Mix NI <span id='mixNI' class='pull-right'>&nbsp;0.00</span>%</h4>
+              <h4 class='alert-success'>Mix ID <span id='mixED' class='pull-right'>&nbsp;0.00</span>%</h4>
               
             </div>
             <div class='col-md-5 well'>
@@ -213,6 +216,8 @@ while($rowYER = sqlsrv_fetch_array($stmt)){
                 $("#totUD").html(totUD.toFixed(2));
                 $("#totNI").html(totNI.toFixed(2));
                 $("#totED").html(totED.toFixed(2));
+                $("#mixNI").html((totNI*100/(totNI+totNS)).toFixed(1));
+                $("#mixED").html((totED*100/(totED+totUD)).toFixed(1));
                 
             })
             $('.tanques').focusout(function(){

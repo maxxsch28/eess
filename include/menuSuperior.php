@@ -8,7 +8,7 @@ $ypfUrl = '';
           <ul class="nav navbar-nav">
             <li role="presentation" class="dropdown" style='height:50px'>
                 <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                  <img alt="CoopeTrans" src="img/iconoCooperativa.png"  style="margin-top: -8px;">
+                  <img alt="CoopeTrans" src="img/iconoCooperativa2.png"  style="margin-top: -8px;">
                   <b><?php if($loggedInUser){echo $loggedInUser->display_username;}?></b>
                   <span class="caret"></span>
                 </a>
@@ -71,6 +71,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/asignaFacturasSocios.php')echo ' class="active"';?>><a href="/asignaFacturasSocios.php">Asigna facturas x diferencia</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/acomodaRecibos.php')echo ' class="active"';?>><a href="/acomodaRecibos.php">Acomoda recibos caja Admin</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/promoCargaComprobantes.php')echo ' class="active"';?>><a href="/promoCargaComprobantes.php">Carga cupones desayuno</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/setupCargadora.php')echo ' class="active"';?>><a href="/setupCargadora.php">Cargadora</a></li>
                         </ul>
                     </li>
                 <?php } 
@@ -122,6 +123,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupProductosPorCliente.php")echo ' class="active"';?>><a href="/setupProductosPorCliente.php">Detalle producto por Clientes</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupTableroSocios.php")echo ' class="active"';?>><a href="/setupTableroSocios.php">Tablero socios</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupOrdenesDeServicioImputadas.php")echo ' class="active"';?>><a href="/setupOrdenesDeServicioImputadas.php">Ordenes imputadas por Socio</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupViajesPendientesLiquidacion.php")echo ' class="active"';?>><a href="/setupViajesPendientesLiquidacion.php">Viajes pendientes de liquidación</a></li>
                         </ul>
                     </li>
                 <?php }

@@ -5,14 +5,13 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 // asignaFacturasSocios.php
 // lista las facturas emitidas sin turno asociado y permite asignarlas al turno actual
 
-
+$titulo = "Asigna facturas de socios sin turnos";
 ?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Asigna facturas de socios sin turnos</title>
-    <?php include ('/include/head.php');?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       
       body {

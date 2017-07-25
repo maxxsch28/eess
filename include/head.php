@@ -15,3 +15,5 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/datepicker.css">
 <meta name="theme-color" content="#FCF8E3" />
+<meta name="theme-color" content="#123456" />
+<link rel="stylesheet" href="css/jquery.contextMenu.min.css">

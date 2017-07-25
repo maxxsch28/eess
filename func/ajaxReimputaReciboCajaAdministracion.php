@@ -9,8 +9,8 @@ if(isset($_GET['IdRecibo'])&&is_numeric($_GET['IdRecibo'])){
   $sqlRecibo = "UPDATE dbo.recibos SET IdCaja=4 WHERE IdRecibo='$idRecibo'";
   $sqlChequesEnRecibo = "UPDATE dbo.chequesterceros SET IdCaja=4, IdUbicacion=8 WHERE IdRecibo='$idRecibo'";
   $sqlChequesEnRecibo = "UPDATE dbo.chequesterceros SET IdCaja=4 WHERE IdRecibo='$idRecibo'";
-  fb($sqlRecibo);
-  fb($sqlChequesEnRecibo);
+  ChromePhp::log($sqlRecibo);
+  ChromePhp::log($sqlChequesEnRecibo);
   $stmt = odbc_exec( $mssql, $sqlRecibo);
   $stmt = odbc_exec( $mssql, $sqlChequesEnRecibo);
   echo "yes";

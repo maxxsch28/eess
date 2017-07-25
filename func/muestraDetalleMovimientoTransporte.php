@@ -9,8 +9,8 @@ $offset=0;
 $parametros = explode('_', $_GET['idAsiento']);
 $idTranglob = $parametros[0];
 $tipo = $parametros[1];
-fb($_GET);
-fb($tipo);
+ChromePhp::log($_GET);
+ChromePhp::log($tipo);
 switch($tipo){
   case '54':
   // extracción de efectivo de cuenta bancaria
@@ -43,7 +43,7 @@ switch($tipo){
       $sqlMovimiento = "select * from dbo.histcomp where idtranglob=$idTranglob;";
       $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
       while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-        fb($row);
+        ChromePhp::log($row);
         if(!isset($tituloDetalle)){
           $tituloDetalle = 1;
           echo "<b>$row[detalle_s]</b><br/>(".date_format($row['ingreso'], "d/m/Y").")</br>";
@@ -72,7 +72,7 @@ switch($tipo){
       $sqlMovimiento = "select * from dbo.histcomp where idtranglob=$idTranglob;";
       $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
       while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-        fb($row);
+        ChromePhp::log($row);
         if(!isset($tituloDetalle)){
           $tituloDetalle = 1;
           echo "<b>$row[detalle_s]</b><br/>(".date_format($row['ingreso'], "d/m/Y").")</br>";
@@ -88,10 +88,10 @@ switch($tipo){
    //echo "$idTranglob";
    
     $sqlMovimiento = "select a.comprobant, a.tipo, a.sucursal, a.numero, a.neto_nogra, a.neto_grava, a.iva, a.importe, nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, * from dbo.detaivco a, dbo.proveedo p, dbo.histocom h where a.idtranglob=$idTranglob and a.codproviva=p.codigo AND h.idtranglob=a.idtranglob;";
-    fb($sqlMovimiento);
+    ChromePhp::log($sqlMovimiento);
     $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
     while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-      fb($row);
+      ChromePhp::log($row);
       if(!isset($tituloDetalle)){
         $tituloDetalle = 1;
         echo "<b>$row[comprobant] $row[sucursal]-$row[numero]</b><br/>(".date_format($row['fecha'], "d/m/Y").")</br>Total: ".sprintf("%.2f",$row['importe'])."<br/>";
@@ -127,7 +127,7 @@ switch($tipo){
     $sqlMovimiento = "select * from dbo.idtranco a, dbo.concasie b, dbo.histvalo c where a.idtranglob=c.idtranglob AND a.idtranglob=b.idtranglob AND a.idtranglob=$idTranglob;";
     $stmt2 = odbc_exec2($mssql2, $sqlMovimiento, __LINE__, __FILE__);
     while($row = sqlsrv_fetch_array($stmt2)){
-      fb($row);
+      ChromePhp::log($row);
       if(!isset($tituloDetalle)){
         $tituloDetalle = 1;
         if($tipo=='1034')echo "<b>RECIBO VARIO</b><br/>"; else echo "<b>PAGO VARIO</b><br/>";
@@ -143,7 +143,7 @@ switch($tipo){
       $sqlMovimiento = "select h.nombre as moneda, f.nombre as fondofijo, detalle_s, h.fechamovi, h.importe, h.operador from dbo.histcomp h, dbo.fondofij f where idtranglob=$idTranglob AND h.fondofijo=f.codigo;";
       $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
       while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-        fb($row);
+        ChromePhp::log($row);
         if(!isset($tituloDetalle)){
           $tituloDetalle = 1;
           echo "<b>$row[detalle_s]</b><br/>(".date_format($row['fechamovi'], "d/m/Y").")</br>";
@@ -156,7 +156,7 @@ switch($tipo){
       $sqlMovimiento = "select h.nombre as moneda, detalle_s, h.fechamovi, h.importe, h.operador, nombre, numeche, cantidad, vencimien from dbo.histcomp h where idtranglob=$idTranglob AND h.fondofijo=0;";
       $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
       while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-        fb($row);
+        ChromePhp::log($row);
         if(!isset($tituloDetalle)){
           $tituloDetalle = 1;
           echo "<b>$row[detalle_s]</b><br/>(".date_format($row['fechamovi'], "d/m/Y").")</br>";
@@ -172,7 +172,25 @@ switch($tipo){
     $sqlMovimiento = "select * from histccfl a, fleteros b where a.fletero=b.fletero AND a.idtranglob=$idTranglob;";
     $stmt2 = odbc_exec2($mssql2, $sqlMovimiento, __LINE__, __FILE__);
     while($row = sqlsrv_fetch_array($stmt2)){
-      fb($row);
+      ChromePhp::log($row);
+      if(!isset($tituloDetalle)){
+        $tituloDetalle = 1;
+        echo "<b>AJUSTE A FLETERO</b><br/>";
+        echo "<b>$row[35]</b><br/>(".$row[0]->format("d/m/Y").")</br>Total: $".sprintf("%.2f",abs($row['importe']))."<br/>";
+        echo "$row[detalle_s]<br/>";
+        if($row['anulado']==1)echo"<span class='bg bg-danger'>&nbsp;ANULADO&nbsp;</span><br/>";
+      }
+      echo "$row[nombre] Nº$row[numero_val], $".sprintf("%.2f",abs($row['importe']))."<br/>";
+      echo "<small>Operador $row[31]</small><br/>";
+    }
+    break;  
+  case '1056':
+  // ajuste fleteros
+   //echo "$idTranglob";
+    $sqlMovimiento = "select * from histccfl a, fleteros b where a.fletero=b.fletero AND a.idtranglob=$idTranglob;";
+    $stmt2 = odbc_exec2($mssql2, $sqlMovimiento, __LINE__, __FILE__);
+    while($row = sqlsrv_fetch_array($stmt2)){
+      ChromePhp::log($row);
       if(!isset($tituloDetalle)){
         $tituloDetalle = 1;
         echo "<b>AJUSTE A FLETERO</b><br/>";
@@ -190,7 +208,7 @@ switch($tipo){
     $sqlMovimiento = "select h.nombre as moneda, f.nombre as fondofijo, nomdeudor, detalle_e, fechamovi, importe, operador FROM dbo.histcomp h, dbo.fondofij f WHERE idtranglob=$idTranglob AND h.fondofijo=f.codigo;";
     $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
     while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-      fb($row);
+      ChromePhp::log($row);
       if(!isset($tituloDetalle)){
         $tituloDetalle = 1;
         echo "<b>$row[detalle_e]</b><br/>(".date_format($row['fechamovi'], "d/m/Y").")</br>";
@@ -228,7 +246,7 @@ switch($tipo){
       $sqlMovimiento = "select h.nombre as moneda, f.nombre as fondofijo, detalle_s, h.fechamovi, h.importe, h.operador from dbo.histcomp h, dbo.fondofij f where idtranglob=$idTranglob AND h.fondofijo=f.codigo;";
       $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
       while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-        fb($row);
+        ChromePhp::log($row);
         if(!isset($tituloDetalle)){
           $tituloDetalle = 1;
           echo "<b>$row[detalle_s]</b><br/>(".date_format($row['fechamovi'], "d/m/Y").")</br>";
@@ -241,7 +259,7 @@ switch($tipo){
       $sqlMovimiento = "select h.nombre as moneda, detalle_s, h.fechamovi, h.importe, h.operador, nombre, numeche, cantidad, vencimien from dbo.histcomp h where idtranglob=$idTranglob AND h.fondofijo=0;";
       $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
       while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
-        fb($row);
+        ChromePhp::log($row);
         if(!isset($tituloDetalle)){
           $tituloDetalle = 1;
           echo "<b>$row[detalle_s]</b><br/>(".date_format($row['fechamovi'], "d/m/Y").")</br>";
@@ -271,7 +289,7 @@ switch($tipo){
           break;
 		
 }
-fb($sqlMovimiento);
+ChromePhp::log($sqlMovimiento);
 
 
 ?>

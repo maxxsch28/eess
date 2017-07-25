@@ -21,7 +21,7 @@ $rowDiasCalden = sqlsrv_fetch_array($stmt);
 $diasCalden = $rowDiasCalden[0];
 
 $sqlPromedioHistorico = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/$diasCalden from dbo.Despachos  group by  datepart(HOUR, Fecha) order by hora";
-// fb($sqlPromedioHistorico);
+// ChromePhp::log($sqlPromedioHistorico);
 $stmt2 = odbc_exec2( $mssql, $sqlPromedioHistorico, __FILE__, __LINE__);
 while($row2 = sqlsrv_fetch_array($stmt2)){
   $sqlInsert = "INSERT INTO [coop].[dbo].[despachosPromedio] (hora, despachos) VALUES ($row2[0], $row2[1]);";

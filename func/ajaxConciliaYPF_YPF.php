@@ -18,7 +18,7 @@ $andConciliado = (isset($_POST['soloNoConciliado']))?" AND idConciliado=0":"";
 
 $sqlYPF = "SELECT *, str_to_date(femision, '%d/%m/%Y') as femision2  FROM ctacte WHERE 1 $andFecha $andConciliado ORDER BY femision2 ASC;";
 
-//fb($sqlYPF);
+//ChromePhp::log($sqlYPF);
 
 $result = $mysqli3->query($sqlYPF);
 

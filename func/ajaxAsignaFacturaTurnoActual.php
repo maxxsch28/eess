@@ -9,7 +9,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(isset($_GET['IdMovimientoFac'])&&is_numeric($_GET['IdMovimientoFac'])){
   // actualizo base
   $sql = "UPDATE dbo.movimientosDetalleFac SET ExcluidoDeTurno=0, IdCierreTurno = NULL WHERE IdMovimientoFac=$_GET[IdMovimientoFac]";
-  fb($sql);
+  ChromePhp::log($sql);
   $stmt = odbc_exec2( $mssql, $sql, __LINE__, __FILE__);
   echo "ok";
 }

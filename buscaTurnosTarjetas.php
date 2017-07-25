@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $nivelRequerido = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
@@ -21,7 +21,7 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
 }
 if(!isset($_SESSION['tarjetasCredito'])||1){
   $sqlTarjetas = "SELECT IdTarjeta, Nombre, IdCuentaContable_Presentacion FROM dbo.tarjetasCredito WHERE Activa=1 ORDER BY Nombre ASC;";
-  fb($sqlTarjetas);
+  ChromePhp::log($sqlTarjetas);
   $stmt = odbc_exec2( $mssql, $sqlTarjetas, __LINE__, __FILE__);
   $_SESSION['tarjetasCredito']=array();
   while($rowTarjetas = sqlsrv_fetch_array($stmt)){

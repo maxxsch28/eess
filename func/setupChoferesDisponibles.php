@@ -13,7 +13,7 @@ if(isset($_POST['muestraComprimido'])){
     $_SESSION['muestraComprimido']=0;
     setcookie( "muestraComprimido", 0, strtotime( '+30 days' ) );
    } 
-  fb($_SESSION['muestraComprimido']);
+  ChromePhp::log($_SESSION['muestraComprimido']);
   die;
 }
 if(isset($_POST['ocultaMenu'])){
@@ -24,7 +24,7 @@ if(isset($_POST['ocultaMenu'])){
     $_SESSION['ocultaMenu']=0;
     setcookie( "ocultaMenu", 0, strtotime( '+30 days' ) );
    } 
-  fb($_SESSION['ocultaMenu']);
+  ChromePhp::log($_SESSION['ocultaMenu']);
   die;
 }
 
@@ -55,7 +55,7 @@ $totalNeto = $totalIVA = $totalPrecio = $cantidadFacturas = $cantidadClientes = 
 $comision=array();
 $totalAComisionar = array();
 //var_dump($flecha);
-fb($flecha);
+ChromePhp::log($flecha);
 while($fila = sqlsrv_fetch_array($stmt)){
   $problemaVencimiento=false;
   $choferConFlecha = false;

@@ -66,7 +66,7 @@ if(!isset($_POST['soloExternos'])||$_POST['soloExternos']==0){
 switch($_POST['que']){
   case 'gastos':
   // GASTOS
-  fb($sqlGastos);
+  ChromePhp::log($sqlGastos);
   $stmt = odbc_exec2($mssql2, $sqlGastos, __LINE__, __FILE__);
   $tabla = "";$a=0;
   $totalNeto = $totalIVA = $totalPrecio = $cantidadFacturas =  0;
@@ -110,7 +110,7 @@ switch($_POST['que']){
   break;
   case 'sueldos':
   // SUELDOS
-  fb($sqlSueldos);
+  ChromePhp::log($sqlSueldos);
   $stmt = odbc_exec2($mssql2, $sqlSueldos, __LINE__, __FILE__);
   $tabla = "";$a=0;
   $totalNeto = $totalIVA = $totalPrecio = $cantidadFacturas =  0;
@@ -154,7 +154,7 @@ switch($_POST['que']){
   break;
   case 'ingresos':
   // Ingresos
-  fb($sqlIngresos);
+  ChromePhp::log($sqlIngresos);
   $stmt = odbc_exec2($mssql2, $sqlIngresos, __LINE__, __FILE__);
   $tabla = "";$a=0;
   $totalB = 0;

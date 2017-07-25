@@ -27,16 +27,15 @@ while($fila = sqlsrv_fetch_array($stmt)){
     if(!isset($encabezado)){
       $encabezado=trim($fila['Descripcion']);
     } elseif($encabezado<>trim($fila['Descripcion'])){
-      
-      $div.= "<span class='alert-success'>$encabezado: <b><span class='pull-right'>".(($sumaGasto<>0)?sprintf("%01.2f",$sumaGasto):'')."</span></b></span></p><p class='text-capitalize'>";
+      $div.= "<tr style='font-weight:bold' class='alert alert-success'><td><b>$encabezado</td><td class=''>".(($sumaGasto<>0)?sprintf("%01.2f",$sumaGasto):'')."</td></tr>";
       $sumaGasto=0;
       $encabezado=$fila['Descripcion'];
     }
-    $ultimaDiv = "<span class='alert-success'>$encabezado: <b><span class='pull-right'>".(($sumaGasto<>0)?sprintf("%01.2f",$sumaGasto):'')."</span></b></span></p><p class='text-capitalize'>";
+    $ultimaDiv = "<tr style='font-weight:bold' class='alert alert-success'><td><b>$encabezado</td><td class=''>".(($sumaGasto<>0)?sprintf("%01.2f",$sumaGasto):'')."</td></tr>";
     
-    $div .= ucwords(strtolower(trim($fila['Detalle']))).": <span class='pull-right'>".(($fila['IngresoEgreso']==1)?'':'-').(($fila['Importe']<>0)?sprintf("%01.2f", ($fila['Importe'])):'')."</span><br/>";
+    $div .= "<tr class='viaje'><td>".ucwords(strtolower(trim($fila['Detalle'])))."</td><td class=''>".(($fila['IngresoEgreso']==1)?'':'-').(($fila['Importe']<>0)?sprintf("%01.2f", ($fila['Importe'])):'')."</td></tr>";
     $sumaGasto+=(($fila['IngresoEgreso']==1)?1:-1)*$fila['Importe'];
 }
-echo $div.$ultimaDiv.'</p>';
+echo $div.$ultimaDiv;
 
 ?>

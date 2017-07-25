@@ -42,7 +42,7 @@ for($i = 0; $i < $cuantosMeses+1; $i++){
   
   $sqlVentas = trim('SELECT MovimientosDetalleFac.IdArticulo, Cantidad, PrecioPublico, MovimientosDetalleFac.IdCierreTurno, Codigo, Descripcion, IdGrupoDescuento, dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4, PrecioPublico AS VENTAS, dbo.CierresTurno.Fecha, dbo.MovimientosFac.IdTipoMovimiento, DATEPART(hh, dbo.CierresTurno.Fecha) as hora, isnumeric(IdEmpleado2*IdEmpleado3*IdEmpleado4) as turnoTriple FROM dbo.MovimientosDetalleFac, dbo.Articulos, dbo.MovimientosFac, dbo.CierresTurno WHERE (IdCliente NOT IN (1993) OR IdCliente is null) AND dbo.Articulos.IdGrupoArticulo=57 AND dbo.MovimientosDetalleFac.IdArticulo=dbo.Articulos.IdArticulo AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosFac.Fecha>=\''.$desde.'\' AND dbo.MovimientosFac.Fecha<\''.$hasta.'\' AND dbo.CierresTurno.IdCierreTurno=dbo.MovimientosDetalleFac.IdCierreTurno '.$soloElaionGrande.' AND Descripcion like (\'%ELAION%\') AND Descripcion NOT LIKE (\'%MOTO%\') AND Descripcion NOT LIKE (\'%NAUTICO%\') AND (descripcion LIKE (\'%1LT%\') OR descripcion LIKE (\'%1 LT%\')) AND idEmpleado2 NOT IN '.$_SESSION['empleadosZZ'].' AND (idEmpleado3 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado3 IS NULL) AND (idEmpleado4 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado4 IS NULL) ORDER BY dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4;'); // Modificacion para corregir Fede 21 julio 2016
   
-  fb($sqlVentas);
+  ChromePhp::log($sqlVentas);
   
 
   $stmt = odbc_exec2($mssql, $sqlVentas, __LINE__, __FILE__);

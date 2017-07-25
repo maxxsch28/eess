@@ -13,27 +13,23 @@ $numeroPago = '20150723';
 
 $soloExternos = (isset($_POST['soloExternos']))?" AND tipoviaje=$_POST[soloExternos]":"";
 if(isset($_POST['numero'])){
-	$sqlClientes = "select nombre, ordservi.importe, totadelant, ordservi.proveedor, ordservi.sucursal_e ,ordservi.numero, fleteros.fletero, observacio, numeinter, fechaprest from dbo.orsefact, ordservi, FLETEROS where ordservi.numero=ordenservi and ordservi.fletero=fleteros.fletero and orsefact.numero=$_POST[numero] and comprobant='NOTA DE DEBITO' AND ordservi.sucursal_e=orsefact.sucursal_e order by nombre asc";
-	echo $sqlClientes;
+  $sqlClientes = "select nombre COLLATE  SQL_Latin1_General_CP1253_CI_AI as nombre, ordservi.importe, totadelant, ordservi.proveedor, ordservi.sucursal_e ,ordservi.numero, fleteros.fletero, observacio, numeinter, fechaprest from dbo.orsefact, ordservi, FLETEROS where ordservi.numero=ordenservi and ordservi.fletero=fleteros.fletero and orsefact.numero=$_POST[numero] and comprobant='NOTA DE DEBITO' AND ordservi.sucursal_e=orsefact.sucursal_e order by nombre asc";
 } else {
-	$limit=' LIMIT 5';
-	$sqlClientes = "select clientes.idCliente as idC, clientes.socio, facturas.idFacturaRecibida, sum(usoRed) AS uR, sum( interesMora ) AS iM, sum( ingresosBrutos ) AS iB,facturaB, (SELECT count(celular) FROM `movistar.celulares` WHERE idCliente=idC) AS q,numeroFactura, nombre, codigo, periodo, facturas.idCliente, sum(cargoFijo) as cF, cargoFijo, (SUM( cargoFijo ) - cargoFijo) as Dif, sum(cargoVariable) as cV, sum(cargoBB) as cB, sum(IVA21) as IV1, sum(IVA27) as IV7, sum(otros) as o, sum(impuestosInternos) as iI, empleado from `movistar.facturasrecibidas` as facturas, `movistar.facturasitems` as items, `movistar.clientes` as clientes WHERE facturas.idFacturaRecibida=items.idFacturaRecibida and clientes.idCliente=facturas.idCliente group by facturas.idFacturaRecibida order by facturas.idFacturaRecibida desc $limit";
+  $limit=' LIMIT 5';
+  $sqlClientes = "select clientes.idCliente as idC, clientes.socio, facturas.idFacturaRecibida, sum(usoRed) AS uR, sum( interesMora ) AS iM, sum( ingresosBrutos ) AS iB,facturaB, (SELECT count(celular) FROM `movistar.celulares` WHERE idCliente=idC) AS q,numeroFactura, nombre, codigo, periodo, facturas.idCliente, sum(cargoFijo) as cF, cargoFijo, (SUM( cargoFijo ) - cargoFijo) as Dif, sum(cargoVariable) as cV, sum(cargoBB) as cB, sum(IVA21) as IV1, sum(IVA27) as IV7, sum(otros) as o, sum(impuestosInternos) as iI, empleado from `movistar.facturasrecibidas` as facturas, `movistar.facturasitems` as items, `movistar.clientes` as clientes WHERE facturas.idFacturaRecibida=items.idFacturaRecibida and clientes.idCliente=facturas.idCliente group by facturas.idFacturaRecibida order by facturas.idFacturaRecibida desc $limit";
 }
 
- echo $sqlClientes;
+ ChromePhp::log($sqlClientes);
 
 
-$stmt = odbc_exec( $mssql2, $sqlClientes);
+$stmt = odbc_exec2( $mssql2, $sqlClientes, __file__, __line__);
 //print_r($stmt);
-if( $stmt === false ){
-     echo "1. Error in executing query.</br>$sqlClientes<br/>";
-     die( print_r( sqlsrv_errors(), true));
-}
+
 $tabla = "";
 $cantidadFacturas = $cantidadClientes = 0;
 $comision=array();
 $totalAComisionar = array();
-while($fila = odbc_fetch_array($stmt)){
+while($fila = sqlsrv_fetch_array($stmt)){
     //$date = date_create_from_format('j-M-Y', $fila['fechaprest']);
     //echo date_format($date, 'Y-m-d');
     //echo $fila['fechaprest'];

@@ -1,12 +1,12 @@
 <?php
 // calculaPromedios.php
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-fb($_POST, 'POST');
+ChromePhp::log($_POST, 'POST');
 $r2 = explode("/", $_REQUEST['rangoFin']);
 $r1 = explode("/", $_REQUEST['rangoInicio']);
 $rangoFin =  "$r2[0]/$r2[1]/$r2[2]";
 $rangoInicio="$r1[0]/$r1[1]/$r1[2]";
-//fb($loggedInUser->user_id);
+//ChromePhp::log($loggedInUser->user_id);
 //if(isset($_))
 /*
 cod_libro	libro	sucursal	asiento	item	fecha	cuentacont	cuentatota	ordenamien	volcado	debe	haber	signo	cantidad	cotizacion	transaccio	exportacio	moneda	sucutranu	numetranu	suctranglo	idtranglob	idempresa	cuentaaux	impumanual	observacio
@@ -32,7 +32,7 @@ if(isset($_POST['idBuscaAsiento'])){
   //$rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
   //$rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
   $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaTransporte, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaTransporte'])&&$_REQUEST['cuentaTransporte']>0)?$_REQUEST['cuentaTransporte']:0)."', $loggedInUser->user_id)";
-  fb($sql);
+  ChromePhp::log($sql);
 }
 if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
   $result = $mysqli->query($sql);
@@ -62,7 +62,7 @@ if( $stmt === false ){
 while($rowAsientos = odbc_fetch_array($stmt)){
   $sqlDetalles = "SELECT cantidad, [sqlcoop_dbimplemen].[dbo].[asiecont].asiento, [sqlcoop_dbimplemen].[dbo].[concasie].detalle, debe, haber, fecha, [sqlcoop_dbshared].[dbo].[plancuen].nombre, cuentacont, ordenamien, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[asiecont].idtranglob, [sqlcoop_dbimplemen].[dbo].[asiecont].cod_libro FROM [sqlcoop_dbimplemen].[dbo].[asiecont], [sqlcoop_dbimplemen].[dbo].[concasie], [sqlcoop_dbshared].[dbo].[plancuen] WHERE [sqlcoop_dbshared].[dbo].[plancuen].codigo=cuentacont AND [sqlcoop_dbimplemen].[dbo].[asiecont].cod_libro=[sqlcoop_dbimplemen].[dbo].[concasie].cod_libro AND [sqlcoop_dbimplemen].[dbo].[asiecont].asiento=[sqlcoop_dbimplemen].[dbo].[concasie].asiento AND [sqlcoop_dbimplemen].[dbo].[asiecont].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[concasie].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[asiecont].asiento=$rowAsientos[asiento] UNION SELECT cantidad, [sqlcoop_dbimplemen].[dbo].[diario].asiento, [sqlcoop_dbimplemen].[dbo].[concasie].detalle, debe, haber, fecha, [sqlcoop_dbshared].[dbo].[plancuen].nombre, cuentacont, ordenamien, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[diario].idtranglob, [sqlcoop_dbimplemen].[dbo].[diario].cod_libro FROM [sqlcoop_dbimplemen].[dbo].[diario], [sqlcoop_dbimplemen].[dbo].[concasie], [sqlcoop_dbshared].[dbo].[plancuen] WHERE [sqlcoop_dbshared].[dbo].[plancuen].codigo=cuentacont AND [sqlcoop_dbimplemen].[dbo].[diario].cod_libro=[sqlcoop_dbimplemen].[dbo].[concasie].cod_libro AND [sqlcoop_dbimplemen].[dbo].[diario].asiento=[sqlcoop_dbimplemen].[dbo].[concasie].asiento AND [sqlcoop_dbimplemen].[dbo].[diario].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[concasie].transaccio=$rowAsientos[transaccio] AND [sqlcoop_dbimplemen].[dbo].[diario].asiento=$rowAsientos[asiento] ORDER BY debe DESC, haber DESC";
             
-  fb($sqlDetalles);
+  ChromePhp::log($sqlDetalles);
     
   $stmt2 = odbc_exec( $mssql2, $sqlDetalles);
   if( $stmt2 === false ){
@@ -75,7 +75,7 @@ while($rowAsientos = odbc_fetch_array($stmt)){
   
   if(!isset($_SESSION['concepto'][$rowAsientos['concepto']])){
     $sqlConcepto = "SELECT TOP 1 concepto FROM CONCECON WHERE codigo=$rowAsientos[concepto];";
-    fb($sqlConcepto);
+    ChromePhp::log($sqlConcepto);
     $stmt5 = odbc_exec($mssql2, $sqlConcepto);
      if( $stmt5 === false ){
       echo "2. Error in executing query.</br>$sqlConcepto<br/>";
@@ -85,14 +85,14 @@ while($rowAsientos = odbc_fetch_array($stmt)){
     $tmp2 = substr($tmp3['concepto'], 5);
     $_SESSION['concepto'][$rowAsientos['concepto']] = trim($tmp2);
   }
-  fb($_SESSION['concepto']);
+  ChromePhp::log($_SESSION['concepto']);
   switch(intval($rowAsientos['concepto'])) {
     case 30:
       // if concepto==30 buscar datos de fletero.
       //$sqlFletero = "select * from [sqlcoop_dbimplemen].[dbo].ordservi, [sqlcoop_dbimplemen].[dbo].fleteros where [sqlcoop_dbimplemen].[dbo].ordservi.importe=$rowDetalles[cantidad] and [sqlcoop_dbimplemen].[dbo].ordservi.idtranglob=$rowAsientos[idtranglob] and [sqlcoop_dbimplemen].[dbo].ordservi.fletero=[sqlcoop_dbimplemen].[dbo].fleteros.fletero";
       
       $sqlFletero = "SELECT nombre FROM [sqlcoop_dbimplemen].[dbo].ordservi, [sqlcoop_dbimplemen].[dbo].fleteros WHERE [sqlcoop_dbimplemen].[dbo].ordservi.idtranglob=$rowAsientos[idtranglob] AND [sqlcoop_dbimplemen].[dbo].ordservi.fletero=[sqlcoop_dbimplemen].[dbo].fleteros.fletero";
-      fb($sqlFletero, $rowAsientos['asiento']);
+      ChromePhp::log($sqlFletero, $rowAsientos['asiento']);
       $stmt3 = odbc_exec( $mssql, $sqlFletero);
       if( $stmt3 === false ){
         echo "3. Error in executing query.</br>$sqlFletero<br/>";
@@ -103,7 +103,7 @@ while($rowAsientos = odbc_fetch_array($stmt)){
       break;
     case 1039:
       $sqlFletero = "SELECT nombre FROM [sqlcoop_dbimplemen].[dbo].histccfl, [sqlcoop_dbimplemen].[dbo].fleteros WHERE [sqlcoop_dbimplemen].[dbo].histccfl.idtranglob=$rowAsientos[idtranglob] AND [sqlcoop_dbimplemen].[dbo].histccfl.fletero=[sqlcoop_dbimplemen].[dbo].fleteros.fletero";
-      fb($sqlFletero, $rowAsientos['asiento']);
+      ChromePhp::log($sqlFletero, $rowAsientos['asiento']);
       $stmt3 = odbc_exec( $mssql, $sqlFletero);
       if( $stmt3 === false ){
         echo "3. Error in executing query.</br>$sqlFletero<br/>";

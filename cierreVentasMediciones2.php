@@ -41,7 +41,7 @@ foreach($tanques as $idTanque => $idArticulo){
 }
 //print_r($lecturaTanque);
 $sqlCierreTanques = "INSERT INTO `pedidosypf`.`cierres_cem_tanques` (`fechaCarga`, `fechaCierre`, `turno`, `tq1`, `tq2`, `tq3`, `tq4`, `tq5`, `tq6`) VALUES (CURRENT_TIMESTAMP, '".date('Y-m-d 22:00:00')."', 'noche', $tqs);";
-fb($sqlCierreTanques);
+ChromePhp::log($sqlCierreTanques);
 echo $sqlCierreTanques;
 //$result = $mysqli->query($sqlCierreTanques);
 

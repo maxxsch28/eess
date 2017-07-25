@@ -4,7 +4,7 @@
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
- //fb($_POST);
+ //ChromePhp::log($_POST);
 if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
   if(isset($_POST['mes'])){
     $mes=substr($_POST['mes'],4,2);
@@ -37,7 +37,7 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
       $rowCEM = "<tr><td rowspan=3>".substr($filaCEM['fechaCierre'],0,-9)."</td><td>".round(($filaCEM['ed1']-$anterior['ed1']),2)."</td><td>".round(($filaCEM['ns1']-$anterior['ns1']),2)."</td><td>".round(($filaCEM['ni1']-$anterior['ni1']),2)."</td><td>".round(($filaCEM['ed2']-$anterior['ed2']),2)."</td><td>".round(($filaCEM['ns2']-$anterior['ns2']),2)."</td><td>".round(($filaCEM['ni2']-$anterior['ni2']),2)."</td><td>".round(($filaCEM['ud3']-$anterior['ud3']),2)."</td><td>".round(($filaCEM['ed4']-$anterior['ed4']),2)."</td><td>".round(($filaCEM['ud5']-$anterior['ud5']),2)."</td><td>".round(($filaCEM['ud6']-$anterior['ud6']),2)."</td><td>".round(($filaCEM['ed7']-$anterior['ed7']),2)."</td></tr>";
        // saca de SQL Server despachos por pico leídos por CaldenOil
       $sqlDespachos = "select idManguera, sum(cantidad) from dbo.despachos where fecha>='$anterior[fechaCierre]' and fecha<='$filaCEM[fechaCierre]' group by Idmanguera order BY IdManguera;";
-      //fb($sqlDespachos);
+      //ChromePhp::log($sqlDespachos);
       $stmt = odbc_exec( $mssql, $sqlDespachos);
       unset($pico, $tableTanques2, $diferenciaPico);
       $rowCalden = "<tr>";
@@ -79,7 +79,7 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
     $tableTanques .= "<td>$totalDiferenciaPico[$i]<br/>$totalPico[$i]<br/>".round(($totalDiferenciaPico[$i]/$totalPico[$i]*100),2)."%</td>";
   }
   $tableTanques .= "</tr></tfooter></table>";
-  //fb($tableTanques);
+  //ChromePhp::log($tableTanques);
   echo $tableTanques;
   //$_SESSION['tablaResumen']=$tablaResumen;
   $_SESSION['tablaTanques']=$tableTanques;

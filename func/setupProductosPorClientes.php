@@ -15,7 +15,7 @@ if(!isset($_SESSION['productosTransporte'])){
     $_SESSION['productosTransporte'][$producto['codigo']] = trim($producto['nombre']);
   }
 }
-//fb($_SESSION['productosTransporte']);
+//ChromePhp::log($_SESSION['productosTransporte']);
 
 
 $soloExternos = (isset($_POST['soloExternos']))?" AND tipoviaje=$_POST[soloExternos]":"";
@@ -37,7 +37,7 @@ if(isset($_POST['mes'])){
 } else {
   die;
 }
-fb($sqlClientes);
+ChromePhp::log($sqlClientes);
 $stmt = odbc_exec2($mssql2, $sqlClientes, __LINE__, __FILE__);
 $tabla = "";$a=0;
 $totalB = 0;

@@ -41,7 +41,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/classes/class.user.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/func/funcs.user.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/func/funcs.general.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/classes/class.newuser.php");
-require_once($_SERVER['DOCUMENT_ROOT'].'/func/FirePHPCore/fb.php'); //firebug
+require_once($_SERVER['DOCUMENT_ROOT'].'/classes/ChromePhp.php'); //firebug
 
 session_start();
 ob_start(); //firebug
@@ -206,7 +206,7 @@ if(!isset($_SESSION['empleado'])||1){
   //$stmt = odbc_exec($mssql, $sqlCajeros);
   $stmt = odbc_exec2($mssql, $sqlCajeros);
   while($rowCajero = sqlsrv_fetch_array($stmt)){
-    //fb($rowCajero);
+    //ChromePhp::log($rowCajero);
     $apellido = explode(" ", $rowCajero['empleado']);
     if(strlen($apellido[0])>3){
       $empleado[$rowCajero['idgrupovendedores']][$rowCajero['idEmpleado']]=$apellido[0];
@@ -355,9 +355,9 @@ function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
   $stmt = sqlsrv_query($db, $sql, $params, $options);
   if( $stmt === false ){
     if(odbc_error()==23000||sqlsrv_errors()[0][0]==23000){
-      fb("Error SQL, en $script, linea $linea: $sql. INDICE REPETIDO");
+      ChromePhp::log("Error SQL, en $script, linea $linea: $sql. INDICE REPETIDO");
     } elseif(odbc_error()==37000||sqlsrv_errors()[0][0]==37000){
-      fb("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
+      ChromePhp::log("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
       echo "<span class='alert alert-danger'>Error SQL - 37000</span><br/>$sql";
       die();
     } else {
@@ -371,7 +371,7 @@ function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
 
 function fecha($fecha, $res='dmy', $tipo='ymd'){
   if(is_object($fecha)){
-    //fb('Fecha es objeto');
+    //ChromePhp::log('Fecha es objeto');
     // fecha es objeto
     switch($res){
       case "Ym":
@@ -387,11 +387,11 @@ function fecha($fecha, $res='dmy', $tipo='ymd'){
         break;
     }
   } else {
-    fb('Fecha NO es objeto');
+    ChromePhp::log('Fecha NO es objeto');
     if(strlen($fecha)==23){
       $fecha=substr($fecha, 0, -4);
     } 
-    fb('Tipo de fecha esperada: '.$res);
+    ChromePhp::log('Tipo de fecha esperada: '.$res);
     switch($res){
       case "Ym":
       $tmp = substr($fecha, 0,4).substr($fecha, 5,2);

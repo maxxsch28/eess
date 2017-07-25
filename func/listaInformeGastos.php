@@ -17,7 +17,7 @@ $tiposMovimientosQueSuman = "'FAA', 'FAC', 'FAB', 'ACR', 'REC', 'REA', 'NDI', 'N
 
 $sqlGastos = "select distinct razonsocial, sum(Costo*Cantidad*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as resumenRenglon, sum(netoNoGravado*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as NoGravado, sum(NetoMercaderias*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Mercaderias, sum(NetoCombustibles*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Combustibles, sum(NetoLubricantes*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Lubricantes, sum(NetoGastos*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Gastos, sum(NetoFletes*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Fletes, sum(Total*(case when IdTipoMovimientoProveedor IN ($tiposMovimientosQueSuman) then 1 else -1 end)) as Total, dbo.cuentasgastos.Descripcion as CuentaGasto from dbo.MovimientosPro, dbo.CuentasGastos, dbo.MovimientosDetallePro where $rangoMes and dbo.MovimientosDetallePro.IdCuentaGastos=dbo.CuentasGastos.IdCuentaGastos and dbo.MovimientosPro.IdMovimientoPro=dbo.MovimientosDetallePro.IdMovimientoPro and (IdTipoMovimientoProveedor<>'RV' AND IdTipoMovimientoProveedor<>'VP') and dbo.movimientosdetallepro.IdCuentaGastos<>43 and dbo.movimientosdetallepro.IdCuentaGastos<>48 group by  razonsocial, dbo.cuentasgastos.Descripcion order by dbo.cuentasgastos.Descripcion asc, RazonSocial asc";
 
-fb($sqlGastos);
+ChromePhp::log($sqlGastos);
 
 $stmt = odbc_exec2( $mssql, $sqlGastos, __LINE__, __FILE__);
 
@@ -42,11 +42,12 @@ while($fila = sqlsrv_fetch_array(($stmt))){
     <td>".(($sumaLubricantes<>0)?sprintf("%01.2f",$sumaLubricantes):'')."</td>
     <td>".(($sumaFletes<>0)?sprintf("%01.2f",$sumaFletes):'')."</td>
     </tr>";
-    $Mercaderias = ($fila['Mercaderias']==$fila['resumenRenglon'])?$fila['Mercaderias']:$fila['resumenRenglon'];
+    $Mercaderias = ($fila['Mercaderias']==$fila['resumenRenglon'])?$fila['Mercaderias']:0;
     $tabla .= "<tr><td>$fila[razonsocial]</td><td>".(($Mercaderias<>0)?sprintf("%01.2f", ($Mercaderias)):'')."</td><td>".(($fila['Gastos']<>0)?sprintf("%01.2f", ($fila['Gastos'])):'')."</td><td>".(($fila['NoGravado']<>0)?sprintf("%01.2f", ($fila['NoGravado'])):'')."</td><td>".(($fila['Lubricantes']<>0)?sprintf("%01.2f", ($fila['Lubricantes'])):'')."</td><td>".(($fila['Fletes']<>0)?sprintf("%01.2f", ($fila['Fletes'])):'')."</td></tr>";
     
     $sumaNoGravado+=$fila['NoGravado'];
-    $sumaMercaderias+=($fila['Mercaderias']==$fila['resumenRenglon'])?$fila['Mercaderias']:$fila['resumenRenglon'];
+    //$sumaMercaderias+=($fila['Mercaderias']==$fila['resumenRenglon'])?$fila['Mercaderias']:$fila['resumenRenglon'];
+    $sumaMercaderias+=($fila['Mercaderias']==$fila['resumenRenglon'])?$fila['Mercaderias']:0;
     //$sumaMercaderias+=$fila['Mercaderias'];
     $sumaCombustibles+=$fila['Combustibles'];
     $sumaLubricantes+=$fila['Lubricantes'];

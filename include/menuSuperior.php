@@ -24,7 +24,7 @@ $ypfUrl = '';
                 </ul>
             </li>
                 <?php if($loggedInUser){
-                    if($loggedInUser->group_id==2||$loggedInUser->group_id==4){ // Playa?>
+                    if($loggedInUser->group_id==2||$loggedInUser->group_id==4||$loggedInUser->group_id==7){ // Playa?>
                     <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanques.php")echo ' class="active"';?>><a href="/">Combustibles</a></li>
                 <?php } 
                 if($loggedInUser->group_id==2){ // Gestion?>
@@ -38,6 +38,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/stockTanques.php')echo ' class="active"';?>><a href="/stockTanques.php">Control de stock de tanques</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/combTrackingVentas.php')echo ' class="active"';?>><a href="/combTrackingVentas.php">Tracking Ventas</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/registroRemito.php')echo ' class="active"';?>><a href="/registroRemito.php">Recepcion combustible</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/stockCierre.php')echo ' class="active"';?>><a href="/stockCierre.php">Stocks al cierre</a></li>
                         </ul>
                     </li>
                 <?php } 
@@ -53,7 +54,7 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php } 
-                    if($loggedInUser->group_id==2){ // Gestion?>
+                    if($loggedInUser->group_id==2||$loggedInUser->group_id==7){ // Gestion?>
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" >
                             Gestión
@@ -72,6 +73,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/acomodaRecibos.php')echo ' class="active"';?>><a href="/acomodaRecibos.php">Acomoda recibos caja Admin</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/promoCargaComprobantes.php')echo ' class="active"';?>><a href="/promoCargaComprobantes.php">Carga cupones desayuno</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/setupCargadora.php')echo ' class="active"';?>><a href="/setupCargadora.php">Cargadora</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/informeMensual.php')echo ' class="active"';?>><a href="/informeMensual.php">Informe mensual</a></li>
                         </ul>
                     </li>
                 <?php } 
@@ -88,7 +90,7 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php } 
-                    if($loggedInUser->group_id==2||$loggedInUser->group_id==5){ // Contables?>
+                    if($loggedInUser->group_id==2||$loggedInUser->group_id==5||$loggedInUser->group_id==7){ // Contables?>
                     
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
@@ -105,7 +107,7 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php }
-                if($loggedInUser->group_id==2||$loggedInUser->group_id==6){ // Transporte?>
+                if($loggedInUser->group_id==2||$loggedInUser->group_id==6||$loggedInUser->group_id==7){ // Transporte?>
                     
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaIVA.php">

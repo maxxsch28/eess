@@ -10,7 +10,7 @@ $titulo="Estado tanques | YPF";
 
 
 $sqlUltimoUpdate = $mysqli->query("SELECT fecha, tipo FROM ultimaactualizacion order by id desc limit 1");
-fb($sqlUltimoUpdate);
+ChromePhp::log($sqlUltimoUpdate);
 $ultimoUpdate = $sqlUltimoUpdate->fetch_array();
 $datetime1 = date_create($ultimoUpdate[0]);
 $datetime2 = new DateTime("now");
@@ -67,10 +67,10 @@ class Picos{
 $tanques = new Tanques();
 $combustibles = new Combustibles();
 $picos = new Picos();
-fb($tanques);
-fb($combustibles);
-fb($picos);
-       fb("hola");
+ChromePhp::log($tanques);
+ChromePhp::log($combustibles);
+ChromePhp::log($picos);
+       ChromePhp::log("hola");
        
        
        
@@ -111,7 +111,7 @@ function muestraDetallesTanquesTelemedidos(){
       // 18/8/2016
       $sqlConversion = "SELECT tq$tanque[IdTanque] FROM `cierres_tanques_equivalencias` WHERE mm=".round($telemedido[$tanque['IdTanque']]['Nivel'],0).";";
       //echo($sqlConversion);
-      //fb($telemedido);
+      //ChromePhp::log($telemedido);
       $result = $mysqli->query($sqlConversion);
       $litrosDesdeMM = $result->fetch_assoc();
       $tq = "tq$tanque[IdTanque]";
@@ -418,8 +418,8 @@ while($tanque = sqlsrv_fetch_array($stmt)){
   $stockActual = $telemedido[$tanque['IdTanque']]['Litros'];
   if(in_array($tanque['IdTanque'], $CFG->tanquesATomarMilimetrosDesdeTablas)){
     $sqlConversion = "SELECT tq$tanque[IdTanque] FROM `cierres_tanques_equivalencias` WHERE mm=".round($telemedido[$tanque['IdTanque']]['Nivel'],0).";";
-    //fb($sqlConversion);
-    //fb($telemedido);
+    //ChromePhp::log($sqlConversion);
+    //ChromePhp::log($telemedido);
     $result = $mysqli->query($sqlConversion);
     $litrosDesdeMM = $result->fetch_assoc();
     $tq = "tq$tanque[IdTanque]";
@@ -430,7 +430,7 @@ while($tanque = sqlsrv_fetch_array($stmt)){
     }
   }
   // var_dump($telemedido);
-  //fb($telemedido);
+  //ChromePhp::log($telemedido);
   
     $telemedidoXarticulo[$tanque['IdArticulo']] = ((isset($telemedidoXarticulo[$tanque['IdArticulo']]))?$telemedidoXarticulo[$tanque['IdArticulo']] + $telemedido[$tanque['IdTanque']]['Litros']:$telemedido[$tanque['IdTanque']]['Litros']);
 }
@@ -579,7 +579,7 @@ if(!isset($_SESSION['despachosHorariosHistoricosDiarios'][date('w')])){
 }
 
 
-//fb($_SESSION['despachosHorariosHistoricos']);
+//ChromePhp::log($_SESSION['despachosHorariosHistoricos']);
 
 // despachos por hora
 $sqlDespachosHorariosActuales = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha)) as q from dbo.Despachos where CONVERT(date, Fecha)=CONVERT(date, Getdate()) group by datepart(HOUR, Fecha) order by hora;";
@@ -590,13 +590,13 @@ while($row = sqlsrv_fetch_array($stmt)){
   if($row['hora']>5)
   $despachosHorariosActuales[$row['hora']]=$row['q'];
 }
-@fb($despachosHorariosActuales);
+@ChromePhp::log($despachosHorariosActuales);
 //// calcula estimacion hora actual
 //$minuto = 
 @$despachosHorariosActuales[date('G')] = round($despachosHorariosActuales[date('G')]/date('i')*60,0);
-//fb($despachosHorariosActuales[date('G')]);
-//fb($despachosHorariosActuales);
-//fb(date('G'));
+//ChromePhp::log($despachosHorariosActuales[date('G')]);
+//ChromePhp::log($despachosHorariosActuales);
+//ChromePhp::log(date('G'));
 $max1 = max($_SESSION['despachosHorariosHistoricos']);
 $max2 = max($despachosHorariosActuales);
 
@@ -612,12 +612,12 @@ while($row = sqlsrv_fetch_array($stmt)){
   if($row['hora']>5)
   $litrosHorariosActuales[$row['hora']]=round($row['q'],1);
 }
-//fb($litrosHorariosActuales);
+//ChromePhp::log($litrosHorariosActuales);
 // calcula estimacion hora actual
 @$litrosHorariosActuales[date('G')] = round($litrosHorariosActuales[date('G')]/date('i')*60,0);
-//fb($despachosHorariosActuales[date('G')]);
-//fb($litrosHorariosActuales);
-//fb(date('G'));
+//ChromePhp::log($despachosHorariosActuales[date('G')]);
+//ChromePhp::log($litrosHorariosActuales);
+//ChromePhp::log(date('G'));
 $max1 = max($_SESSION['litrosHorariosHistoricos']);
 $max2 = max($litrosHorariosActuales);
 
@@ -669,7 +669,7 @@ while($aforadores = sqlsrv_fetch_array($stmt)){
 }
 $sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-m-d H:i:s')."' group by IdArticulo; ";
 //$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer."' group by IdArticulo; ";
-//fb($sqlVentasDesdeAyer);
+//ChromePhp::log($sqlVentasDesdeAyer);
 //echo $sqlVentasDesdeUltimoCierre;
 $stmt = odbc_exec2($mssql, $sqlVentasDesdeUltimoCierre, __LINE__, __FILE__);
 

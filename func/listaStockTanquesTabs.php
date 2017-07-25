@@ -26,7 +26,7 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
 
     //echo $sqlAforadores;
 }
-  fb($sqlAforadores);
+  ChromePhp::log($sqlAforadores);
   //die;
 
   $result = $mysqli->query($sqlAforadores);
@@ -132,8 +132,8 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
   //$tableTanques[$tanque] .= "<tr><td></td>";
 
   foreach($totalDespachoTanque as $tanque => $despachado){  
-    fb(array_sum($arrayDiferencias['tq'.$tanque]));
-    fb(count($arrayDiferencias['tq'.$tanque]));
+    ChromePhp::log(array_sum($arrayDiferencias['tq'.$tanque]));
+    ChromePhp::log(count($arrayDiferencias['tq'.$tanque]));
     $promedio = array_sum($arrayDiferencias['tq'.$tanque])/count($arrayDiferencias['tq'.$tanque]);
     $tableTanques[$tanque] .= "<tr><td>Final</td><td>".sprintf("%.2f", $totalRecibidoTanque[$tanque])."</td><td>".sprintf("%.2f", $despachado)."</td><td></td><td></td><td class='".((($sumaDiferencias[$tanque])<-$toleranciaTanques)?'neg':((($sumaDiferencias[$tanque])>$toleranciaTanques)?'pos':''))."'>$sumaDiferencias[$tanque] lts<br/>x&#772;".round($promedio).' &sigma;'.round(stats_standard_deviation($arrayDiferencias['tq'.$tanque]),1)."</td><td>".sprintf("%.2f", $sumaDiferencias[$tanque]/$despachado*100)."%</td></tr>";
   }

@@ -87,7 +87,7 @@ while($rowVentas = odbc_fetch_array($stmt)){
   
 }
 
-fb($empleado);
+ChromePhp::log($empleado);
 die;
 
 foreach($meses as $mes){

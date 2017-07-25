@@ -60,8 +60,8 @@ $arrayYER = array();
 while($rowYER = sqlsrv_fetch_array($stmt)){
   $arrayYER[$rowYER['IdArticulo']] = $rowYER['q'];
 }
-//fb($sqlYER);
-//fb($arrayYER);
+//ChromePhp::log($sqlYER);
+//ChromePhp::log($arrayYER);
 ?>
 <!DOCTYPE html>
 <html lang="en">

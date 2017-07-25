@@ -26,8 +26,8 @@ function muestraDetallesTanquesTelemedidos(){
       // arreglo para tomar tanques desde milimetros para super y euro
       // 18/8/2016
       $sqlConversion = "SELECT tq$tanque[3] FROM `cierres_tanques_equivalencias` WHERE mm=".round($telemedido[$tanque['idTanque']]['Nivel'],0).";";
-      //fb($sqlConversion);
-      //fb($telemedido);
+      //ChromePhp::log($sqlConversion);
+      //ChromePhp::log($telemedido);
       $result = $mysqli->query($sqlConversion);
       $litrosDesdeMM = $result->fetch_assoc();
       $tq = "tq$tanque[3]";

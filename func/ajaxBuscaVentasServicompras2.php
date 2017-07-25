@@ -46,7 +46,7 @@ WHERE cpe1.Fecha>=\''.$desde.'\' AND cpe1.Fecha<\''.$hasta.'\' AND (IdEmpleado2<
 
     
 
-// fb($sqlVentas);
+// ChromePhp::log($sqlVentas);
 
 $stmt = odbc_exec($mssql, $sqlVentas);
 if( $stmt === false ){
@@ -96,8 +96,8 @@ foreach($cajero as $idEmpleado => $datos){
 
 
 
-//fb($cajero);
-//fb($promedioEmpleadoUltimos12Meses);
+//ChromePhp::log($cajero);
+//ChromePhp::log($promedioEmpleadoUltimos12Meses);
 //die;
 $qq=0;
 $total5meses = 0;
@@ -118,7 +118,7 @@ foreach($cajero as $id => $quien){
       if($cajero[$id][$mesObservado]>0){
         $cantidadMesesVendedor[$id]++;
         $linea .= "$ ".sprintf("%.2f",$cajero[$id][$mesObservado]);
-        //fb($cajero[$id]);
+        //ChromePhp::log($cajero[$id]);
         $q++;$qq++;
         $totalMeses = $totalMeses + $cajero[$id][$mesObservado];
       } else {

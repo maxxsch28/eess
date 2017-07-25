@@ -46,7 +46,7 @@ WHERE cpe1.Fecha>=\''.$desde.'\' AND cpe1.Fecha<\''.$hasta.'\' AND (IdEmpleado2<
 
     
 
-// fb($sqlVentas);
+// ChromePhp::log($sqlVentas);
 
 $stmt = odbc_exec($mssql, $sqlVentas);
 if( $stmt === false ){
@@ -86,12 +86,12 @@ $sumaEmpleado = array();
 foreach($cajero as $idEmpleado => $datos){
   $cantidadPeriodos[$idEmpleado] = 0;
   $sumaEmpleado[$idEmpleado] = 0;
-  //fb($datos);
+  //ChromePhp::log($datos);
   
   foreach($datos as $mesAnalizado => $facturado){
     if(is_numeric($mesAnalizado)){
-      //fb($mesAnalizado);fb($facturado);
-      //fb($facturado);//fb( array_sum($facturado));
+      //ChromePhp::log($mesAnalizado);ChromePhp::log($facturado);
+      //ChromePhp::log($facturado);//ChromePhp::log( array_sum($facturado));
       $promedioEmpleado[$idEmpleado][$mesAnalizado]=(array_sum($facturado)-$facturado['q'])/$facturado['q'];
       
       if(is_numeric($mesAnalizado)){
@@ -104,11 +104,11 @@ foreach($cajero as $idEmpleado => $datos){
     }
   }
 }
-fb($promedioEmpleado);
+ChromePhp::log($promedioEmpleado);
 
 
-//fb($cajero);
-//fb($promedioEmpleadoUltimos12Meses);
+//ChromePhp::log($cajero);
+//ChromePhp::log($promedioEmpleadoUltimos12Meses);
 //die;
 $qq=0;
 $total5meses = 0;
@@ -131,7 +131,7 @@ foreach($cajero as $id => $quien){
       if($cajero[$id][$mesObservado]>0){
         $cantidadMesesVendedor[$id]++;
         $linea .= "$ ".sprintf("%.2f",$promedioEmpleado[$id][$mesObservado]);
-        //fb($cajero[$id]);
+        //ChromePhp::log($cajero[$id]);
         $q++;$qq++;
         $totalMeses = $totalMeses + $promedioEmpleado[$id][$mesObservado];
         $totalEmpleado[$id]=$totalEmpleado[$id]+$promedioEmpleado[$id][$mesObservado];
@@ -140,9 +140,9 @@ foreach($cajero as $id => $quien){
       }
       $linea .="</td>";
     }
-    //fb($totalEmpleado);
+    //ChromePhp::log($totalEmpleado);
     $promedio = ($totalEmpleado[$id]>0)?sprintf("%.2f",$totalEmpleado[$id]/$q):'S/D';
-    //fb($promedio);
+    //ChromePhp::log($promedio);
     // Restringe el promedio si el empleado no tiene los 12 meses de antiguedad como los demas
     if($cantidadMesesVendedor[$id]>9){$ponderaVendedor = 1;}
     elseif($cantidadMesesVendedor[$id]>6){$ponderaVendedor = .75;}
@@ -166,7 +166,7 @@ foreach($cajero as $id => $quien){
     //$totalMes += $totalPorVendedor[0][$id];
     $qEmpleados++;
     echo "</tr>";
-  } else {echo "lola";fb('hola guey');}
+  } else {echo "lola";ChromePhp::log('hola guey');}
 }
 
 echo "<tr><td colspan=9>&nbsp;</td></tr>"

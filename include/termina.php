@@ -26,3 +26,14 @@ $mysqli->close();
 <script src="js/bootstrap-datepicker.es.js"></script>
 <script src="js/jquery.ui.position.min.js"></script>
 <script src="js/jquery.contextMenu.min.js"></script>
+<script>
+  function coma(numero){
+    if(numero<0){
+      numero = -1*numero;
+    }
+    if(isNaN(numero)){
+      numero = numero.toString().replace(/,/g , "__COMMA__").replace(/\./g, '').replace(/__COMMA__/g, '.');
+    }
+    return numero;
+  }
+</script>

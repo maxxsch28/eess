@@ -20,7 +20,7 @@ if(isset($_POST['tipoDeCargaCierreCEM'])&&$_POST['tipoDeCargaCierreCEM']=='litro
 } else {
   $sql = "INSERT INTO cierres_cem_aforadores (fechaCarga, fechaCierre, ed1, ns1, ni1, ed2, ns2, ni2, ud3, ed4, ud5, ud6, ed7) VALUES (now(), '$fecha[2]-$fecha[1]-$fecha[0] 22:00', $_POST[ed1], $_POST[ns1], $_POST[ni1], $_POST[ed2], $_POST[ns2], $_POST[ni2], $_POST[ud3], $_POST[ed4], $_POST[ud5], $_POST[ud6], $_POST[ed7]);";
 }
-fb($sql);
+ChromePhp::log($sql);
 
 $result = $mysqli->query($sql);
 die;

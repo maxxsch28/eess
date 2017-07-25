@@ -13,7 +13,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 // IdCuentaContable_presentacion  
 // IdCierreTurno
 
-//fb($_GET);
+//ChromePhp::log($_GET);
 if(isset($_GET['IdLoteTarjetasCredito'])&&isset($_GET['IdTarjeta'])&&isset($_GET['LoteNumero'])&&isset($_GET['IdCuentaContable_presentacion'])&&is_numeric($_GET['IdLoteTarjetasCredito'])&&is_numeric($_GET['IdTarjeta'])&&is_numeric($_GET['LoteNumero'])&&is_numeric($_GET['IdCuentaContable_presentacion'])){
   $sqlLoteOriginal = "SELECT * FROM dbo.LotesTarjetasCredito WHERE IdLoteTarjetasCredito=$_GET[IdLoteTarjetasCredito]";
   $stmt = odbc_exec2($mssql, $sqlLoteOriginal, __LINE__, __FILE__);
@@ -38,7 +38,7 @@ if(isset($_GET['IdLoteTarjetasCredito'])&&isset($_GET['IdTarjeta'])&&isset($_GET
       $sqlAsientos[] = "UPDATE dbo.LotesTarjetasCredito SET LoteNumero=$_GET[LoteNumero] WHERE IdLoteTarjetasCredito=$_GET[IdLoteTarjetasCredito]";
     }
     if(count($sqlAsientos)>0){
-      fb($sqlAsientos);
+      ChromePhp::log($sqlAsientos);
       foreach($sqlAsientos as $sql){
         $stmt = odbc_exec2($mssql, $sql, __LINE__, __FILE__);
         $stmt = odbc_exec2($mssql, "UPDATE dbo.LotesTarjetasCredito SET SinCierreDeLote=1 WHERE IdCierreTurno=$_GET[IdCierreTurno] AND Importe=0 and IdAsiento is NULL AND SinCierreDeLote=0", __LINE__, __FILE__);
@@ -62,7 +62,7 @@ if(isset($_GET['IdLoteTarjetasCredito'])&&isset($_GET['IdTarjeta'])&&isset($_GET
 
 
 
-fb($_GET);
+ChromePhp::log($_GET);
 die;
 //print_r($_GET);
  // $array=array();

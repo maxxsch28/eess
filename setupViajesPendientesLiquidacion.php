@@ -66,11 +66,11 @@ $titulo="Detalle viajes pendientes de liquidar";
         </div>
         <div class='col-md-6 col-md-offset-1'>
           <div style='float:right'><div id='comprimir' class='btn btn-success no2'>Ver comprimido</div>
-          <select name='filtroTipoViaje' id='filtroTipoViaje' class='btn btn-danger'>
+          <!--<select name='filtroTipoViaje' id='filtroTipoViaje' class='btn btn-danger'>
             <option value='0' selected="selected">Todos los clientes</option>
             <option value='1' >Solo Fleteros</option>
             <option value='2' >Solo Clientes</option>
-          </select>
+          </select>-->
           </div>
         </div>
       </form>
@@ -124,7 +124,7 @@ $titulo="Detalle viajes pendientes de liquidar";
       selector: '.x', 
       callback: function(key, options) {
         var n = (this).html();
-        if(key == 'repetir'){
+        if(key == 'buscar'){
           $('#importe').val(coma(n));
           $('#enviar').click();
         } else {
@@ -137,8 +137,8 @@ $titulo="Detalle viajes pendientes de liquidar";
         }
       },
       items: {
-        "repetir": {name: "Repetir búsqueda con este importe", icon: "copy"},
         "buscar": {name: "Buscar este importe", icon: "paste"},
+        "viaje": {name: "Buscar datos de este viaje", icon: "copy"},
       }
     });
     $('.x').on('click', function(e){

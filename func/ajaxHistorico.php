@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // calculaPromedios.php
 include_once($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
@@ -14,7 +14,7 @@ if(isset($_GET['alterno'])&&$_GET['alterno']==1){
 $filtroUsuarios = (!isset($_SESSION['soloMios'])||$_SESSION['soloMios']==0)?"":" AND tmpBuscaAsientos.user_id=".$loggedInUser->user_id;
 
 $sql = "SELECT id, importe, leyenda, fuzzyness, ambito, rangoinicio, rangofin, cuentaEESS, cuentaTransporte, cantidadusos, username, color FROM tmpBuscaAsientos, users_users WHERE tmpBuscaAsientos.user_id=users_users.user_id $filtroUsuarios ORDER BY id DESC LIMIT 10;";
-//fb($sql);
+//ChromePhp::log($sql);
 $result = $mysqli->query($sql);
 while($row = $result->fetch_assoc()){
   if($row['rangoinicio']=='2011-01-01'&&$row['rangofin']=='2069-12-31'){
@@ -40,7 +40,7 @@ while($row = $result->fetch_assoc()){
     $rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
     $rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
     $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuenta, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuenta'])&&$_REQUEST['cuenta']>0)?$_REQUEST['cuenta']:0)."', $loggedInUser->user_id)";
-    fb($sql);
+    ChromePhp::log($sql);
   }
   if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
     $result = $mysqli->query($sql);

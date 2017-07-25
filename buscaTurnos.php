@@ -57,7 +57,7 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
 					<label class="control-label" for="rangoFechas">Rango de fechas</label>
 					<div class="controls">
 					<div class="input-group" id='rop'>
-					  <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="<?php echo date("d/m/y", mktime(0, 0, 0, date("m", strtotime("-1 month")), 1, date("Y", strtotime("-1 month"))));?>" data-date-format="dd/mm/y"  data-plus-as-tab='true'/>
+					  <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="<?php echo date("d/m/y", mktime(0, 0, 0, date("m", strtotime("-1 month")), 1, date("Y", strtotime("-1 month"))));?>" data-date-format="dd/mm/yy"  data-plus-as-tab='true'/>
 					  <span class="input-group-addon">a</span>
 					  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="<?php echo date("d/m/y");?>" data-date-format="dd/mm/yy" data-plus-as-tab='true'/>
 					  <span class="input-group-addon presetAnio btn" id="<?php echo date('y', strtotime("-1 year"))?>"><?php echo date('Y', strtotime("-1 year"))?></span>

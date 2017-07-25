@@ -2,14 +2,14 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 $maximoMesesAtras = 2;
-//fb($_POST);
+//ChromePhp::log($_POST);
 if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
   $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND IdCierreTurno IS NOT NULL;";
 
-  //fb($sqlTicket);
+  //ChromePhp::log($sqlTicket);
   $stmt = odbc_exec2( $mssql, $sqlTicket, __LINE__, __FILE__);
   $tmp=array();
-  //fb(sqlsrv_num_rows($stmt));
+  //ChromePhp::log(sqlsrv_num_rows($stmt));
   if(sqlsrv_has_rows($stmt)){
     // multiples resultados
     while($rowTicket = sqlsrv_fetch_array($stmt)){
@@ -36,14 +36,14 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
       $fCanje = (isset($_SESSION['fCanje']))?$_SESSION['fCanje']:false;
       $resalta = "";
       if($fCanje){
-        //fb("fCanje");
+        //ChromePhp::log("fCanje");
         // si la fecha de canje que tengo cargada es anterior a la fecha del ticket la pone en rojo
         //$resaltaFecha = ();
-        //fb(($rowTicket[2]->format('d/m/Y')));
+        //ChromePhp::log(($rowTicket[2]->format('d/m/Y')));
         $fCanje2 = explode("/", $fCanje);
         $fechaCanje = new DateTime("$fCanje2[1]/$fCanje2[0]/$fCanje2[2] 23:59:59");
         if($fechaCanje<$rowTicket[2]){
-          fb("fecha imposible");
+          ChromePhp::log("fecha imposible");
           $resalta = "label label-danger";
         }
       }
@@ -64,7 +64,7 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
 } elseif(is_numeric($_POST['IdMovimientoFac'])){
   $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND dbo.MovimientosDetalleFac.IdMovimientoFac=$_POST[IdMovimientoFac] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND IdCierreTurno IS NOT NULL;";
 
-  //fb($sqlTicket);
+  //ChromePhp::log($sqlTicket);
   $stmt = odbc_exec2( $mssql, $sqlTicket, __LINE__, __FILE__);
   if(sqlsrv_has_rows($stmt)){
     // multiples resultados

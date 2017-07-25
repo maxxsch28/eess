@@ -1,5 +1,6 @@
 <?php
-require_once("include/inicia.php");
+
+include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 require_once("include/config.php");
 $titulo = "Crear un usuario";
 //Prevent the user visiting the logged in page if he/she is already logged in
@@ -63,7 +64,7 @@ if(!empty($_POST)){
 <!DOCTYPE html>
 <html lang="es">
   <head>
-      <?php include ('/include/head.php')?>
+      <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
       <style>
             body {
               padding-top: 40px;

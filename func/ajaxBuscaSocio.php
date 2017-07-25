@@ -7,7 +7,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(isset($_GET['term'])){
   // borro todos los registros de este cliente
   //$sqlClientes = "SELECT * FROM `iva_socios` WHERE (razonsocial LIKE ('%$_GET[term]%') OR codigo LIKE ('%$_GET[term]%') OR cuit LIKE ('%$_GET[term]%')) ORDER BY razonsocial;";
-  $sqlClientes = "SELECT fletero, nombre, cuit, tipo_resp, cliente FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
+  $sqlClientes = "SELECT fletero, nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, cuit, tipo_resp, cliente FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
   //echo $sqlOrdenes;
   
   $stmt = odbc_exec2( $mssql2, $sqlClientes, __LINE__, __FILE__);

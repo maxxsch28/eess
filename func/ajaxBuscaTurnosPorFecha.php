@@ -2,7 +2,7 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-//fb($_REQUEST);
+//ChromePhp::log($_REQUEST);
 
 if(!isset($_SESSION['empleados'])){
   $s = "SELECT IdEmpleado, Empleado FROM empleados ORDER BY IdEmpleado";
@@ -49,13 +49,13 @@ $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno
 
 $sqlTurnos0 = "SELECT IdCierreTurno, IdCierreCajaTesoreria FROM dbo.CierresTurno WHERE dbo.CierresTurno.IdCierreTurno IN (SELECT idCierreTurno FROM dbo.Table_1 where IdCierreCajaTesoreria IS NULL);";
 $stmt0 = odbc_exec2($mssql, $sqlTurnos0, __LINE__, __FILE__);
-//fb($sqlTurnos0);
+//ChromePhp::log($sqlTurnos0);
 while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
-  //fb($rowTurnos0);var_dump($rowTurnos0);
+  //ChromePhp::log($rowTurnos0);var_dump($rowTurnos0);
   if(isset($rowTurnos0['IdCierreCajaTesoreria'])){
     $dmd = sqlsrv_fetch_array(odbc_exec2($mssql, "SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]", __LINE__, __FILE__));
     //var_dump($dmd);
-    fb("SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]");
+    ChromePhp::log("SELECT idCierreCajaTesoreria FROM dbo.Table_1 WHERE IdCierreTurno=$rowTurnos0[IdCierreTurno]");
     if($dmd == NULL){
       $sqlInsert = "INSERT INTO dbo.Table_1 (idCierreTurno, idCierreCajaTesoreria) VALUES ($rowTurnos0[IdCierreTurno], $rowTurnos0[IdCierreCajaTesoreria]);";
     } else {
@@ -63,7 +63,7 @@ while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
     }
   } else {
     // NULL
-    fb($rowTurnos0['IdCierreCajaTesoreria']);
+    ChromePhp::log($rowTurnos0['IdCierreCajaTesoreria']);
     $sqlInsert = "INSERT INTO dbo.Table_1 (idCierreTurno, idCierreCajaTesoreria) VALUES ($rowTurnos0[IdCierreTurno], NULL);";
   }
   //echo $sqlInsert;
@@ -101,7 +101,7 @@ if($cierresTurnos==''&&$andFecha==''&&$soloabiertos=='')$top=' TOP 10 ';else $to
 
 $sqlTurnos = "SELECT {$top}dbo.CierresTurno.IdCierreTurno, Fecha, IdCaja, IdEmpleado2, IdEmpleado3, IdEmpleado4, EmitioFacturaComplemento, dbo.CierresTurno.IdCierreCajaTesoreria, dbo.Table_1.idCierreCajaTesoreria, dbo.Table_1.lotesRevisados FROM dbo.CierresTurno, dbo.Table_1 WHERE dbo.CierresTurno.IdCierreTurno=dbo.Table_1.idCierreTurno{$cierresTurnos}{$soloabiertos}{$andFecha}{$factdif}{$idCaja}{$soloNoRevisados} ORDER BY dbo.CierresTurno.IdCierreTurno DESC;";
 
-fb($sqlTurnos);
+ChromePhp::log($sqlTurnos);
 
 $stmt = odbc_exec2($mssql, $sqlTurnos, __LINE__, __FILE__);
 while($rowTurnos = sqlsrv_fetch_array($stmt)){

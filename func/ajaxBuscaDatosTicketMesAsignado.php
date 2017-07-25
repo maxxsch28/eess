@@ -1,14 +1,14 @@
 <?php
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-//fb($_POST);
+//ChromePhp::log($_POST);
 //fechaTicket: data.fecha, fechaCanje: $(this.val())
 $d1 = explode('/',$_POST['fechaTicket']);
 $d2 = explode('/',$_POST['fechaCanje']);
 $datetime1 = date_create("$d1[2]-$d1[1]-$d1[0]");
 $datetime2 = date_create("$d2[2]-$d2[1]-$d2[0]");
 $interval = date_diff($datetime1, $datetime2);
-//fb($interval->days);
+//ChromePhp::log($interval->days);
 if($interval->days<=15){
   // mes de ticket
   $mesAsignado="$d1[2]$d1[1]";

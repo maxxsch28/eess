@@ -2,7 +2,7 @@
 // asignaTanques2.php
 // muestra modal para descarga de camión y a la vez procesa esa descarga.
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-fb($_POST);
+ChromePhp::log($_POST);
 //die;
 /*
 array(
@@ -27,7 +27,7 @@ if(isset($_POST['tipo'])&&$_POST['tipo']=='yer'){
     $yerID = (is_numeric($_POST['yerID']))?$_POST['yerID']:0;
     $yerNI = (is_numeric($_POST['yerNI']))?$_POST['yerNI']:0;
     $insertYER = "INSERT INTO yer (fecha, despachos, ns, ud, ed, np, rv) VALUES ('$fecha', 0, '$yerNS', '$yerUD', '$yerID', '$yerNI', $_POST[rv]);";
-    fb($insertYER);
+    ChromePhp::log($insertYER);
     $nuevaOrden = $mysqli->query($insertYER);
 
     if($nuevaOrden){
@@ -63,14 +63,14 @@ if(isset($_POST['tipo'])&&$_POST['tipo']=='yer'){
           $fecha=$fecha1[2].$fecha1[1].$fecha1[0];
           // inserta ordenes
           $sqlOrden = "INSERT INTO ordenes (op, fechaDespachoEstimada, fechaEntregada, ultimoEstado, entregado) values ('$_POST[op]', '$fecha1[2]-$fecha1[1]-$fecha1[0]', '$fecha1[2]-$fecha1[1]-$fecha1[0]', 'Pedido Entregado', 1)";
-          fb($sqlOrden);
+          ChromePhp::log($sqlOrden);
           $nuevaOrden = $mysqli->query($sqlOrden);
           $idOrden = $mysqli->insert_id;
           $inputTq4 = $_POST['totalEd']-$_POST['inputTq1'];
           $inputTq6 = $_POST['totalUD']-$_POST['inputTq2'];
           //substr($_POST['fecha'],-4).substr($_POST['fecha'],3,2).substr($_POST['fecha'],0,2);
           $sql1 = "INSERT INTO recepcioncombustibles (fecha, remito1, remito2, tq1, tq2, tq3, tq4, tq5, tq6, idOrden) VALUES ('$fecha', '$_POST[remito1]', '$_POST[remito2]', '0$_POST[inputTq1]', '0$_POST[inputTq2]', '0$_POST[inputTq3]', '$inputTq4', '0$_POST[inputTq5]', '$inputTq6', '$idOrden')";
-          fb($sql1);
+          ChromePhp::log($sql1);
           $res1 = $mysqli->query($sql1);
           
           // si en la RV se incluyen litros reintegrados por YER se carga

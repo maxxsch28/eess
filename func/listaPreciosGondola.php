@@ -2,7 +2,7 @@
 // cargaUltimasFacturasCliente.php
 // recibe datos del form y los procesa en mysql
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-fb($_POST);
+ChromePhp::log($_POST);
 
  // $array=array();
 //$_POST['mes']='201411';
@@ -15,13 +15,13 @@ $sqlArticulos = "SELECT Codigo, CodigoBarra, dbo.Articulos.Descripcion, PrecioPu
 $sqlArticulos = "SELECT Codigo, CodigoBarra, PrecioPublico, g.Descripcion as grupo, a.Descripcion as articulo FROM dbo.Articulos a, dbo.GruposArticulos g WHERE a.IdGrupoArticulo=g.IdGrupoArticulo AND a.Activo=1 $filtraUbicacion $filtraGrupoArticulo ORDER BY grupo, a.Descripcion";
 
 
-fb($sqlArticulos);
+ChromePhp::log($sqlArticulos);
 
 
 $stmt = odbc_exec2( $mssql, $sqlArticulos, __LINE__,__FILE__);
 //print_r($stmt);
 $tabla = "";$a=0;
-while($fila = sqlsrv_fetch_array($stmt)){fb($fila);
+while($fila = sqlsrv_fetch_array($stmt)){ChromePhp::log($fila);
   $a++;
   //$date = date_create_from_format('j-M-Y', $fila['fechaprest']);
   //echo date_format($date, 'Y-m-d');

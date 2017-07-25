@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*
   ajaxBuscaAsientosPorImporte.php
   
@@ -35,7 +35,7 @@ if(!isset($_REQUEST['importe'])||$_REQUEST['importe']==0&&($leyenda||$cuenta)<>'
   echo "<tbody><tr><td colspan='2' class='act'>Ingrese parámetros de búsqueda</td></tr></tbody>";
   die;
 }
-fb($_POST);
+ChromePhp::log($_POST);
 
 // tmpBuscaAsiento
 if($_REQUEST['ambito']<>'integral'){
@@ -48,7 +48,7 @@ if($_REQUEST['ambito']<>'integral'){
     $rangoInicio = substr($_REQUEST['rangoInicio'], 6).'-'.substr($_REQUEST['rangoInicio'], 0,2).'-'.substr($_REQUEST['rangoInicio'], 3,2);
     $rangoFin = substr($_REQUEST['rangoFin'], 6).'-'.substr($_REQUEST['rangoFin'], 0,2).'-'.substr($_REQUEST['rangoFin'], 3,2);
     $sql = "INSERT INTO tmpbuscaasientos (ambito, importe, rangoInicio, rangoFin, fuzzyness, leyenda, cuentaEESS, user_id) VALUES ('$_REQUEST[ambito]', '$_REQUEST[importe]', '$rangoInicio', '$rangoFin', $fuzyness, '".((isset($_REQUEST['leyenda'])&&$_REQUEST['leyenda']>'')?mysqli_real_escape_string($mysqli, $_REQUEST['leyenda']):'')."', '".((isset($_REQUEST['cuentaEESS'])&&$_REQUEST['cuentaEESS']>0)?$_REQUEST['cuentaEESS']:0)."', $loggedInUser->user_id)";
-    fb($sql);
+    ChromePhp::log($sql);
   }
   if(!isset($_SESSION['ultimoSQL'])||$_SESSION['ultimoSQL']<>$sql){
     $result = $mysqli->query($sql);
@@ -62,11 +62,12 @@ if($_REQUEST['ambito']<>'integral'){
 
 $orden=(isset($_REQUEST['ord_imp']))?", Importe DESC":"";
 $conciliando=(isset($_REQUEST['conciliando']))?"<input type='checkbox''>":"";
+$incluyeTransferencias = (isset($_REQUEST['inc_trn']))?"":" AND (Detalle NOT LIKE ('Transf. de %') OR Detalle is NULL)";
 
 /* $sqlAsientos = ";WITH Results_CTE AS (SELECT ROW_NUMBER() OVER (ORDER BY dbo.AsientosDetalle.idAsiento) AS RowNum, DISTINCT dbo.AsientosDetalle.idAsiento, , Detalle, Fecha, dbo.ModelosContables.Nombre FROM dbo.AsientosDetalle, dbo.Asientos, dbo.ModelosContables WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento AND dbo.asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable AND Importe=$_REQUEST[importe] AND Detalle NOT LIKE ('Transf. de PLAYA a Tesoreria') $andFecha) SELECT * FROM Results_CTE WHERE RowNum >= $offset AND RowNum < $offset + $limit;"; */
 
-$sqlAsientos = trim("SELECT DISTINCT dbo.AsientosDetalle.idAsiento, Detalle, Fecha FROM dbo.AsientosDetalle, dbo.Asientos WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento{$fuzziness}{$leyenda}{$cuenta} AND (Detalle NOT LIKE ('Transf. de %') OR Detalle is NULL) $andFecha{$excluyeAnulados};");
-fb($sqlAsientos);
+$sqlAsientos = trim("SELECT DISTINCT dbo.AsientosDetalle.idAsiento, Detalle, Fecha FROM dbo.AsientosDetalle, dbo.Asientos WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento{$fuzziness}{$leyenda}{$cuenta}{$incluyeTransferencias} $andFecha{$excluyeAnulados};");
+ChromePhp::log($sqlAsientos);
 
 // AND (dbo.asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable OR dbo.asientos.IdModeloContable is NULL)
 

@@ -43,7 +43,8 @@ setlocale(LC_ALL, 'es_ES');
                     <?php
                     asort($empleado[1]);
                     foreach($empleado[1] as $idEmpleado => $empleado) {
-                      echo "<option value='$idEmpleado'>$empleado</option>";
+                      if(substr($empleado,0,2)<>'ZZ'){
+                      echo "<option value='$idEmpleado'>$empleado</option>";}
                     }?>
                     </select></td>
                     <td><input type='hidden' name='IdMovimientoFac' id='IdMovimientoFac'/><input type='text' name='pv' id='pv' data-plus-as-tab='true'  placeholder='PV' class='input-sm form-control' disabled='disabled'/></td>
@@ -197,7 +198,7 @@ setlocale(LC_ALL, 'es_ES');
       var datetime1 = new Date(d1[2], d1[1], d1[0]);
       var datetime2 = new Date(d2[2], d2[1], d2[0]);
       var interval = new Date(datetime2.getTime() - datetime1.getTime());
-      //fb($interval->days);
+      //ChromePhp::log($interval->days);
       if((interval.getUTCDate()-1)<=15){
         // mes de ticket
         var mesAsignado= d1[2]+d1[1];

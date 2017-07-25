@@ -1,7 +1,7 @@
 <?php
 $nivelRequerido = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-
+$titulo = "Acomoda recibos donde no desmarcamos la casillita";
 
 if(!isset($_SESSION['ultimosMeses'])||1){
 	$_SESSION['ultimosMeses']='';
@@ -24,8 +24,7 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>Acomoda recibos donde no desmarcamos la casillita</title>
-    <?php include ('/include/head.php');?>
+      <?php include ($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
     <style type="text/css">
       body {
         padding-top: 60px;

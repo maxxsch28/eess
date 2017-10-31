@@ -98,7 +98,7 @@ setlocale(LC_ALL, 'es_ES');
       },"json");
       $('#empleado').focus();
       $("#ticket").focusout(function() {
-        $.post('func/ajaxBuscaDatosTicket.php', { ticket: $(this).val() }, function(data) {
+        $.post('func/ajaxBuscaDatosTicket.php', { ticket: $(this).val(), idEmpleado: $('#empleado').val() }, function(data) {
           if(data.status === 'single'){
             $('#datosTicket').html(data.message).removeClass('alert alert-danger');
             $('#pv').val(data.pv);

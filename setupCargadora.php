@@ -171,7 +171,6 @@ $titulo="Detalle Cargadora";
         $('#cargadoraGastos').addClass('table-striped');
         $('#cargadoraIngresos').addClass('table-striped');
         $('#cargadoraSueldos').addClass('table-striped');
-        $(".viaje" ).hide();
         $('#muestraComprimido').val(0);
       }
       //$('.viaje').toggle();

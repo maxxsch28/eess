@@ -16,7 +16,7 @@ if(isset($_GET['idTurno'])&&is_numeric($_GET['idTurno'])){
 
   $stmt = odbc_exec2( $mssql, $sqlLotesTurno, __LINE__, __FILE__);
   
-  echo "<form name='modificacionLotesTarjetas' id='modificacionLotesTarjetas'><table class='table table-striped table-bordered IdCierreTurno' id='$_GET[idTurno]'><thead><tr><th width='15%'>idLote / Asiento</th><th>Tarjeta</th><th colspan=2 width='15%'>Prefijo y Lote</th><th>Importe</th><th><span id='marcarRevisado' class='btn btn-xs btn-".(($revisado[0]==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></th></tr></thead><tbody>";
+  echo "<form name='modificacionLotesTarjetas' id='modificacionLotesTarjetas'><table class='table table-striped table-bordered IdCierreTurno' id='$_GET[idTurno]'><thead><tr><th width='15%'>idLote / Asiento</th><th>Tarjeta</th><th colspan=2 width='18%'>Prefijo y Lote</th><th>Importe</th><th><span id='marcarRevisado' class='btn btn-xs btn-".(($revisado[0]==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></th></tr></thead><tbody>";
   $sumaLote = 0;
   while($rowLotesIngresados = sqlsrv_fetch_array($stmt)){
       //print_r($rowLotesIngresados);

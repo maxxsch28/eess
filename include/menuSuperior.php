@@ -39,6 +39,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/combTrackingVentas.php')echo ' class="active"';?>><a href="/combTrackingVentas.php">Tracking Ventas</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/registroRemito.php')echo ' class="active"';?>><a href="/registroRemito.php">Recepcion combustible</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/stockCierre.php')echo ' class="active"';?>><a href="/stockCierre.php">Stocks al cierre</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/evolucionDespachos.php')echo ' class="active"';?>><a href="/evolucionDespachos.php">CREA - Despachos horarios</a></li>
                         </ul>
                     </li>
                 <?php } 
@@ -74,6 +75,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/promoCargaComprobantes.php')echo ' class="active"';?>><a href="/promoCargaComprobantes.php">Carga cupones desayuno</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/setupCargadora.php')echo ' class="active"';?>><a href="/setupCargadora.php">Cargadora</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/informeMensual.php')echo ' class="active"';?>><a href="/informeMensual.php">Informe mensual</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/muestraFacturasIVA.php')echo ' class="active"';?>><a href="/muestraFacturasIVA.php">Facturas x dif socios</a></li>
                         </ul>
                     </li>
                 <?php } 
@@ -86,6 +88,7 @@ $ypfUrl = '';
                         <ul class="dropdown-menu" role="menu">
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/buscaTurnos.php")echo ' class="active"';?>><a href="/buscaTurnos.php">Abre y cierra Turnos</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listadoPrecios.php")echo ' class="active"';?>><a href="/listadoPrecios.php">Listas de precios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/tableroTurnos.php")echo ' class="active"';?>><a href="/tableroTurnos.php">Tablero objetivos</a></li>
                             
                         </ul>
                     </li>

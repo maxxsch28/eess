@@ -5,27 +5,27 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411';
-$cuentasGastosCargadora = '340010, 610111, 311308, 312204, 340046';
-$cuentasSueldosCargadora = '213202, 213201';
+$cuentasGastosCargadora = '340010, 610111, 311308, 312204, 340046, 316201, 610111, 316501';
+$cuentasSueldosCargadora = '312102, 316401, 312103, 422103';
 $productosCargadora = "26, 27, 103, 104, 105";
 $productosFacturadosCargadora = "26, 27, 103, 104, 105, 128";
 
 
-if(!isset($_SESSION['cuentasSueldosCargadora'])||1){
+if(!isset($_SESSION['cuentasSueldosCargadora'])){
   $sqlProductos = "select nombre, codigo from dbo.PLANCUEN WHERE codigo in ($cuentasSueldosCargadora)";
   $stmt = odbc_exec2($mssql2, $sqlProductos, __LINE__, __FILE__);
   while($producto = sqlsrv_fetch_array($stmt)){
     $_SESSION['cuentasSueldosCargadora'][$producto['codigo']] = trim($producto['nombre']);
   }
 }
-if(!isset($_SESSION['cuentasGastosCargadora'])||1){
+if(!isset($_SESSION['cuentasGastosCargadora'])){
   $sqlProductos = "select nombre, codigo from dbo.PLANCUEN WHERE codigo in ($cuentasGastosCargadora)";
   $stmt = odbc_exec2($mssql2, $sqlProductos, __LINE__, __FILE__);
   while($producto = sqlsrv_fetch_array($stmt)){
     $_SESSION['cuentasGastosCargadora'][$producto['codigo']] = trim($producto['nombre']);
   }
 }
-if(!isset($_SESSION['productosCargadora'])||1){
+if(!isset($_SESSION['productosCargadora'])){
   $sqlProductos = "select nombre, codigo from dbo.PRODUCTO WHERE codigo in ($productosFacturadosCargadora)";
   $stmt = odbc_exec2($mssql2, $sqlProductos, __LINE__, __FILE__);
   while($producto = sqlsrv_fetch_array($stmt)){
@@ -53,7 +53,7 @@ if(!isset($_POST['soloExternos'])||$_POST['soloExternos']==0){
   
   $sqlGastos = "select a.libro, fecha, cuentacont as concepto, debe, haber,  detalle, a.idtranglob from dbo.asiecont as a,dbo.concasie as b where cuentacont in ($cuentasGastosCargadora) and a.asiento=b.asiento and a.idtranglob=b.idtranglob and fecha>='$anio-$mes-01' AND fecha<='$rangoFin' order by cuentacont asc, fecha asc";
   
-  $sqlSueldos = "select a.libro, fecha, cuentacont as concepto, .35*debe as debe, 0.35*haber as haber,  detalle, a.idtranglob from dbo.asiecont as a,dbo.concasie as b where cuentacont in ($cuentasSueldosCargadora) and a.asiento=b.asiento and a.idtranglob=b.idtranglob and fecha>='$anio-$mes-01' AND fecha<='$rangoFin' AND haber=0 order by cuentacont asc, fecha asc";
+  $sqlSueldos = "select a.libro, fecha, cuentacont as concepto, debe, haber,  detalle, a.idtranglob from dbo.asiecont as a,dbo.concasie as b where cuentacont in ($cuentasSueldosCargadora) and a.asiento=b.asiento and a.idtranglob=b.idtranglob and fecha>='$anio-$mes-01' AND fecha<='$rangoFin' AND haber=0  UNION SELECT  diario.libro, fecha, cuentacont as concepto, debe, haber,  detalle, diario.idtranglob FROM dbo.diario,  dbo.concasie WHERE dbo.diario.asiento=dbo.concasie.asiento AND dbo.diario.cod_libro=dbo.concasie.cod_libro AND cuentacont in ($cuentasSueldosCargadora) and diario.asiento=concasie.asiento and diario.idtranglob=concasie.idtranglob and fecha>='$anio-$mes-01' AND fecha<='$rangoFin' AND haber=0  order by cuentacont asc,fecha asc";
   
 } elseif($_POST['soloExternos']==1){
   // Solo Fleteros
@@ -62,7 +62,7 @@ if(!isset($_POST['soloExternos'])||$_POST['soloExternos']==0){
   // Solo Clientes
   $sqlGastos = "SELECT libro, concasie.sucursal, asiento, dbo.concasie.detalle, dbo.concasie.idtranglob, dbo.detavtas.comprobant, dbo.detavtas.sucursal, dbo.detavtas.numero, producto.concepto, producto.detalle, dbo.detavtas.precio_vta, monto, dbo.detavtas.importe, dbo.detavtas.iva, dbo.detavtas.ingbruto, aliporiva, neto_grava, neto_nogra, total_item, percepib, dbo.clientes.nombre as clienteNombre, dbo.producto.cuentacont, dbo.clientes.concepto as clienteCodigo, fecha_asie, dbo.detavtas.cantidad, producto FROM dbo.concasie, dbo.detavtas, dbo.PRODUCTO, dbo.histvtam, dbo.clientes WHERE DBO.histvtam.idtranglob=dbo.concasie.idtranglob and dbo.histvtam.cliente=dbo.clientes.concepto AND datepart(year, dbo.concasie.fecha_asie)='$anio' AND datepart(month, dbo.concasie.fecha_asie)='$mes' AND dbo.detavtas.producto=dbo.PRODUCTO.concepto AND dbo.concasie.idtranglob=dbo.detavtas.idtranglob ORDER BY producto;";
 }
-
+ChromePhp::log($sqlSueldos);
 switch($_POST['que']){
   case 'gastos':
   // GASTOS
@@ -102,7 +102,7 @@ switch($_POST['que']){
   }
   if(isset($encabezaProducto)){
     $_SESSION['cargadoraTotalGastos'] = $totalPrecio;
-    $tabla .= "<tr class='info comisionEncabezado'><td colspan=2>Subtotal <b>{$_SESSION['cuentasSueldosCargadora'][$encabezaProducto]}</b></td><td class='text-right'>$".number_format($sumaNeto[$encabezaProducto], 2, ',', '.')."</td></tr>";
+    $tabla .= "<tr class='info comisionEncabezado'><td colspan=2>Subtotal <b>{$_SESSION['cuentasGastosCargadora'][$encabezaProducto]}</b></td><td class='text-right'>$".number_format($sumaNeto[$encabezaProducto], 2, ',', '.')."</td></tr>";
     $tabla .= "<tr class='info comisionEncabezado bg-warning'><td colspan='2' class='text-right'><b>Total</b></td><td class='text-right'><b>$".number_format($totalPrecio, 2, ',', '.')."</b></td></tr>";
   } else {
     $tabla .= "<tr class='info comisionEncabezado'><td colspan=3><b>No hay datos</b></td></tr>";

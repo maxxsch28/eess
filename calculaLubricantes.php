@@ -8,102 +8,7 @@ $titulo='Ventas de lubricantes por empleado';
   <head>
     <meta charset="utf-8">
     <?php include($_SERVER['DOCUMENT_ROOT'].'/include/head.php');?>
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      th, caption{
-          text-align:right;
-          border-bottom: 1px solid #000;
-      }
-      .neg, .nc{
-          color: #f00;
-      }
-      #listadoVentas{
-          display:none;
-          font-size: .8em;
-      }
-      #soloImpresora{
-          display:none;
-      }
-      
-      .noche{
-          color:#000099;
-      }
-      .cebra{
-          background-color:#fcf8e3;
-      }
-      #aclaracion { display: block; }
-      .oculto{
-          color:#fcf8e3;
-          font-size:.6em;
-      }
-      sup {
-          color: #f00;
-      }
-      .ampliar, .ampliar2 {
-          cursor: pointer;
-      }
-      .ampliar{
-          width: 110px;
-      }
-      .columna{
-          width: 94px;
-          word-wrap: normal;
-      }
-      .sel {
-          font-weight: bold;
-          background-color: #66cccc;
-      }
-      #recibo{
-          width:50%; 
-          text-align: right; 
-          line-height: 3em;
-      }
-      #recibo tbody tr{
-          border-bottom: 1px dotted #000;
-      }
-      @media print {
-            #soloImpresora{
-                page-break-before: always;
-                display: block;
-            }
-            #recibo{
-                padding-top:3em;
-            }
-          footer {
-              display:none;
-          }
-          .ni{
-              display:none;
-          }
-          body{
-              padding-top:0;
-          }
-          @page {size: landscape A4; margin: .5cm }
-          .container{width: 100%}
-          #ventasMensuales{
-              font-size: 1em;
-          }
-          #listadoVentas{
-            font-size: .8em;
-        }
-        #ranking tbody {
-            font-size: .8em;
-        }
-        #aclaracion {
-            font-size:.9em;
-            display:block;
-        }
-        h2 {
-            font-size: 1.5em;
-        }
-        input {
-            border: none;
-        }
-      }
-    </style>
+
   </head>
 
   <body>
@@ -142,9 +47,7 @@ $titulo='Ventas de lubricantes por empleado';
                     <p><sup>1</sup> La Variación personal (<b>&Delta; personal</b>) es el porcentaje que varió cada uno respecto a su promedio de ventas de los últimos <?php echo $cuantosMeses?> meses.<br/>
                     <sup>2</sup> La Variación sobre el promedio grupal (<b>&Delta; grupal</b>) es el porcentaje que varió cada uno respecto al promedio total de los últimos <?php echo $cuantosMeses?> meses. Ese promedio se calculó dividiendo el total vendido en cada mes sobre la cantidad de empleados de cada mes.<br/>
                     <sup>3</sup> Si el vendedor no tiene <?php echo $cuantosMeses?> de antigüedad el premio por la variación sobre su promedio personal se ponderará gradualmente hasta alcanzar la misma antigüedad que el resto del plantel.</p>
-                    <?php if(!$historicoNoAfectadoNoche){?><sup>4</sup> El promedio para todos los vendedores de los últimos <?php echo $cuantosMeses?> meses está calculado sin incluir el plus nocturno para mejorar el plus por trabajo nocturno.<br/><?php }?>
                     <!--<p>Las ventas hechas por "cubre vacaciones" no se suman en el total de las ventas, pero tampoco achican el promedio al dividir por un empleado mas. Si se toman en cuenta para comisionar solo la mitad de los artículos vendidos al empleado, de lo contrario favorecería a los que trabajen con "cubre vacaciones".</p>-->
-                    <?php if(!isset($_GET['sinNoche']))echo "<p>Los artículos vendidos en el turno noche se multiplican por $ponderaNoche para que no se 'castigue' a los que cubren mas noches. <b>En caso de detectar manejos como ser arreglos con clientes para vender específicamente de noche este beneficio se suspende.</b></p>";?>
                     <p>No se incluyen los artículos facturados a la cuenta Estación de Servicio C0059.</p>
                 </div>
             </div>

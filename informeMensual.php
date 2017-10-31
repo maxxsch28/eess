@@ -45,7 +45,8 @@ $titulo="Prepara informe mensual";
                                 $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                                 echo "<option value='$valorMes' ".(($abc==1)?' selected="selected"':'').">$mes</option>";
                             }?>
-                            </select></label><div style='float:right'><div id='comprimir' class='btn btn-success no2'>Ver detallado</div>
+                            </select></label><span class='' id='refresh'>XX</span>
+                            <div style='float:right'><div id='comprimir' class='btn btn-success no2'>Ver detallado</div>
                             <!--<select name='filtroTipoViaje' id='filtroTipoViaje' class='btn btn-danger'>
                                 <option value='0' selected="selected">Todos los viajes</option>
                                 <?php foreach($_SESSION['transporte_tipos_comisiones'] as $key => $nombre){
@@ -106,6 +107,19 @@ $titulo="Prepara informe mensual";
           //$('#listaGastos').dataTable();
         });
       });
+      $('#refresh').click(function(){
+        $.post('func/listaInformeCompras.php', { mes: $('#periodo').val() }, function(data) {
+          $('#listaGastos tbody').html(data);
+          if($('#muestraComprimido').val() == 1){
+            $('#comprimir').click();
+          }
+          //$('#listaGastos').dataTable();
+        });
+        $.post('func/listaInformeOtrosMovimientos.php', { mes: $('#periodo').val() }, function(data) {
+          $('#listaCompras tbody').html(data);
+          //$('#listaGastos').dataTable();
+        });
+      })
        $('#comprimir').click(function(){
         if ( $('.viaje').is(":visible") === true ) {
           $( ".viaje" ).hide();

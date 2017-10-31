@@ -94,7 +94,7 @@ $titulo="Descarga camión | YPF";
             <div class="form-group">
               <label for="remito" class="col-sm-3 control-label">RV</label>
               <div class="col-sm-7 input-group">
-                <input type="number" class="form-control" name="rv" required="required" data-plus-as-tab='true' placeholder='RV' max='9999999'>
+                <input type="number" class="form-control" name="rv" required="required" data-plus-as-tab='true' placeholder='RV' max='29999999'>
               </div>
             </div>
             <div class="form-group">

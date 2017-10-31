@@ -54,6 +54,35 @@ switch($tipo){
     }
     echo "<small>Operador $operador</small><br/>";
     break; 
+  case '11':
+    // recibo a cliente
+    $sqlMovimiento = "select p.sucursal as pagoSucursal, p.numero as pagoNumero, fecha, detalle, p.importe as pagoImporte, reten_ib, banco, nombre, abs(d.numero) as detalleNumero, d.importe as detalleImporte, d.vencimien, operador from dbo.pagos as p, dbo.detapago as d where p.idtranglob=$idTranglob AND p.idtranglob=d.idtranglob;";
+    $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
+    while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
+      if(!isset($tituloDetalle)){
+        $tituloDetalle = 1;
+        echo "<b>$row[detalle]</b><br/>(".date_format($row['fecha'], "d/m/Y").")</br>Total: ".sprintf("%.2f",$row['pagoImporte'])."<br/>IIBB: $$row[reten_ib]<br>";
+      }
+      echo "$row[nombre] Nº$row[detalleNumero], $$row[detalleImporte], ".date_format($row['vencimien'], "d/m/Y")."<br/>";
+      $operador = $row['operador'];
+    }
+    if(sqlsrv_num_rows($stmt2)==0){
+      
+      // caso del detalle de los cheques
+      $sqlMovimiento = "select * from dbo.histcomp where idtranglob=$idTranglob;";
+      $stmt2 = odbc_exec2( $mssql2, $sqlMovimiento, __LINE__, __FILE__);
+      while($row = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
+        ChromePhp::log($row);
+        if(!isset($tituloDetalle)){
+          $tituloDetalle = 1;
+          echo "<b>$row[detalle_s]</b><br/>(".date_format($row['ingreso'], "d/m/Y").")</br>";
+        }
+        echo "$row[nombre] Nº".abs($row['numeche']).", $".sprintf("%.2f",abs($row['importe'])).", ".date_format($row['vencimien'], "d/m/Y")."<br/>";
+        $operador = $row['operador'];
+      }
+    }
+    echo "<small>Operador $operador</small><br/>";
+    break; 
   case '30':
     // orden de servicio a fletero
     $sqlMovimiento = "select p.sucursal as pagoSucursal, p.numero as pagoNumero, fecha, detalle, p.importe as pagoImporte, reten_ib, banco, nombre, abs(d.numero) as detalleNumero, d.importe as detalleImporte, d.vencimien, operador from dbo.pagos as p, dbo.detapago as d where p.idtranglob=$idTranglob AND p.idtranglob=d.idtranglob;";

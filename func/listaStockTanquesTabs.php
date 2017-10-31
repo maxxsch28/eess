@@ -158,7 +158,7 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
       . "Existencia teórica: <span class='pull-right'><b>".round($inicial['tq'.$idProducto]+$totalRecibidoProducto[$idProducto]-$totalDespachoProducto[$idProducto],0)."</b></span><br/>"
       . "Medición real: <span class='pull-right' style='border-bottom:1px solid #000'><b>$medido[$idProducto]</b></span><br/><br/>"
       . "&nbsp;<span class='pull-right ".((($dif/$sumaDespachado[$idProducto]*100)<=-$maxTolerable)?'neg':((round($dif/$sumaDespachado[$idProducto]*100,1
-      )>=$maxTolerable)?'pos':'0'))."'>(".round($dif/$sumaDespachado[$idProducto]*100,1)."%) <b>$dif</b>".(($dif>2000)?"<a href='func/modalDescargaCisterna.php' rel='modal:open'><span class='glyphicon glyphicon-tint descargaCisterna'></span></a>":'')."</span></li>"
+      )>=$maxTolerable)?'pos':'0'))."'>(".round($dif/$sumaDespachado[$idProducto]*100,1)."%) <b>$dif</b></span></li>"
       . "</ul></div>";
     if($i==2){
       // naftas

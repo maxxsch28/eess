@@ -7,7 +7,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //$_POST['mes']='201411';
 
 
-$sql = "select dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, PuntoVenta, Numero, Fecha, RazonSocial, Total, Cantidad, IdArticulo from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idtipomovimiento IN ('FAA','FAB') AND IdCliente>0 AND IdCondicionVenta=1 AND NetoCombustibles>0 AND Consignado=1 AND DocumentoAnticipado=0 AND DocumentoCancelado=0 AND IdCierreTurno IS NULL AND ExcluidoDeTurno=1 AND Fecha>'2016-01-01' order by dbo.MovimientosFac.IdMovimientoFac desc";
+$sql = "select dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, PuntoVenta, Numero, Fecha, RazonSocial, Total, Cantidad, IdArticulo from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idtipomovimiento IN ('FAA','FAB') AND IdCliente>0 AND IdCondicionVenta=1 AND NetoCombustibles>0 AND Consignado=1 AND DocumentoAnticipado=0 AND DocumentoCancelado=0 AND IdCierreTurno IS NULL AND ExcluidoDeTurno=1 AND Fecha>'2017-01-01' order by dbo.MovimientosFac.IdMovimientoFac desc";
 
 $stmt = odbc_exec2( $mssql, $sql, __FILE__, __LINE__);
 

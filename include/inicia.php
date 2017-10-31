@@ -24,7 +24,7 @@ $tercerEmpleado = 24; // federico
 $CFG = new stdClass(); 
 $CFG->tomaLitrosDesdeTabla = false;
 $CFG->tanquesATomarMilimetrosDesdeTablas = array(7); // 7 es para que ningún tanque de true.
-$CFG->fechaDesdeDondeTomoPromedioHistoricos = "2015-01-01";
+$CFG->fechaDesdeDondeTomoPromedioHistoricos = "2017-01-01";
 $CFG->tipoFechaSQL = "Y-d-m";
 
 //Dbal Support - Thanks phpBB ; )
@@ -201,9 +201,9 @@ if(!isset($_SESSION['vendedor'])){
   $vendedor = $_SESSION['vendedor'];
   asort($vendedor);
 }
+
 if(!isset($_SESSION['empleado'])||1){
   $sqlCajeros = "select idEmpleado, empleado, idgrupovendedores from dbo.empleados where esVendedor=1;";
-  //$stmt = odbc_exec($mssql, $sqlCajeros);
   $stmt = odbc_exec2($mssql, $sqlCajeros);
   while($rowCajero = sqlsrv_fetch_array($stmt)){
     //ChromePhp::log($rowCajero);
@@ -228,24 +228,25 @@ if(!isset($_SESSION['comision'])){
 }
 $multiplica = 1;
 $comision = $multiplica*$_SESSION['comision'];
-$cuantosMeses=12;
+
+$fechaCambioTurno = new DateTime('2017-07-01');
+$hoy = new DateTime();
+$cuantosDiasDesdeElCambio = $hoy->diff($fechaCambioTurno);
+$cuantosMesesDesdeElCambio = ($cuantosDiasDesdeElCambio->format('%y') * 12) + $cuantosDiasDesdeElCambio->format('%m');
+$cuantosMeses=($cuantosMesesDesdeElCambio<12)?$cuantosMesesDesdeElCambio:12;
+
 $comisionPorTantoPorciento = 10;
 $ponderaNoche = 1.5;           // multiplicador para los turnos noches de un solo empleado
 $historicoNoAfectadoNoche=1; // 1 histórico es afectado por noches
 
-if(!isset($_SESSION['empleadosZZ'])||1){
+if(!isset($_SESSION['empleadosZZ'])){
     $_SESSION['empleadosZZ'] = "(0";
-    $stmt = odbc_exec2($mssql, "select idEmpleado from dbo.empleados where empleado like ('%ZZs%') and activo=0");
+    $stmt = odbc_exec2($mssql, "select idEmpleado from dbo.empleados where empleado like ('%ZZ%') and activo=0", __FILE__, __LINE__);
     while($rowVentas = sqlsrv_fetch_array($stmt)){
         $_SESSION['empleadosZZ'].=", $rowVentas[0]";
     }
-    
     $_SESSION['empleadosZZ'].=')';
 }
-if(!isset($_SESSION['precios'])){
-    
-}
-
 
 // TRANSPORTE
 if(!isset($_SESSION['transporte_tipos_comisiones'])){

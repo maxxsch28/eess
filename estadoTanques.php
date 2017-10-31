@@ -281,12 +281,14 @@ while($row = sqlsrv_fetch_array($stmt)){
 // metodo nuevo (2014-11-17), lo calcula en base a la información de los cierres de turno
 
 $sqlPromedioHistorico = "SELECT avg(ns) as l2078, avg(np) as l2076, avg(ud) as l2069, avg(ed) as l2068 FROM `ventasDiarias` WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' AND month(fecha)=month(curdate()) ";
+$sqlPromedioHistorico = "SELECT avg(ns) as l2078, avg(np) as l2076, avg(ud) as l2069, avg(ed) as l2068 FROM `ventasDiarias` WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}'";
 $resultPromedioHistorico = $mysqli->query($sqlPromedioHistorico);
 $promedioHistorico = $resultPromedioHistorico->fetch_assoc();
 
 // Promedio diario
 // metodo nuevo (2014-11-17), lo calcula en base a la información de los cierres de turno
 $sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2069, avg(ed) as l2068, diaSemana FROM `ventasDiarias`  WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' AND month(fecha)=month(curdate()) GROUP BY diaSemana";
+$sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2069, avg(ed) as l2068, diaSemana FROM `ventasDiarias`  WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' GROUP BY diaSemana";
 $result = $mysqli->query($sqlPromedioDiario);
 if($result && $result->num_rows>0 && !$_SESSION['esMovil']){
     $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
@@ -529,13 +531,14 @@ foreach($combustible as $key => $cb){
 $totalDiario['d'] = ($totalDiario['d']<>0)?$totalDiario['d']:.0001;
 
 $tabla2.="<tr class='well'><th width='18%'>Total</th><td>".$totalDiario['vtasDdeCierre']."<br>$totalDiario[d] desp / ".round($totalDiario['vtasDdeCierre']/$totalDiario['d'],2)." lts</td><td colspan=2>Estimado ".round($totalDiario['vtasDdeCierre']/(date("H")-6)*16)." lts<br/>Mix ".round($mixInfinia,1)."% | ".round($mixEuro,1)."%</td><td></td></tr>"; // basado en cálculos ultra precisos
-
+$desdeHistorico = "2011-10-02";
+$desdeHistorico = "2017-01-01";
 
 // verifico que el historico no esté en sesion
-if(!isset($_SESSION['despachosHorariosHistoricos'])){
+if(!isset($_SESSION['despachosHorariosHistoricos'])||1){
   // saca promedio general desde el día 0 hasta hoy
-  // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora; 
-  $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()) as q from dbo.Despachos group by datepart(HOUR, Fecha) order by hora;"; 
+  // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$desdeHistorico',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora; 
+  $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$desdeHistorico',getdate()) as q from dbo.Despachos WHERE Fecha>='$desdeHistorico' group by datepart(HOUR, Fecha) order by hora;"; 
   $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos, __FILE__, __LINE__);
 
   $despachosHorariosHistoricos = array();
@@ -544,7 +547,7 @@ if(!isset($_SESSION['despachosHorariosHistoricos'])){
     $despachosHorariosHistoricos[$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosHistoricos']=$despachosHorariosHistoricos;
-  $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'2011-10-12',getdate()) as q from dbo.Despachos group by datepart(HOUR, Fecha) order by hora;";
+  $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$desdeHistorico',getdate()) as q from dbo.Despachos WHERE Fecha>='$desdeHistorico'  group by datepart(HOUR, Fecha) order by hora;";
   $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos, __FILE__, __LINE__);
 
   $litrosHorariosHistoricos = array();
@@ -555,10 +558,11 @@ if(!isset($_SESSION['despachosHorariosHistoricos'])){
   $_SESSION['litrosHorariosHistoricos']=$litrosHorariosHistoricos;
 }
 
-if(!isset($_SESSION['despachosHorariosHistoricosDiarios'][date('w')])){
+if(!isset($_SESSION['despachosHorariosHistoricosDiarios'][date('w')])||1){
   // saca promedio general desde el día 0 hasta hoy
-  // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora; 
-  $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, (count(datepart(HOUR, Fecha))/DATEDIFF(day,'2011-10-12',getdate()))*7 as q from dbo.Despachos WHERE DATEPART(dw,Fecha)=".(date('w')+1)." group by datepart(HOUR, Fecha) order by hora;"; 
+  // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$desdeHistorico',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora;
+  
+  $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, (count(datepart(HOUR, Fecha))/DATEDIFF(day,'$desdeHistorico',getdate()))*7 as q from dbo.Despachos WHERE DATEPART(dw,Fecha)=".(date('w')+1)." AND Fecha>='$desdeHistorico' group by datepart(HOUR, Fecha) order by hora;"; 
   $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos, __FILE__, __LINE__);
 
   $despachosHorariosHistoricos = array();
@@ -567,7 +571,7 @@ if(!isset($_SESSION['despachosHorariosHistoricosDiarios'][date('w')])){
     $despachosHorariosHistoricos[date('w')][$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosHistoricosDiarios']=$despachosHorariosHistoricos;
-  $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'2011-10-12',getdate())*7 as q from dbo.Despachos WHERE DATEPART(dw,Fecha)=".(date('w')+1)." group by datepart(HOUR, Fecha) order by hora;";
+  $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$desdeHistorico',getdate())*7 as q from dbo.Despachos WHERE DATEPART(dw,Fecha)=".(date('w')+1)." AND Fecha>='$desdeHistorico' group by datepart(HOUR, Fecha) order by hora;";
   $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos, __FILE__, __LINE__);
 
   $litrosHorariosHistoricos = array();
@@ -692,8 +696,11 @@ if($result&&$result->num_rows>0 ){//&& !$_SESSION['esMovil']
           } else {
             $mixInfinia = round($rowPromedioDiaSemana['l2076']/($rowPromedioDiaSemana['l2076']+$rowPromedioDiaSemana['l2078']),2);
             $mixEuro = round($rowPromedioDiaSemana['l2068']/($rowPromedioDiaSemana['l2068']+$rowPromedioDiaSemana['l2069']),2);
-            $colorMixInfinia = (($mixInfinia>.18)?'success':(($mixInfinia>.16)?'info':(($mixInfinia>.14)?'warning':'danger')));
-            $colorMixEuro = (($mixEuro>.18)?'success':(($mixEuro>.16)?'info':(($mixEuro>.14)?'warning':'danger')));
+            $mix['success']=.25;
+            $mix['info']=.20;
+            $mix['warning']=.18;
+            $colorMixInfinia = (($mixInfinia>$mix['success'])?'success':(($mixInfinia>$mix['info'])?'info':(($mixInfinia>$mix['warning'])?'warning':'danger')));
+            $colorMixEuro = (($mixEuro>$mix['success'])?'success':(($mixEuro>$mix['info'])?'info':(($mixEuro>$mix['warning'])?'warning':'danger')));
             $tablaVentasMensuales.="<tr class='".
             (((date("n")==$rowPromedioDiaSemana['mes'])||(date("N")==0))?'label-warning':'').
             "'><td>".$mes[$rowPromedioDiaSemana['mes']]
@@ -744,6 +751,9 @@ function d($fecha, $incluyeHora=false){
 }
 
 function muestraOrdenes(){
+  // desestimado por cambio en web ypf.com 
+  echo"<table class='table'><tbody></tbody></table>";
+/*
 	global $articulo, $estadoComb, $config, $mysqli;
 	$tabla="<table class='table'><tbody>";//<thead><tr><th>OP</th><th>Estado</th><th>Pedido</th></tr></thead>
 	$sql1 = "SELECT * FROM ordenes ORDER BY idOrden DESC LIMIT 5";
@@ -836,7 +846,7 @@ function muestraOrdenes(){
 		}
 		$tabla.="</tr>";
 	}
-	echo $tabla.'</tbody></table>';
+	echo $tabla.'</tbody></table>';*/
 }
 if(false){
 function muestraProyeccion(){
@@ -1064,22 +1074,10 @@ function muestraProyeccion(){
         
         <div class='row'>
         <?php if(!isset($_GET['soloComb'])&&!$_SESSION['esMovil']){?>
-              <div class='col-md-5'>
-			<div class="panel panel-primary" id='pedidos'>
-                <div class="panel-heading">
-                    <h3 class="panel-title">Ordenes <span class='pull-right sh2'><?php echo $interval->format('%h:%I horas').' // '.$ultimoUpdate[1]?></span><span class="sh2 glyphicon glyphicon-refresh"><a class='noPrint' href='http://C30530341131:ingreso46@downstream.ypf.com.ar/agent_portal/plsql/PKG_CONSULTA_UNIFICADA.prc_consulta'>Abrir YPF</a></span> || <span id='muestraYPF'>Ultimo estado</span></h3>
-                </div>
-                <div class="panel-body gris" id="panelDetalle">
-                <?php $a=microtime();muestraOrdenes();?>
-                </div>
-			</div>
-            </div>
-
-			<!-- <div class="col-md-3 noPrint" id="botonera">Detalle tanques<br/>Boton2</div>-->
             <div class='col-md-5'>
 			<div class="panel panel-primary" id='ventasDiarias'>
                 <div class="panel-heading">
-                    <h3 class="panel-title">Promedio diario <?php echo date("M")?></h3>
+                    <h3 class="panel-title">Promedio diario 2016-<?php echo date("Y")?></h3>
                 </div>
                 <div class="panel-body gris" id="panelDetalle">
                     <?php echo $tablaPromedioDiaSemana; ?>

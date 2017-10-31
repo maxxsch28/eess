@@ -19,7 +19,7 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
     $_SESSION['ultimosCierresTesoreria'].="<option value='$rowCuentas[IdCierreCajaTesoreria]'>".date_format($rowCuentas['FechaCierre'], "d/m/Y H:i:s")."</option>";
   }
 }
-if(!isset($_SESSION['tarjetasCredito'])||1){
+if(!isset($_SESSION['tarjetasCredito'])){
   $sqlTarjetas = "SELECT IdTarjeta, Nombre, IdCuentaContable_Presentacion FROM dbo.tarjetasCredito WHERE Activa=1 ORDER BY Nombre ASC;";
   ChromePhp::log($sqlTarjetas);
   $stmt = odbc_exec2( $mssql, $sqlTarjetas, __LINE__, __FILE__);

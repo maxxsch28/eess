@@ -89,10 +89,16 @@ if($tabla==""){
     $a++;
     $totalAFacturar += $monto*$_SESSION['transporte_alicuotas_comisiones'][$alicuota]/100;
     if($a==1){
-      $tablaEncabezado .= " {$_SESSION['transporte_tipos_comisiones'][$alicuota]}: $".number_format($monto, 2, ',', '.')." || Facturar $".number_format($monto*$_SESSION['transporte_alicuotas_comisiones'][$alicuota]/100, 2, ',', '.')."</b></td></tr>";
-    } else {
+      $tablaEncabezado .= " {$_SESSION['transporte_tipos_comisiones'][$alicuota]}: $".number_format($monto, 2, ',', '.')." ||  Facturar $".number_format($monto*$_SESSION['transporte_alicuotas_comisiones'][$alicuota]/100, 2, ',', '.')."</b>";
+      if($alicuota==1){
+        $tablaEncabezado .= "<br/><b>1% A capitalizar $".number_format($monto*.01, 2, ',', '.')."</b>";
+        $totalACapitalizar = $totalACapitalizar + $monto*.01;
+      }
+      $tablaEncabezado .= "</td></tr>";
+    }  else {
       $tablaEncabezado .= "<tr class='info comisionEncabezado'><td></td><td colspan='4' style='text-align:right'><b> {$_SESSION['transporte_tipos_comisiones'][$alicuota]}: $".number_format($monto, 2, ',', '.')." || Facturar $".number_format($monto*$_SESSION['transporte_alicuotas_comisiones'][$alicuota]/100, 2, ',', '.')."</b></td></tr>";
     }
+    
   }
   if($a>1){
     // totaliza comisiones por fletero

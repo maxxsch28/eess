@@ -1,200 +1,150 @@
 Tanque,1
-Fecha,04/01/17 21:51:35
+Fecha,30/10/17 21:45:05
 Producto,EURO DIESEL
-Nivel, ,1566.16,mm
-Litros, ,15809.2,litros
-Litros Vacio, ,3794.5,litros
-Merma mes,-4.4,litros
-Nivel Agua, ,5,mm
-Temperatura,27.7,grados
+Nivel, ,1258.26,mm
+Litros, ,12274.1,litros
+Litros Vacio, ,7329.6,litros
+Merma mes,1.8,litros
+Nivel Agua, ,0,mm
+Temperatura,20.4,grados
 Perdidas,0.0,litros/hora
 Tanque,2
-Fecha,04/01/17 21:51:48
+Fecha,30/10/17 21:52:13
 Producto,ULTRA DIESEL
-Nivel, ,1861.30,mm
-Litros, ,18667.0,litros
-Litros Vacio, ,936.7,litros
-Merma mes,-8.7,litros
+Nivel, ,1299.15,mm
+Litros, ,12766.0,litros
+Litros Vacio, ,6837.7,litros
+Merma mes,-18.6,litros
 Nivel Agua, ,0,mm
-Temperatura,28.6,grados
+Temperatura,19.3,grados
 Perdidas,0.0,litros/hora
 Tanque,3
-Fecha,04/01/17 21:46:57
+Fecha,30/10/17 21:54:24
 Producto,SUPER
-Nivel, ,1737.10,mm
-Litros, ,17533.8,litros
-Litros Vacio, ,2069.9,litros
-Merma mes,-9.1,litros
-Nivel Agua, ,0,mm
-Temperatura,27.6,grados
+Nivel, ,1116.01,mm
+Litros, ,10536.1,litros
+Litros Vacio, ,9067.6,litros
+Merma mes,-67.6,litros
+Nivel Agua,*,0,mm
+Temperatura,20.5,grados
 Perdidas,0.0,litros/hora
 Tanque,4
-Fecha,04/01/17 21:48:02
+Fecha,30/10/17 21:46:31
 Producto,EURO DIESEL
-Nivel, ,1272.40,mm
-Litros, ,8968.1,litros
-Litros Vacio, ,1886.2,litros
-Merma mes,2.4,litros
-Nivel Agua, ,10,mm
-Temperatura,26.9,grados
+Nivel, ,436.69,mm
+Litros, ,2214.8,litros
+Litros Vacio, ,8639.5,litros
+Merma mes,0.3,litros
+Nivel Agua, ,0,mm
+Temperatura,18.3,grados
 Perdidas,0.0,litros/hora
 Tanque,5
-Fecha,04/01/17 21:53:17
+Fecha,30/10/17 21:45:45
 Producto,INFINIA
-Nivel, ,1329.65,mm
-Litros, ,9390.7,litros
-Litros Vacio, ,1492.7,litros
-Merma mes,-7.5,litros
+Nivel, ,1041.66,mm
+Litros, ,7216.5,litros
+Litros Vacio, ,3666.9,litros
+Merma mes,-29.3,litros
 Nivel Agua, ,0,mm
-Temperatura,27.4,grados
+Temperatura,20.5,grados
 Perdidas,0.0,litros/hora
 Tanque,6
-Fecha,04/01/17 21:48:28
+Fecha,30/10/17 21:50:53
 Producto,ULTRA DIESEL
-Nivel, ,1325.78,mm
-Litros, ,25984.8,litros
-Litros Vacio, ,14726.1,litros
-Merma mes,-38.6,litros
+Nivel, ,1533.80,mm
+Litros, ,30772.3,litros
+Litros Vacio, ,9938.6,litros
+Merma mes,-102.5,litros
 Nivel Agua, ,0,mm
-Temperatura,27.2,grados
+Temperatura,18.4,grados
 Perdidas,0.0,litros/hora
 DESCARGA EN TANQUE,1
-Fecha,04/01/17 19:05:36
+Fecha,30/10/17 18:04:03
 Producto,EURO DIESEL
-Liquido Inicial, ,11517.3,litros
-Liquido Final, ,16431.6,litros
-Liquido Total, ,4914.3,litros
+Liquido Inicial, ,3184.1,litros
+Liquido Final, ,13153.7,litros
+Liquido Total, ,9969.6,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total, ,4914.3,litros
+Producto Total, ,9969.6,litros
 DESCARGA EN TANQUE,1
-Fecha,03/01/17 19:01:11
+Fecha,26/10/17 08:45:03
 Producto,EURO DIESEL
-Liquido Inicial, ,2734.1,litros
-Liquido Final, ,13652.6,litros
-Liquido Total, ,10918.5,litros
+Liquido Inicial, ,10449.2,litros
+Liquido Final, ,16367.8,litros
+Liquido Total, ,5918.6,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total, ,10918.5,litros
+Producto Total, ,5918.6,litros
 DESCARGA EN TANQUE,2
-Fecha,04/01/17 21:10:47
+Fecha,27/10/17 21:11:32
 Producto,ULTRA DIESEL
-Liquido Inicial, ,11905.7,litros
-Liquido Final, ,18666.3,litros
-Liquido Total, ,6760.5,litros
+Liquido Inicial, ,8654.5,litros
+Liquido Final, ,18495.6,litros
+Liquido Total, ,9841.1,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total, ,6760.5,litros
-DESCARGA EN TANQUE,2
-Fecha,03/01/17 17:47:18
-Producto,ULTRA DIESEL
-Liquido Inicial, ,7749.8,litros
-Liquido Final, ,14728.6,litros
-Liquido Total, ,6978.9,litros
-Agua Inicial, ,0.0,litros
-Agua Final, ,0.0,litros
-Agua Total, ,0.0,litros
-Producto Total, ,6978.9,litros
-DESCARGA EN TANQUE,2
-Fecha,31/12/16 11:00:44
-Producto,ULTRA DIESEL
-Liquido Inicial,? ,1857.3,litros
-Liquido Final, ,13683.3,litros
-Liquido Total,? ,11826.0,litros
-Agua Inicial, ,0.0,litros
-Agua Final, ,0.0,litros
-Agua Total, ,0.0,litros
-Producto Total,? ,11826.0,litros
+Producto Total, ,9841.1,litros
 DESCARGA EN TANQUE,3
-Fecha,04/01/17 21:05:56
+Fecha,30/10/17 18:17:21
 Producto,SUPER
-Liquido Inicial, ,6115.0,litros
-Liquido Final, ,17534.7,litros
-Liquido Total, ,11419.7,litros
+Liquido Inicial, ,4575.1,litros
+Liquido Final, ,11119.2,litros
+Liquido Total, ,6544.2,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total, ,11419.7,litros
+Producto Total, ,6544.2,litros
 DESCARGA EN TANQUE,3
-Fecha,03/01/17 17:36:29
+Fecha,27/10/17 21:29:42
 Producto,SUPER
-Liquido Inicial,? ,771.6,litros
-Liquido Final, ,11827.1,litros
-Liquido Total,? ,11055.5,litros
+Liquido Inicial, ,4016.1,litros
+Liquido Final, ,15455.0,litros
+Liquido Total, ,11438.9,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total,? ,11055.5,litros
-DESCARGA EN TANQUE,3
-Fecha,31/12/16 11:16:54
-Producto,SUPER
-Liquido Inicial, ,3261.6,litros
-Liquido Final, ,9948.0,litros
-Liquido Total, ,6686.4,litros
-Agua Inicial, ,0.0,litros
-Agua Final, ,0.0,litros
-Agua Total, ,0.0,litros
-Producto Total, ,6686.4,litros
+Producto Total, ,11438.9,litros
 DESCARGA EN TANQUE,5
-Fecha,04/01/17 21:22:18
+Fecha,30/10/17 18:31:43
 Producto,INFINIA
-Liquido Inicial, ,4373.4,litros
-Liquido Final, ,9391.0,litros
-Liquido Total, ,5017.6,litros
+Liquido Inicial, ,1463.3,litros
+Liquido Final, ,7488.1,litros
+Liquido Total, ,6024.8,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total, ,5017.6,litros
-DESCARGA EN TANQUE,5
-Fecha,03/01/17 17:51:49
-Producto,INFINIA
-Liquido Inicial, ,753.5,litros
-Liquido Final, ,5747.6,litros
-Liquido Total, ,4994.2,litros
-Agua Inicial, ,0.0,litros
-Agua Final, ,0.0,litros
-Agua Total, ,0.0,litros
-Producto Total, ,4994.2,litros
-DESCARGA EN TANQUE,5
-Fecha,31/12/16 11:04:16
-Producto,INFINIA
-Liquido Inicial, ,1084.9,litros
-Liquido Final, ,7081.1,litros
-Liquido Total, ,5996.2,litros
-Agua Inicial, ,0.0,litros
-Agua Final, ,0.0,litros
-Agua Total, ,0.0,litros
-Producto Total, ,5996.2,litros
+Producto Total, ,6024.8,litros
 DESCARGA EN TANQUE,6
-Fecha,04/01/17 21:01:26
+Fecha,27/10/17 21:21:13
 Producto,ULTRA DIESEL
-Liquido Inicial, ,18895.7,litros
-Liquido Final, ,25985.4,litros
-Liquido Total, ,7089.7,litros
+Liquido Inicial, ,32977.4,litros
+Liquido Final, ,39994.1,litros
+Liquido Total, ,7016.7,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total, ,7089.7,litros
+Producto Total, ,7016.7,litros
 DESCARGA EN TANQUE,6
-Fecha,03/01/17 17:41:01
+Fecha,27/10/17 21:07:11
 Producto,ULTRA DIESEL
-Liquido Inicial, ,18434.5,litros
-Liquido Final,? ,32645.6,litros
-Liquido Total,? ,14211.2,litros
+Liquido Inicial, ,25896.2,litros
+Liquido Final, ,32981.7,litros
+Liquido Total, ,7085.6,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total,? ,14211.2,litros
+Producto Total, ,7085.6,litros
 DESCARGA EN TANQUE,6
-Fecha,31/12/16 10:34:24
+Fecha,27/10/17 20:50:09
 Producto,ULTRA DIESEL
-Liquido Inicial,? ,25339.5,litros
-Liquido Final, ,37428.3,litros
-Liquido Total,? ,12088.8,litros
+Liquido Inicial, ,25077.1,litros
+Liquido Final, ,25900.9,litros
+Liquido Total, ,823.8,litros
 Agua Inicial, ,0.0,litros
 Agua Final, ,0.0,litros
 Agua Total, ,0.0,litros
-Producto Total,? ,12088.8,litros
+Producto Total, ,823.8,litros

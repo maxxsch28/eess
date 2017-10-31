@@ -3,7 +3,11 @@
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 $_SESSION['fCanje']=$_POST['fcanje'];
 if(isset($_POST['soloResultados'])){
-  $sqlResultados = "select e.Empleado, count(c.IdTicket) as cuantos, sum(c.esNafta) as nafta, sum(c.esDespacho) as despachos from [coop].dbo.promoDesayunos as c, [CoopDeTrabajo.Net].dbo.Empleados as e where c.IdEmpleado=e.IdEmpleado AND c.mesAsignado=".date("Ym")." Group by e.Empleado order by cuantos desc;";
+  if(!isset($_POST['mesAsignado'])){
+    $sqlResultados = "select e.Empleado, count(c.IdTicket) as cuantos, sum(c.esNafta) as nafta, sum(c.esDespacho) as despachos from [coop].dbo.promoDesayunos as c, [CoopDeTrabajo.Net].dbo.Empleados as e where c.IdEmpleado=e.IdEmpleado AND c.mesAsignado=".date("Ym")." Group by e.Empleado order by cuantos desc;";
+  } else {
+    $sqlResultados = "select e.Empleado, count(c.IdTicket) as cuantos, sum(c.esNafta) as nafta, sum(c.esDespacho) as despachos from [coop].dbo.promoDesayunos as c, [CoopDeTrabajo.Net].dbo.Empleados as e where c.IdEmpleado=e.IdEmpleado AND c.mesAsignado=".$_POST['mesAsignado']." Group by e.Empleado order by cuantos desc;";
+  }
   $stmt = odbc_exec2($mssql, $sqlResultados, __LINE__, __FILE__);
   $tr='';
   while($rowResultados = sqlsrv_fetch_array($stmt)){

@@ -1,13 +1,13 @@
 <?php
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-////ChromePhp::log($_REQUEST);
+ChromePhp::log($_REQUEST);
 
 if(isset($_POST['id'])){
   // AUTOMATICO
   $id = substr($_POST['id'],4);
   $sqlYPF = "SELECT * FROM ctacte WHERE id=$id";
-  ////ChromePhp::log($sqlYPF);die;
+  ChromePhp::log($sqlYPF);
   $result = $mysqli3->query($sqlYPF);
   $rowYPF = $result->fetch_assoc();
   $mes = substr($rowYPF['femision'],3,2);
@@ -15,11 +15,11 @@ if(isset($_POST['id'])){
   $ano = substr($rowYPF['femision'],6,4);
   $limiteInferior = (is_decimal(abs($rowYPF['Importe'])))?6:2;
   $limiteSuperior = (is_decimal(abs($rowYPF['Importe'])))?4:1;
-  //ChromePhp::log($rowYPF['clase']);
+  ChromePhp::log($rowYPF['clase']);
   switch($rowYPF['clase']){
     case 'RV':
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('RV') AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
-    //ChromePhp::log($sqlCalden);
+    ChromePhp::log($sqlCalden);
     $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
     $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
@@ -29,7 +29,7 @@ if(isset($_POST['id'])){
     break;
     case 'VP':
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('VP') AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
-    //ChromePhp::log($sqlCalden);
+    ChromePhp::log($sqlCalden);
     $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
     $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
@@ -40,7 +40,7 @@ if(isset($_POST['id'])){
     case 'AR':
     // cheque rebotado
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor='NDI' AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
-    //ChromePhp::log($sqlCalden);
+    ChromePhp::log($sqlCalden);
     $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
     $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
@@ -54,7 +54,7 @@ if(isset($_POST['id'])){
     // saco numero de documento
     $numero = explode('A', $rowYPF['Referencia']);
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('FAA', 'NDA') AND Numero=$numero[1] AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
-    //ChromePhp::log($sqlCalden);
+    ChromePhp::log($sqlCalden);
     $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
     $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
@@ -67,7 +67,7 @@ if(isset($_POST['id'])){
     // saco numero de documento
     $numero = explode('A', $rowYPF['Referencia']);
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor IN ('NCA') AND Numero=$numero[1] AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
-    //ChromePhp::log($sqlCalden);
+    ChromePhp::log($sqlCalden);
     $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
     $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
@@ -77,7 +77,7 @@ if(isset($_POST['id'])){
     case 'AV':
     // cheque rebotado
     $sqlCalden = "select * from dbo.movimientospro where IdTipoMovimientoProveedor='AJU' AND total=".abs($rowYPF['Importe'])." AND datepart(MONTH, Fecha)=$mes AND datepart(YEAR, Fecha)=$ano;";
-    //ChromePhp::log($sqlCalden);
+    ChromePhp::log($sqlCalden);
     $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
     $rowCalden = sqlsrv_fetch_array($stmt);
     if(is_array($rowCalden)){
@@ -90,7 +90,7 @@ if(isset($_POST['id'])){
       // Visa
       $rowYPF['clase']='Visa';
       $sqlCalden = "select IdTransferenciaBancaria FROM dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor=4 AND o.IdOrdenPago=t.IdOrdenPago AND t.Fecha>=dateadd(day, -$limiteInferior, '$ano-$mes-$dia') AND t.Fecha<=dateadd(day, +$limiteSuperior, '$ano-$mes-$dia') AND Importe=".abs($rowYPF['Importe']).";";
-      //ChromePhp::log($sqlCalden);
+      ChromePhp::log($sqlCalden);
       $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
       $rowCalden = sqlsrv_fetch_array($stmt);
       if(is_array($rowCalden)){
@@ -100,7 +100,7 @@ if(isset($_POST['id'])){
       // Otro recibo
       // busco primero pagos en efectivo
       $sqlCalden = "select TOP 1 IdOrdenPago, TotalAPagar, PagoEfectivo FROM dbo.OrdenesPago as o WHERE o.IdProveedor=4 AND  o.Fecha>=dateadd(day, -2, '$ano-$mes-$dia') AND o.Fecha<dateadd(day, +$limiteSuperior, '$ano-$mes-$dia')  AND PagoEfectivo=".abs($rowYPF['Importe'])." ORDER BY o.Fecha DESC;";
-      ////ChromePhp::log($sqlCalden);
+      ChromePhp::log($sqlCalden);
       $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
       $rowCalden = sqlsrv_fetch_array($stmt);
       if(is_array($rowCalden)){
@@ -112,7 +112,7 @@ if(isset($_POST['id'])){
         $sqlCalden = "select IdChequeTercero FROM dbo.OrdenesPago as o, dbo.ChequesTerceros as c WHERE o.IdProveedor=4 AND c.IdOrdenPago=o.IdOrdenPago AND o.Fecha>=dateadd(day, -$limiteInferior, '$ano-$mes-$dia') AND o.Fecha<=dateadd(day, +$limiteSuperior, '$ano-$mes-$dia') AND Importe=".abs($rowYPF['Importe']).";";
         
         
-        ////ChromePhp::log($sqlCalden);
+        ChromePhp::log($sqlCalden);
         $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
         $rowCalden = sqlsrv_fetch_array($stmt);
         if(is_array($rowCalden)){
@@ -120,7 +120,7 @@ if(isset($_POST['id'])){
         } else {
           // no fue cheque, busco epago
           $sqlCalden = "select IdTransferenciaBancaria FROM dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor=4 AND o.IdOrdenPago=t.IdOrdenPago AND t.Fecha>=dateadd(day, -2, '$ano-$mes-$dia') AND t.Fecha<dateadd(day, +$limiteSuperior, '$ano-$mes-$dia')  AND Importe=".abs($rowYPF['Importe']).";";
-          ////ChromePhp::log($sqlCalden);
+          ChromePhp::log($sqlCalden);
           $stmt = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
           $rowCalden = sqlsrv_fetch_array($stmt);
           if(is_array($rowCalden)){
@@ -132,19 +132,19 @@ if(isset($_POST['id'])){
     break;
   }
   if(isset($insert)){
-    //ChromePhp::log($insert);
+    ChromePhp::log("insert: ".$insert);
     $result2 = $mysqli3->query($insert);
     $idConciliado = $mysqli3->insert_id;
-    //ChromePhp::log($idConciliado);
+    ChromePhp::log($idConciliado);
     $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-    //ChromePhp::log($update);
+    ChromePhp::log($update);
     $result = $mysqli3->query($update);
     $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$idConciliado";
-    //ChromePhp::log($update2);
+    ChromePhp::log($update2);
     $result = $mysqli3->query($update2);
   }
 } else {
-  //ChromePhp::log($_POST);
+  ChromePhp::log($_POST);
   if(count($_POST['idypf'])>1){
     // varios ypf a varios idCalden
     foreach($_POST['idypf'] as $r => $id){
@@ -157,17 +157,17 @@ if(isset($_POST['id'])){
         case 'VP':
         foreach($_POST['idcalden'] as $r => $idCalden){
           $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'rv', '0');";
-          //ChromePhp::log($insert);
+          ChromePhp::log($insert);
           $result2 = $mysqli3->query($insert);
           
           if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
           $ultimoId=$mysqli3->insert_id;
           $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-          //ChromePhp::log($update);
+          ChromePhp::log($update);
           
           $result = $mysqli3->query($update);
           $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-          //ChromePhp::log($update2);
+          ChromePhp::log($update2);
           $result = $mysqli3->query($update2);
         }
         break;
@@ -175,17 +175,17 @@ if(isset($_POST['id'])){
         case 'RC':
         foreach($_POST['idcalden'] as $r => $idCalden){
           $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'epago', '0');";
-          //ChromePhp::log($insert);
+          ChromePhp::log($insert);
           $result2 = $mysqli3->query($insert);
           
           if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
           $ultimoId=$mysqli3->insert_id;
           $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-          //ChromePhp::log($update);
+          ChromePhp::log($update);
           
           $result = $mysqli3->query($update);
           $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-          //ChromePhp::log($update2);
+          ChromePhp::log($update2);
           $result = $mysqli3->query($update2);
         }
         break;
@@ -193,17 +193,17 @@ if(isset($_POST['id'])){
         case 'VA':
         foreach($_POST['idcalden'] as $r => $idCalden){
           $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'av', '0');";
-          //ChromePhp::log($insert);
+          ChromePhp::log($insert);
           $result2 = $mysqli3->query($insert);
           
           if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
           $ultimoId=$mysqli3->insert_id;
           $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-          //ChromePhp::log($update);
+          ChromePhp::log($update);
           
           $result = $mysqli3->query($update);
           $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-          //ChromePhp::log($update2);
+          ChromePhp::log($update2);
           $result = $mysqli3->query($update2);
         }
         break;
@@ -225,23 +225,23 @@ if(isset($_POST['id'])){
     $sqlYPF = "SELECT * FROM ctacte WHERE id=$id";
     $result = $mysqli3->query($sqlYPF);
     $rowYPF = $result->fetch_assoc();
-    //ChromePhp::log($rowYPF['clase']);
+    ChromePhp::log($rowYPF['clase']);
     switch($rowYPF['clase']){
       case 'RV':
       case 'VP':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'rv', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;
@@ -250,34 +250,34 @@ if(isset($_POST['id'])){
       case 'LC':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'nca', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;
       case 'PU':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'nda', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;
@@ -286,51 +286,51 @@ if(isset($_POST['id'])){
       case 'DD':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'faa', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;
       case 'CF':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'nca', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;
       case 'AV':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'av', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;
@@ -338,17 +338,17 @@ if(isset($_POST['id'])){
       case 'RC':
       foreach($_POST['idcalden'] as $r => $idCalden){
         $insert = "INSERT INTO conciliacion (idCalden, idYPF, tipoCalden, auto) VALUES ($idCalden, $id, 'op', '0');";
-        //ChromePhp::log($insert);
+        ChromePhp::log($insert);
         $result2 = $mysqli3->query($insert);
         
         if(!isset($idConciliado))$idConciliado = $mysqli3->insert_id;
         $ultimoId=$mysqli3->insert_id;
         $update = "UPDATE ctacte SET idConciliado=$idConciliado WHERE id=$id";
-        //ChromePhp::log($update);
+        ChromePhp::log($update);
         
         $result = $mysqli3->query($update);
         $update2 = "UPDATE conciliacion SET idConciliado=$idConciliado WHERE id=$ultimoId";
-        //ChromePhp::log($update2);
+        ChromePhp::log($update2);
         $result = $mysqli3->query($update2);
       }
       break;

@@ -33,14 +33,16 @@ echo "</tr></thead><tbody align='right'>";
 
 $total = 0;
 for($i = 0; $i < $cuantosMeses+1; $i++){
-  $desde = date("Y-d-m", strtotime("-$i month", strtotime($inicia)));
-  $hasta = date("Y-d-m", strtotime("+1 month", strtotime("-$i month", strtotime($inicia))));
+  $desde = date("Y-m-d", strtotime("-$i month", strtotime($inicia)));
+  $hasta = date("Y-m-d", strtotime("+1 month", strtotime("-$i month", strtotime($inicia))));
   $mes = date("m", strtotime("-$i month", strtotime(date("Y-m-01")))); //dbo.MovimientosFac.IdTipoMovimiento<>\'REM\'
   $soloElaionGrande = " AND IdGrupoDescuento>0 ";
   $soloElaionGrande = "";
-  //$sqlVentas = trim('SELECT MovimientosDetalleFac.IdArticulo, Cantidad, PrecioPublico, MovimientosDetalleFac.IdCierreTurno, Codigo, Descripcion, IdGrupoDescuento, dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4, CASE WHEN dbo.CierresTurno.IdEmpleado3>0 THEN PrecioPublico/2 else PrecioPublico END AS VENTAS, dbo.CierresTurno.Fecha, dbo.MovimientosFac.IdTipoMovimiento, DATEPART(hh, dbo.CierresTurno.Fecha) as hora FROM dbo.MovimientosDetalleFac, dbo.Articulos, dbo.MovimientosFac, dbo.CierresTurno WHERE (IdCliente NOT IN (1993)OR IdCliente is null) AND dbo.Articulos.IdGrupoArticulo=57 AND dbo.MovimientosDetalleFac.IdArticulo=dbo.Articulos.IdArticulo AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosFac.Fecha>=\''.$desde.'\' AND dbo.MovimientosFac.Fecha<\''.$hasta.'\' AND dbo.CierresTurno.IdCierreTurno=dbo.MovimientosDetalleFac.IdCierreTurno '.$soloElaionGrande.' AND Descripcion like (\'%ELAION%\') AND Descripcion NOT LIKE (\'%MOTO%\') AND Descripcion NOT LIKE (\'%NAUTICO%\') AND (descripcion LIKE (\'%1LT%\') OR descripcion LIKE (\'%1 LT%\')) AND dbo.CierresTurno.IdCierreTurno<>3227 AND idEmpleado2 NOT IN '.$_SESSION['empleadosZZ'].' AND (idEmpleado3 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado3 IS NULL) ORDER BY dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3;');
   
-  $sqlVentas = trim('SELECT MovimientosDetalleFac.IdArticulo, Cantidad, PrecioPublico, MovimientosDetalleFac.IdCierreTurno, Codigo, Descripcion, IdGrupoDescuento, dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4, PrecioPublico AS VENTAS, dbo.CierresTurno.Fecha, dbo.MovimientosFac.IdTipoMovimiento, DATEPART(hh, dbo.CierresTurno.Fecha) as hora, isnumeric(IdEmpleado2*IdEmpleado3*IdEmpleado4) as turnoTriple FROM dbo.MovimientosDetalleFac, dbo.Articulos, dbo.MovimientosFac, dbo.CierresTurno WHERE (IdCliente NOT IN (1993) OR IdCliente is null) AND dbo.Articulos.IdGrupoArticulo=57 AND dbo.MovimientosDetalleFac.IdArticulo=dbo.Articulos.IdArticulo AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosFac.Fecha>=\''.$desde.'\' AND dbo.MovimientosFac.Fecha<\''.$hasta.'\' AND dbo.CierresTurno.IdCierreTurno=dbo.MovimientosDetalleFac.IdCierreTurno '.$soloElaionGrande.' AND Descripcion like (\'%ELAION%\') AND Descripcion NOT LIKE (\'%MOTO%\') AND Descripcion NOT LIKE (\'%NAUTICO%\') AND (descripcion LIKE (\'%1LT%\') OR descripcion LIKE (\'%1 LT%\')) AND idEmpleado2 NOT IN '.$_SESSION['empleadosZZ'].' AND (idEmpleado3 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado3 IS NULL) AND (idEmpleado4 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado4 IS NULL) ORDER BY dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4;'); // Modificacion para corregir Fede 21 julio 2016
+  $sqlVentas = trim('SELECT MovimientosDetalleFac.IdArticulo, Cantidad, PrecioPublico, MovimientosDetalleFac.IdCierreTurno, Codigo, Descripcion, IdGrupoDescuento, dbo.CierresTurno.IdEmpleado1, dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4, PrecioPublico AS VENTAS, dbo.CierresTurno.Fecha, dbo.MovimientosFac.IdTipoMovimiento, DATEPART(hh, dbo.CierresTurno.Fecha) as hora, isnumeric(IdEmpleado1*IdEmpleado2*IdEmpleado3) as turnoTriple FROM dbo.MovimientosDetalleFac, dbo.Articulos, dbo.MovimientosFac, dbo.CierresTurno WHERE (IdCliente NOT IN (1993) OR IdCliente is null) AND dbo.Articulos.IdGrupoArticulo=57 AND dbo.MovimientosDetalleFac.IdArticulo=dbo.Articulos.IdArticulo AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosFac.Fecha>=\''.$desde.'\' AND dbo.MovimientosFac.Fecha<\''.$hasta.'\' AND dbo.CierresTurno.Fecha>=\''.$desde.'\' AND dbo.CierresTurno.Fecha<=\''.$hasta.'\' AND dbo.CierresTurno.IdCierreTurno=dbo.MovimientosDetalleFac.IdCierreTurno '.$soloElaionGrande.' AND Descripcion like (\'%ELAION%\') AND Descripcion NOT LIKE (\'%MOTO%\') AND Descripcion NOT LIKE (\'%NAUTICO%\') AND (descripcion LIKE (\'%1LT%\') OR descripcion LIKE (\'%1 LT%\'))'.
+  'ORDER BY dbo.CierresTurno.IdEmpleado1, dbo.CierresTurno.IdEmpleado2, dbo.CierresTurno.IdEmpleado3, dbo.CierresTurno.IdEmpleado4;'); 
+  //'AND IdEmpleado1 NOT IN '.$_SESSION['empleadosZZ'].' AND (idEmpleado2 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado2 IS NULL) AND (IdEmpleado3 NOT IN '.$_SESSION['empleadosZZ'].' OR idEmpleado3 IS NULL) '
+  
   
   ChromePhp::log($sqlVentas);
   
@@ -48,32 +50,27 @@ for($i = 0; $i < $cuantosMeses+1; $i++){
   $stmt = odbc_exec2($mssql, $sqlVentas, __LINE__, __FILE__);
 
   while($rowVentas = sqlsrv_fetch_array($stmt)){
-    if($rowVentas['turnoTriple']==1){
-      // borro a Federico de la ecuacion
-      if($rowVentas['IdEmpleado2']==$tercerEmpleado){
-        $rowVentas['IdEmpleado2']=$rowVentas['IdEmpleado4'];
-        $rowVentas['IdEmplado4']=0;
-      } elseif($rowVentas['IdEmpleado3']==$tercerEmpleado){
-        $rowVentas['IdEmpleado3']=$rowVentas['IdEmpleado4'];
-        $rowVentas['IdEmplado4']=0;
-      }
+    if($rowVentas['IdEmpleado1']==17){
+      $rowVentas['IdEmpleado1']=$rowVentas['IdEmpleado2'];
+      $rowVentas['IdEmpleado2']=$rowVentas['IdEmpleado3'];
+      $rowVentas['IdEmpleado3']=$rowVentas['IdEmpleado4'];
     }
-    $ponderacion = ($rowVentas['hora']<=7)?$ponderaNoche:1;
     //if(!isset($articulo[$rowVentas['Codigo']])){$articulo[$rowVentas['Codigo']]=$rowVentas['Descripcion'];} // deprecated, esto sirve para el listaVentas
     $signo=($rowVentas['IdTipoMovimiento']=='NCB'||$rowVentas['IdTipoMovimiento']=='NCA')?-1:1;
-    $divide = 1;
+    $divide = .5;
     if($rowVentas['IdEmpleado3']>0){
-      // dos vendedores en el turno
-      $totalPorVendedor[$i][$rowVentas['IdEmpleado3']] += $signo*$ponderacion*$rowVentas['VENTAS']/2*$rowVentas['Cantidad'];
-      $totalPorVendedorSinPonderacion[$i][$rowVentas['IdEmpleado3']] += $signo*$rowVentas['VENTAS']/2*$rowVentas['Cantidad'];
+      // tres vendedores en el turno
+      $divide = 1/3;
+      $totalPorVendedor[$i][$rowVentas['IdEmpleado3']] += $signo*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
+      $totalPorVendedorSinPonderacion[$i][$rowVentas['IdEmpleado3']] += $signo*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
       //$articuloVendedor[$i][$rowVentas['IdEmpleado3']][$rowVentas['Codigo']] = $articuloVendedor[$i][$rowVentas['IdEmpleado3']][$rowVentas['Codigo']]+$signo*$rowVentas['Cantidad'];
-      $divide = .5;
     } 
-    $totalPorVendedor[$i][$rowVentas['IdEmpleado2']] += $signo*$ponderacion*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
+    $totalPorVendedor[$i][$rowVentas['IdEmpleado2']] += $signo*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
     $totalPorVendedorSinPonderacion[$i][$rowVentas['IdEmpleado2']] += $signo*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
+    $totalPorVendedor[$i][$rowVentas['IdEmpleado1']] += $signo*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
+    $totalPorVendedorSinPonderacion[$i][$rowVentas['IdEmpleado1']] += $signo*$rowVentas['VENTAS']*$divide*$rowVentas['Cantidad'];
     //$articuloVendedor[$i][$rowVentas['IdEmpleado2']][$rowVentas['Codigo']] = $articuloVendedor[$i][$rowVentas['IdEmpleado2']][$rowVentas['Codigo']]+$signo*$rowVentas['Cantidad'];
     unset($totalPorVendedor[$i][21], $totalPorVendedorSinPonderacion[$i][21]); // elimino cubrevacaciones
-    unset($totalPorVendedor[$i][24], $totalPorVendedorSinPonderacion[$i][24]); // elimino cubrevacaciones
   }
   if($i>0){ // meses desde el actual, no incluído
     $totalVentas               += array_sum($totalPorVendedor[$i]);

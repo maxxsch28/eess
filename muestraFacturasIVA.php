@@ -5,7 +5,7 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 // asignaFacturasSocios.php
 // lista las facturas emitidas sin turno asociado y permite asignarlas al turno actual
 
-$titulo = "Muetra facturas de socios";
+$titulo = "Muestra facturas de socios";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -38,15 +38,6 @@ $titulo = "Muetra facturas de socios";
             $('#detalle').html("<center><img src='img/ajax-loader.gif'/></center>").fadeIn();
             $.get('func/ajaxMuestraFacturasIVA.php', function(data) {
               $('#detalle').html(data).fadeIn();
-              $('.graba').click(function(){
-                $(this).html("<center><img src='img/ajax-loader-chico.gif'/></center>").removeClass().fadeIn();
-                // elimino el "actualizaLote_" del id para obtener el idLote correspondiente
-                var id3 = $(this).attr('id').split("_");
-                var IdMovimientoFac = id3[1];
-                $.get('func/ajaxAsignaFacturaTurnoActual.php?IdMovimientoFac=' + IdMovimientoFac, function(data) {
-                  $('#fac_'+IdMovimientoFac).hide('slow');
-                });
-              });
             });
           });
       </script>

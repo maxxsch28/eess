@@ -20,7 +20,7 @@ if($importeRastrear==0){
 }
 
 $sqlMovimientos = "SELECT IdMovimientoCta, RazonSocial, Fecha, IdTipoMovimiento, IdMovimientoFac, IdRecibo, IdMovimientoImputado, Importe FROM dbo.movimientosCta, dbo.Clientes 
-WHERE dbo.Clientes.IdCliente=dbo.movimientosCta.idCliente AND idmovimientoimputado = (select IdMovimientoCta from dbo.movimientosCta where idmovimientofac=(select IdMovimientofac from dbo.MovimientosFac where puntoVenta=$_POST[prefijo] and numero=$_POST[numero] and idtipomovimiento='FAA'))";
+WHERE dbo.Clientes.IdCliente=dbo.movimientosCta.idCliente AND idmovimientoimputado = (select IdMovimientoCta from dbo.movimientosCta where idmovimientofac IN (select IdMovimientofac from dbo.MovimientosFac where puntoVenta=$_POST[prefijo] and numero=$_POST[numero] and idtipomovimiento IN ('FAA', 'FAB')))";
 
 //$sqlImporte = "select IdMovimientoCta, RazonSocial, Fecha, IdTipoMovimiento, IdMovimientoFac, IdRecibo, IdMovimientoImputado from dbo.MovimientosCta, dbo.Clientes where Importe=$importeRastrear and dbo.Clientes.idCliente=dbo.MovimientosCta.IdCliente and dbo.MovimientosCta.IdCliente=$facturaTotal[IdCliente];";
 

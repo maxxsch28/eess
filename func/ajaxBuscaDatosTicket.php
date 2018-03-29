@@ -1,7 +1,7 @@
 <?php
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-$maximoMesesAtras = 2;
+$maximoMesesAtras = 4;
 ChromePhp::log($_POST);
 if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
   $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, IdCierreTurno from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND IdCierreTurno IS NOT NULL;";

@@ -153,10 +153,10 @@ if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
     }else{
       $maxTolerable=0.3;
     }
-    $tablaResumen[$idProducto] .= "Recepción: <span class='pull-right'><b>+".round($totalRecibidoProducto[$idProducto],0)."</b></span><br/>"
-      . "Ventas medidas: <span class='pull-right' style='border-bottom:1px solid #000'><b>-".round($totalDespachoProducto[$idProducto],0)."</b></span><br/><br/>"
-      . "Existencia teórica: <span class='pull-right'><b>".round($inicial['tq'.$idProducto]+$totalRecibidoProducto[$idProducto]-$totalDespachoProducto[$idProducto],0)."</b></span><br/>"
-      . "Medición real: <span class='pull-right' style='border-bottom:1px solid #000'><b>$medido[$idProducto]</b></span><br/><br/>"
+    $tablaResumen[$idProducto] .= "Recepción: <span class='pull-right' style='clear:both'><b>+".round($totalRecibidoProducto[$idProducto],0)."</b></span><br/>"
+      . "Ventas: <span class='pull-right' style='border-bottom:1px solid #000; clear:both'><b>-".round($totalDespachoProducto[$idProducto],0)."</b></span><br/><br/>"
+      . "Existencia teórica: <span class='pull-right' style='clear:both'><b>".round($inicial['tq'.$idProducto]+$totalRecibidoProducto[$idProducto]-$totalDespachoProducto[$idProducto],0)."</b></span><br/>"
+      . "Medición real: <span class='pull-right' style='border-bottom:1px solid #000; clear:both'><b>$medido[$idProducto]</b></span><br/><br/>"
       . "&nbsp;<span class='pull-right ".((($dif/$sumaDespachado[$idProducto]*100)<=-$maxTolerable)?'neg':((round($dif/$sumaDespachado[$idProducto]*100,1
       )>=$maxTolerable)?'pos':'0'))."'>(".round($dif/$sumaDespachado[$idProducto]*100,1)."%) <b>$dif</b></span></li>"
       . "</ul></div>";

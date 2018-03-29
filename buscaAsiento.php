@@ -174,6 +174,11 @@ if((!isset($_SESSION['cuentasContables'])||(isset($rowHistorico['cuentaEESS'])&&
                     <input type="checkbox" value="1" name='inc_trn' id='inc_trn'> Incluye Transferencias
                 </label>
               </div>
+              <div class='col-md-6'>
+                <label class="radio" for='inc_det'>
+                    <input type="checkbox" value="1" name='inc_det' id='inc_det'> Muestra Detalle (no anda)
+                </label>
+              </div>
             </div></div>
         </fieldset>
         <fieldset>

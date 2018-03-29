@@ -46,10 +46,11 @@ $ypfUrl = '';
                     if($loggedInUser->group_id==2||$loggedInUser->group_id==3){ // Movistar?>
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
-                            Movistar
+                            Teresa
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/litrosDisponibles.php")echo ' class="active"';?>><a href="/litrosDisponibles.php">Litros disponibles</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/cargaMovistar.php")echo ' class="active"';?>><a href="/cargaMovistar.php">Carga facturas</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listaFacturacion.php")echo ' class="active"';?>><a href="/listaFacturacion.php">Refacturacion</a></li>
                         </ul>
@@ -105,7 +106,8 @@ $ypfUrl = '';
 
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/buscaCuentaCorriente.php")echo ' class="active"';?>><a href="/buscaCuentaCorriente.php">Rastrea cuentas corrientes</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/conciliaYPF.php")echo ' class="active"';?>><a href="/conciliaYPF.php">Concilia YPF</a></li>
-                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/conciliaYPF.php")echo ' class="active"';?>><a href="/conciliaYPF.php">Concilia BAPRO Setup</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/verificaConciliaYPF.php")echo ' class="active"';?>><a href="/verificaConciliaYPF.php">Verifica conciliación YPF</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/conciliaBAPRO.php")echo ' class="active"';?>><a href="/conciliaBAPRO.php">Concilia BAPRO Setup</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanques.php")echo ' class="active"';?>><a href="/estadoTanques.php?juli=1">¿Hay Nafta?</a></li>
                         </ul>
                     </li>

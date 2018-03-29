@@ -2,7 +2,7 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$fechaDesde = '2017-05-01';
+$fechaDesde = '2018-02-01';
 
 // acomodar asientos que son de movistar carga de documentos para que la cuenta sea la de movistar.
 // idem repsol
@@ -10,7 +10,7 @@ $fechaDesde = '2017-05-01';
 
 // acomodar Movistar para que si es un gasto de administracion no lo cambie.
 
-$s['cigarrillos']=array(44, 2, "252, 259, 502", "48");
+$s['cigarrillos']=array(44, 2, "252, 259, 502, 1601", "48");
 $s['TarjetasCelulares']=array(39, 2, "348");
 $s['Movistar']=array(8, 3, "323, 229, 392, 95, 362", "3, 20");
 $s['Servicios']=array(3, 1, "1, 302, 388, 3, 2");
@@ -28,7 +28,7 @@ $s['Limpieza'] = array(9, 1, "241, 272");
 $s['BDUMantenimiento'] = array(10, 1, "57, 324, 470, 408, 288, 286, 366, 138, 76, 146, 228, 221, 134, 300, 103, 204, 398, 100, 261, 157");
 $s['BDUCompra'] = array(11, 1, "22, 114, 48, 26, 489, 479, 475, 418, 378, 235, 208, 118, 386, 487, 65, 88, 163");
 $s['Sistemas'] = array(11, 1, "394, 416, 5, 427, 463, 170, 438, 500, 365, 510, 117, 450, 419, 70, 490, 249, 476, 405, 320, 454, 477, 222, 211");
-$s['Publicidad'] = array(6, 1, "128, 393, 414, 31, 503, 424, 40, 429, 513, 488, 498, 56, 207, 8, 466, 52");
+$s['Publicidad'] = array(6, 1, "128, 393, 414, 31, 503, 424, 40, 429, 513, 488, 498, 56, 207, 8, 466, 52, 512");
 $s['Vestimenta'] = array(7, 1, "55, 499, 497, 486, 472, 330, 430, 139, 121, 67");
 $s['MantenimientoPlaya'] = array(36, 1, "243, 399, 496, 101, 322, 44, 69, 190, 58, 397, 230, 27, 50, 59, 236, 72, 122, 426, 352");
 $s['MantenimientoSurtidores'] = array(40, 1, "143, 359, 459, 406");
@@ -38,7 +38,7 @@ $s['Representacion'] = array(52, 1, "209, 199, 263, 32, 371, 64, 102, 47, 38, 27
 $s['Campo'] = array(38, 1, "284, 368, 363, 188, 280, 246, 41, 355, 203");
 $s['Sistemas'] = array(11, 1, "394, 416, 5, 427, 463, 170, 438, 500, 365, 510, 117, 450, 419, 70, 490, 249, 476, 405, 320, 454, 477, 222, 211");
 $s['Seguros'] = array(29, 1, "162, 435, 77, 379");
-$s['Cafeteria'] = array(57, 2, "168, 28, 485, 501, 480, 107, 173");
+$s['Cafeteria'] = array(57, 2, "168, 28, 485, 501, 480, 107, 173, 219, 1572");
 $s['RepuestosYVarios'] = array(41, 1, "242, 201, 491, 29, 149, 25, 7, 167, 515, 36");// 36, 515
 $s['Edenred'] = array(17, 1, "547");// 36, 515
 
@@ -126,26 +126,26 @@ $sql['MovistarNeto'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderias
 
 ///////////////////////////////////////////////////
 // YPF
-$sql['YPFRendicionesVenta'] = "update dbo.MovimientosDetallePro set idcuentagastos=1, idcentrocostos=1 where IdMovimientoPro in (select idMovimientodetallepro from dbo.MovimientosPro where IdProveedor=423 AND Fecha>='$fechaDesde' AND IdTipoMovimientoProveedor IN ('RV', 'VP')) "; // BORRAR DESPUES
+$sql['YPFRendicionesVenta'] = "update dbo.MovimientosDetallePro set idcuentagastos=1, idcentrocostos=1 where IdMovimientoPro in (select idMovimientodetallepro from dbo.MovimientosPro where IdProveedor in (4, 422) AND Fecha>='$fechaDesde' AND IdTipoMovimientoProveedor IN ('RV', 'VP')) "; // BORRAR DESPUES
 
 
-$sql['YPFAjusteNLP'] = "update dbo.MovimientosDetallePro set idcuentagastos=43, idcentrocostos=1 where IdMovimientoPro in (select idMovimientodetallepro from dbo.MovimientosPro where IdProveedor=423 AND Fecha>='$fechaDesde' ) ";
+$sql['YPFAjusteNLP'] = "update dbo.MovimientosDetallePro set idcuentagastos=43, idcentrocostos=1 where IdMovimientoPro in (select idMovimientodetallepro from dbo.MovimientosPro where IdProveedor in (4, 422) AND Fecha>='$fechaDesde' ) ";
 
 
-$sql['YPFLubricantes'] = "UPDATE dbo.MovimientosPro SET NetoLubricantes=NetoMercaderias, NetoMercaderias=0 WHERE IdProveedor=4 AND NetoLubricantes=0 AND NetoMercaderias>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020);
+$sql['YPFLubricantes'] = "UPDATE dbo.MovimientosPro SET NetoLubricantes=NetoMercaderias, NetoMercaderias=0 WHERE IdProveedor in (4, 422) AND NetoLubricantes=0 AND NetoMercaderias>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020);
 
-UPDATE dbo.MovimientosPro SET NetoLubricantes=NetoCombustibles, NetoCombustibles=0 WHERE IdProveedor=4 AND NetoLubricantes=0 AND NetoCombustibles>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020);
+UPDATE dbo.MovimientosPro SET NetoLubricantes=NetoCombustibles, NetoCombustibles=0 WHERE IdProveedor in (4, 422) AND NetoLubricantes=0 AND NetoCombustibles>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020);
 
-UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=28 WHERE IdCuentaGastos<>28 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor=4 AND NetoLubricantes>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020)));
+UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=28 WHERE IdCuentaGastos<>28 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoLubricantes>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020)));
 
-UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=28 WHERE IdCuentaGastos<>28 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where Descripcion LIKE ('%LUBES%') AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor=4 AND NetoLubricantes>0 AND idTipoMovimientoProveedor='NCA' AND PuntoVenta IN (2023)));
+UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=28 WHERE IdCuentaGastos<>28 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where Descripcion LIKE ('%LUBES%') AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoLubricantes>0 AND idTipoMovimientoProveedor='NCA' AND PuntoVenta IN (2023)));
 
 
-UPDATE dbo.AsientosDetalle SET IdCuentaContable=705 WHERE IdCuentaContable IN (706, 734) AND IdAsiento IN (SELECT IdAsiento FROM dbo.MovimientosPro where IdProveedor=4 AND NetoLubricantes>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020));";
+UPDATE dbo.AsientosDetalle SET IdCuentaContable=705 WHERE IdCuentaContable IN (706, 734) AND IdAsiento IN (SELECT IdAsiento FROM dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoLubricantes>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020));";
 
-$sql['YPFSeguros'] = "UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=29 WHERE IdCuentaGastos<>29 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where Descripcion LIKE ('%seguro%') AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor=4 AND NetoGastos>0 AND idTipoMovimientoProveedor IN ('NDA', 'FAA') AND PuntoVenta IN (2023)));";
+$sql['YPFSeguros'] = "UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=29 WHERE IdCuentaGastos<>29 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where Descripcion LIKE ('%seguro%') AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoGastos>0 AND idTipoMovimientoProveedor IN ('NDA', 'FAA') AND PuntoVenta IN (2023)));";
 
-$sql['YPFServiclub'] = "UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=21 WHERE IdCuentaGastos<>21 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where Descripcion LIKE ('%serviclub%') AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor=4 AND NetoGastos>0 AND idTipoMovimientoProveedor IN ('NDA', 'FAA', 'NCA') AND PuntoVenta IN (2142)));";
+$sql['YPFServiclub'] = "UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=21 WHERE IdCuentaGastos<>21 AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosDetallePro where Descripcion LIKE ('%serviclub%') AND IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoGastos>0 AND idTipoMovimientoProveedor IN ('NDA', 'FAA', 'NCA') AND PuntoVenta IN (2142)));";
 // actualiza Facturas de lubricantes, tiene que modificar el asiento y el detalle de la factura.
 
 
@@ -201,11 +201,11 @@ $sql['YPFServiclub'] = "UPDATE dbo.MovimientosDetallePro SET IdCuentaGastos=21 W
 
 
 
-// select * from dbo.MovimientosDetallePro where IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor=4 AND NetoLubricantes=0 AND NetoMercaderias>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020))
+// select * from dbo.MovimientosDetallePro where IdMovimientoPro IN (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoLubricantes=0 AND NetoMercaderias>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020))
 
 
 
-// SELECT * FROM dbo.AsientosDetalle WHERE IdAsiento IN (SELECT IdAsiento FROM dbo.MovimientosPro where IdProveedor=4 AND NetoLubricantes=0 AND NetoMercaderias>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020))
+// SELECT * FROM dbo.AsientosDetalle WHERE IdAsiento IN (SELECT IdAsiento FROM dbo.MovimientosPro where IdProveedor in (4, 422) AND NetoLubricantes=0 AND NetoMercaderias>0 AND idTipoMovimientoProveedor='FAA' AND PuntoVenta IN (2020))
 
 
 

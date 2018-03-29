@@ -365,7 +365,8 @@ switch($tipo){
     break;
   case "PAGOS":
     echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
-    $sqlMovimiento = "select * from dbo.OrdenesPago where IdAsiento=$_GET[idAsiento]";echo "<br>$sqlMovimiento<br>";
+    $sqlMovimiento = "select * from dbo.OrdenesPago where IdAsiento=$_GET[idAsiento]";
+    //echo "<br>$sqlMovimiento<br>";
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
     $rowMovimiento = sqlsrv_fetch_array($stmt2);
     echo " ($rowMovimiento[IdProveedor])<br/><br/>";
@@ -406,6 +407,19 @@ switch($tipo){
     //$rowMovimiento[PagoEfectivoTipo] => 0
     //$rowMovimiento[PagoTarjeta] => .0000
     //$rowMovimiento[IdTarjeta] => 
+    // Que documentos imputa esta orden de pago?
+    $sql4 = "select a.IdTipoMovimientoProveedor, b.PuntoVenta, b.Numero, b.Total, b.RazonSocial, b.IdAsiento, b.UserName, a.Fecha, a.Importe from dbo.MovimientosCtaPro a, dbo.movimientosPro b where IdMovimientoImputado IN (SELECT IdMovimientoImputado FROM dbo.MovimientosCtaPro WHERE IdOrdenPago=$rowMovimiento[IdOrdenPago]) AND a.IdMovimientoPro=b.IdMovimientoPro;";
+    $stmt4 = odbc_exec2( $mssql, $sql4, __LINE__, __FILE__);
+    while($rowImputaciones = sqlsrv_fetch_array($stmt4)){
+      $operator = explode("/", $rowImputaciones['UserName']);
+      $operador = $operator[0];
+      if(!isset($tituloChequesPropios)){
+        $tituloChequesPropios=true;
+        echo "<br/>Documentos imputados en orden de pago:<br/>";
+      }
+      echo "<span class='".(($rowImputaciones['IdTipoMovimientoProveedor']=='NCA'||$rowImputaciones['IdTipoMovimientoProveedor']=='ORD'||$rowImputaciones['IdTipoMovimientoProveedor']=='NCB')?'negativo':'')."'>$rowImputaciones[IdTipoMovimientoProveedor] $rowImputaciones[PuntoVenta]-$rowImputaciones[Numero], ".fecha($rowImputaciones['Fecha'], "dmy").", \$".round($rowImputaciones['Importe'],2)." ($operador)</span><br/>";
+    }
+    
     
     echo "<br><small>OPERADOR: $rowMovimiento[UserName]</small>";
     break;

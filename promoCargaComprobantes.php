@@ -54,9 +54,9 @@ setlocale(LC_ALL, 'es_ES');
                     <td><select name='mesAsignado' id='mesAsignado' data-plus-as-tab='true' >
                       <?php 
                       for ($abc = 3; $abc >= 0; $abc--) {
-                          $mes = date("m/y", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
-                          $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
-                          echo "<option value='$valorMes' ".(((date('d')>10&&$abc==0)||(date('d')<10&&$abc==1))?' selected="selected"':'').">$mes</option>";
+                          $mes = date("m/y", mktime(0, 0, 0, date("m")-$abc, date("d")-2, date("Y")));
+                          $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d")-2, date("Y")));
+                          echo "<option value='$valorMes'".(((date('d')>10&&$abc==0)||(date('d')<10&&$abc==1))?' selected="selected"':'').">$mes</option>";
                       }?>
                     </select></td>
                     <td ><span id='graba'><button class='button btn btn-default btn-xs graba' >Graba</button></span><span id="grabaLoading" style='display:none'><img src='img/ajax-loader-chico.gif'/></span></td>

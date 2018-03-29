@@ -174,7 +174,7 @@ $titulo = "Conciliar Cuenta Corriente YPF - CaldenOil (conciliatutti)";
               $(this).addClass("alert-info");
             <?php }?>
             var id = $(this).attr('id');
-            $.post("func/ajaxBuscaConciliarMovimientoYPF.php", {id: id}, function (data){
+            $.post("func/ajaxBuscaConciliarMovimientoYPF.php", {id: id, maxi: 'schimmel'}, function (data){
             });
           a++;
           }

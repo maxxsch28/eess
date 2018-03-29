@@ -16,7 +16,7 @@ $andFecha=(isset($_REQUEST['rangoInicio']))?" AND femision>='$_REQUEST[rangoInic
 $andConciliado = (isset($_POST['soloNoConciliado']))?" AND idConciliado=0":"";
 
 
-$sqlYPF = "SELECT *, str_to_date(femision, '%d/%m/%Y') as femision2  FROM ctacte WHERE 1 $andFecha $andConciliado ORDER BY femision2 ASC;";
+$sqlYPF = "SELECT *, str_to_date(femision, '%d/%m/%Y') as femision2, fecha as femision3  FROM ctacte WHERE 1 $andFecha $andConciliado ORDER BY fecha ASC;";
 
 //ChromePhp::log($sqlYPF);
 
@@ -49,8 +49,12 @@ while($rowYPF = $result->fetch_assoc()){
     // Visa
     $rowYPF['clase']='Visa';
   }
-  if($rowYPF['clase']=='RV')$rowYPF['Referencia']=substr($rowYPF['Referencia'],0,-2); 
-  $femision3 = explode('-', $rowYPF['femision2']);
+  if($rowYPF['clase']=='RV')$rowYPF['Referencia']=substr($rowYPF['Referencia'],0,-2);
+  if(strlen($rowYPF['femision2'])>6){
+    $femision3 = explode('-', $rowYPF['femision2']);
+  } else {
+    $femision3 = explode('-', $rowYPF['fecha']);
+  }
   echo "<tr class='alert alert-$clase $classConciliado' id='ypf_$rowYPF[id]'><td>$femision3[2]/$femision3[1]/$femision3[0]</td><td>$rowYPF[clase]</td><td>$rowYPF[Referencia]</td><td>$".number_format(abs($rowYPF['Importe']), 2, ",", ".")."</td><td>$rowYPF[fvto]</td>$tdConciliado</tr>";
 }
 echo "</tbody>";

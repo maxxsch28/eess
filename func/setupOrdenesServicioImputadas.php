@@ -24,9 +24,9 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 	
 if(isset($_POST['idSocio'])){ 
-  $sql = "SELECT dbo.ordservi.sucursal_e AS sucos, dbo.ordservi.numero as numos, dbo.ordservi.fecha, dbo.ordservi.importe, dbo.ordservi.reten_ib, dbo.impupagf.sucursal_e, dbo.impupagf.pago, dbo.ordservi.observacio, dbo.ordservi.numeinter, dbo.pagos.fecha AS fechaorden FROM dbo.ordservi, dbo.detaorse, dbo.impupagf, dbo.pagos where dbo.impupagf.pago=dbo.pagos.numero AND dbo.ordservi.numero=dbo.detaorse.ordenservi and dbo.ordservi.proveedor=1 AND dbo.detaorse.tipoadelan in (2, 25) and dbo.ordservi.numero = dbo.impupagf.numero and dbo.ordservi.sucursal_e = dbo.impupagf.sucursal_e and dbo.detaorse.sucursal_e = dbo.impupagf.sucursal_e and dbo.pagos.sucursal = dbo.impupagf.sucursal_e AND dbo.impupagf.fletero = dbo.ordservi.fletero and dbo.ordservi.fletero=$_POST[idSocio] ORDER BY fechaorden Desc, sucos, numos;";
+  $sql = "SELECT DISTINCT dbo.ordservi.sucursal_e AS sucos, dbo.ordservi.numero as numos, dbo.ordservi.fecha, dbo.ordservi.importe, dbo.ordservi.reten_ib, dbo.impupagf.sucursal_e, dbo.impupagf.pago, dbo.ordservi.observacio, dbo.ordservi.numeinter, dbo.pagos.fecha AS fechaorden FROM dbo.ordservi, dbo.detaorse, dbo.impupagf, dbo.pagos where dbo.impupagf.pago=dbo.pagos.numero AND dbo.ordservi.numero=dbo.detaorse.ordenservi and dbo.ordservi.proveedor IN (1, 321) AND dbo.detaorse.tipoadelan in (2, 25, 24) and dbo.ordservi.numero = dbo.impupagf.numero and dbo.ordservi.sucursal_e = dbo.impupagf.sucursal_e and dbo.detaorse.sucursal_e = dbo.impupagf.sucursal_e and dbo.pagos.sucursal = dbo.impupagf.sucursal_e AND dbo.impupagf.fletero = dbo.ordservi.fletero and dbo.ordservi.fletero=$_POST[idSocio] ORDER BY fechaorden Desc, sucos, numos;";
   // falta filtrar por tiempos
-  //ChromePhp::log($sql);
+  ChromePhp::log($sql);
   $stmt = odbc_exec2( $mssql2, $sql, __LINE__, __FILE__);
   $tabla = "";$a=$q=0;
   while($fila = sqlsrv_fetch_array($stmt)){

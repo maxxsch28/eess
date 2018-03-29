@@ -197,7 +197,7 @@ function d($fecha, $incluyeHora=false){
           for ($i = 12; $i >= 0; $i--) {
               $mes = date("F Y", mktime(0, 0, 0, date("m")-$i, date("d"),   date("Y")));
               $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$i, date("d"),   date("Y")));
-              if($valorMes>'201706'){
+              if($valorMes>'201709'){
                 echo "<option value='$valorMes' ".((($i==1&&!isset($_GET['m']))||(isset($_GET['m'])&&$_GET['m']==$valorMes))?' selected="selected"':'').">$mes</option>";
               }
           }?>

@@ -45,7 +45,7 @@ $titulo="Prepara informe mensual";
                                 $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                                 echo "<option value='$valorMes' ".(($abc==1)?' selected="selected"':'').">$mes</option>";
                             }?>
-                            </select></label><span class='' id='refresh'>XX</span>
+                            </select></label><span class='glyphicon glyphicon-refresh' id='refresh'></span>
                             <div style='float:right'><div id='comprimir' class='btn btn-success no2'>Ver detallado</div>
                             <!--<select name='filtroTipoViaje' id='filtroTipoViaje' class='btn btn-danger'>
                                 <option value='0' selected="selected">Todos los viajes</option>

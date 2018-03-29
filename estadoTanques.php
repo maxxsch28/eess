@@ -527,6 +527,7 @@ foreach($combustible as $key => $cb){
 @$mixInfinia = 100*$estadoComb[2076]['vtasDdeCierre']/($estadoComb[2076]['vtasDdeCierre']+$estadoComb[2078]['vtasDdeCierre']);
 @$mixEuro = 100*$estadoComb[2068]['vtasDdeCierre']/($estadoComb[2068]['vtasDdeCierre']+$estadoComb[2069]['vtasDdeCierre']);
 
+
 // para corregir error después de las 0 de cada día mientras no haya despachos.
 $totalDiario['d'] = ($totalDiario['d']<>0)?$totalDiario['d']:.0001;
 
@@ -696,6 +697,7 @@ if($result&&$result->num_rows>0 ){//&& !$_SESSION['esMovil']
           } else {
             $mixInfinia = round($rowPromedioDiaSemana['l2076']/($rowPromedioDiaSemana['l2076']+$rowPromedioDiaSemana['l2078']),2);
             $mixEuro = round($rowPromedioDiaSemana['l2068']/($rowPromedioDiaSemana['l2068']+$rowPromedioDiaSemana['l2069']),2);
+            @$mixComb = 100*($rowPromedioDiaSemana['l2076']+$rowPromedioDiaSemana['l2078'])/($rowPromedioDiaSemana['l2076']+$rowPromedioDiaSemana['l2078']+$rowPromedioDiaSemana['l2068']+$rowPromedioDiaSemana['l2069']);
             $mix['success']=.25;
             $mix['info']=.20;
             $mix['warning']=.18;
@@ -710,7 +712,8 @@ if($result&&$result->num_rows>0 ){//&& !$_SESSION['esMovil']
             ."</td><td>".sprintf("%01.0f",$rowPromedioDiaSemana['l2076']+((date("n")==$rowPromedioDiaSemana['mes'])?$estadoComb[2076]['vtasDdeCierre']:0)). " <span class='label label-$colorMixInfinia'>"
             .sprintf("%01.0f",100*$mixInfinia).'%</span>'
             ."</td><td>".sprintf("%01.0f",$rowPromedioDiaSemana['l2078']+((date("n")==$rowPromedioDiaSemana['mes'])?$estadoComb[2078]['vtasDdeCierre']:0))
-            ."</td><td>".sprintf("%01.0f",$rowPromedioDiaSemana['l2078']+$rowPromedioDiaSemana['l2069']+$rowPromedioDiaSemana['l2068']+$rowPromedioDiaSemana['l2076'])
+            ."</td><td>".sprintf("%01.0f",$rowPromedioDiaSemana['l2078']+$rowPromedioDiaSemana['l2069']+$rowPromedioDiaSemana['l2068']+$rowPromedioDiaSemana['l2076']). " <span class=' '>"
+            .sprintf("%01.0f",$mixComb).'%</span>'
             ."</td></tr>";
           }
         }

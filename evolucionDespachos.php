@@ -17,17 +17,23 @@ $datetime2 = new DateTime("now");
 $interval = date_diff($datetime1, $datetime2);
        
 
-$hito1 = "2011-10-02"; // Comienzo
+$hito1 = "2011-11-01"; // Comienzo
 $hito2 = "2017-07-01"; // cambio de turnos
 $hito3 = "2017-08-31"; // CREA
-
+$soloNaftas = (isset($_REQUEST['soloNafta'])||isset($_REQUEST['nafta']))?true:false;
+if($soloNaftas){
+  $soloArticulos = "2078, 2076"; // solo naftas
+} else {
+  $soloArticulos = "2076, 2078, 2069, 2068"; // todos
+}
+//
 
 
 // verifico que el historico no esté en sesion
 if(!isset($_SESSION['despachosHorariosHistoricos'])||1){
   // saca promedio general desde el día 0 hasta hoy
   // select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$desdeHistorico',getdate()) from dbo.Despachos group by datepart(HOUR, Fecha) order by hora; 
-  $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$hito1',getdate()) as q from dbo.Despachos WHERE Fecha>='$hito1' AND Fecha<'$hito2' group by datepart(HOUR, Fecha) order by hora;"; 
+  $sqlDespachosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$hito1','$hito2') as q from dbo.Despachos WHERE IdArticulo IN ($soloArticulos) AND Fecha>='$hito1' AND Fecha<'$hito2' group by datepart(HOUR, Fecha) order by hora;"; 
   $stmt = odbc_exec2($mssql, $sqlDespachosHorariosHistoricos, __FILE__, __LINE__);
 
   $despachosHorariosHistoricos = array();
@@ -36,7 +42,7 @@ if(!isset($_SESSION['despachosHorariosHistoricos'])||1){
     $despachosHorariosHistoricos[$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosHistoricos']=$despachosHorariosHistoricos;
-  $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$hito1',getdate()) as q from dbo.Despachos WHERE Fecha>='$hito1' AND Fecha<'$hito2'  group by datepart(HOUR, Fecha) order by hora;";
+  $sqlLitrosHorariosHistoricos = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$hito1','$hito2') as q from dbo.Despachos WHERE IdArticulo IN ($soloArticulos) AND  Fecha>='$hito1' AND Fecha<'$hito2'  group by datepart(HOUR, Fecha) order by hora;";
   $stmt = odbc_exec2($mssql, $sqlLitrosHorariosHistoricos, __FILE__, __LINE__);
 
   $litrosHorariosHistoricos = array();
@@ -48,7 +54,7 @@ if(!isset($_SESSION['despachosHorariosHistoricos'])||1){
 }
 
 if(!isset($_SESSION['despachosHorariosNuevoTurno'])||1){
-  $sqlDespachosHorariosNuevoTurno = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$hito2',getdate()) as q from dbo.Despachos WHERE Fecha>='$hito2' AND Fecha<'$hito3' group by datepart(HOUR, Fecha) order by hora;"; 
+  $sqlDespachosHorariosNuevoTurno = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$hito2','$hito3') as q from dbo.Despachos WHERE IdArticulo IN ($soloArticulos) AND  Fecha>='$hito2' AND Fecha<'$hito3' group by datepart(HOUR, Fecha) order by hora;"; 
   $stmt = odbc_exec2($mssql, $sqlDespachosHorariosNuevoTurno, __FILE__, __LINE__);
 
   $despachosHorariosNuevoTurno = array();
@@ -57,7 +63,7 @@ if(!isset($_SESSION['despachosHorariosNuevoTurno'])||1){
     $despachosHorariosNuevoTurno[$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosNuevoTurno']=$despachosHorariosNuevoTurno;
-  $sqlLitrosHorariosNuevoTurno = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$hito2',getdate()) as q from dbo.Despachos WHERE Fecha>='$hito2' AND Fecha<'$hito3'  group by datepart(HOUR, Fecha) order by hora;";
+  $sqlLitrosHorariosNuevoTurno = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$hito2','$hito3') as q from dbo.Despachos WHERE IdArticulo IN ($soloArticulos) AND  Fecha>='$hito2' AND Fecha<'$hito3'  group by datepart(HOUR, Fecha) order by hora;";
   $stmt = odbc_exec2($mssql, $sqlLitrosHorariosNuevoTurno, __FILE__, __LINE__);
 
   $litrosHorariosNuevoTurno = array();
@@ -69,7 +75,7 @@ if(!isset($_SESSION['despachosHorariosNuevoTurno'])||1){
 }
 
 if(!isset($_SESSION['despachosHorariosPostCrea'])||1){
-  $sqlDespachosHorariosPostCrea = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$hito3',getdate()) as q from dbo.Despachos WHERE Fecha>='$hito3' group by datepart(HOUR, Fecha) order by hora;"; 
+  $sqlDespachosHorariosPostCrea = "select datepart(HOUR, Fecha) as hora, count(datepart(HOUR, Fecha))/DATEDIFF(day,'$hito3',getdate()-1) as q from dbo.Despachos WHERE IdArticulo IN ($soloArticulos) AND  Fecha>='$hito3' group by datepart(HOUR, Fecha) order by hora;"; 
   $stmt = odbc_exec2($mssql, $sqlDespachosHorariosPostCrea, __FILE__, __LINE__);
 
   $despachosHorariosPostCrea = array();
@@ -78,7 +84,7 @@ if(!isset($_SESSION['despachosHorariosPostCrea'])||1){
     $despachosHorariosPostCrea[$row['hora']] = $row['q'];
   }
   $_SESSION['despachosHorariosPostCrea']=$despachosHorariosPostCrea;
-  $sqlLitrosHorariosPostCrea = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$hito3',getdate()) as q from dbo.Despachos WHERE Fecha>='$hito3' group by datepart(HOUR, Fecha) order by hora;";
+  $sqlLitrosHorariosPostCrea = "select datepart(HOUR, Fecha) as hora, sum(Cantidad)/DATEDIFF(day,'$hito3',getdate()-1) as q from dbo.Despachos WHERE IdArticulo IN ($soloArticulos) AND  Fecha>='$hito3' group by datepart(HOUR, Fecha) order by hora;";
   $stmt = odbc_exec2($mssql, $sqlLitrosHorariosPostCrea, __FILE__, __LINE__);
 
   $litrosHorariosPostCrea = array();
@@ -100,7 +106,7 @@ $maximo = max($max1, $max2, $max3)+10;
 
 
 // litros por hora
-$sqlLitrosHorariosActuales = "select datepart(HOUR, Fecha) as hora, sum(Cantidad) as q from dbo.Despachos where CONVERT(date, Fecha)=CONVERT(date, Getdate()) group by datepart(HOUR, Fecha) order by hora;";
+$sqlLitrosHorariosActuales = "select datepart(HOUR, Fecha) as hora, sum(Cantidad) as q from dbo.Despachos where IdArticulo IN ($soloArticulos) AND  CONVERT(date, Fecha)=CONVERT(date, Getdate()) group by datepart(HOUR, Fecha) order by hora;";
 
 $stmt = odbc_exec2($mssql, $sqlLitrosHorariosActuales, __FILE__, __LINE__);
 
@@ -176,21 +182,16 @@ function d($fecha, $incluyeHora=false){
 	<?php if(!isset($_GET['soloComb'])&&!$_SESSION['esMovil']){include($_SERVER['DOCUMENT_ROOT']."/include/menuSuperior.php");} ?>
 	<?php //if(!isset($_GET['soloComb'])){include("include/menuSuperior.php");} ?>
     <div class="container">
-      <h1>Despachos por hora</h1>
+      <h1>Despachos por hora<?php if($soloNaftas){echo " - Solo Naftas";}?></h1>
           <h2>Cantidad</h2>
         <div class='row'>
-          <p><ul><li>Azul: desde 2011 hasta julio 2017</li><li>Rojo: Desde 01/07/2017 hasta 30/08/2017, cambio de esquema de turnos</li><li>Verde: Desde 31/08, luego de reunión CREA, se elminaron los conos en el cambio de turno</li></ul></p>
+          <p><ul><li>Azul: desde noviembre 2011 hasta julio 2017</li><li>Rojo: Desde 01/07/2017 hasta 30/08/2017, cambio de esquema de turnos</li><li>Verde: Desde 31/08, luego de reunión CREA, se eliminaron los conos en el cambio de turno</li></ul></p>
           <div id="chartContainer" style="height: 200px; " class='col-md-10'></div>
         </div>
         <h2>Litros</h2>
         <div class='row'>
           <div id="chartContainer2" style="height: 200px; " class='col-md-10'></div>
         </div>
-        
-      <h1>Porcentaje AliBabá</h1>
-      <p>Por cada turno se calcula cuantos envases de 1 litro de Elaion se venden respecto a cantidad de despachos.</p>
-      <div class='row'>
-      </div>
       
       <h1>Ventas Lubricantes</h1>
       <p>Se prorratea los envases de litro vendidos en cada turno entre los vendedores que lo componen y se suman para cada uno, eso se hace mensual y luego se obtiene un promedio de esos últimos 12 meses.</p>
@@ -213,6 +214,11 @@ function d($fecha, $incluyeHora=false){
             <table id='ventasMensuales' style='width:100%'></table>
           </div>
         </div>
+      </div>
+        
+      <h1>Porcentaje AliBabá</h1>
+      <p>Por cada turno se calcula cuantos envases de 1 litro de Elaion se venden respecto a cantidad de despachos.</p>
+      <div class='row'>
       </div>
       <div class='row'>
       </div>

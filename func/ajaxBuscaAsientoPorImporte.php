@@ -63,7 +63,7 @@ if($_REQUEST['ambito']<>'integral'){
 $orden=(isset($_REQUEST['ord_imp']))?", Importe DESC":"";
 $conciliando=(isset($_REQUEST['conciliando']))?"<input type='checkbox''>":"";
 $incluyeTransferencias = (isset($_REQUEST['inc_trn']))?"":" AND (Detalle NOT LIKE ('Transf. de %') OR Detalle is NULL)";
-
+$incluyeDetalle = (isset($_REQUEST['inc_det']))?"":" AND (Detalle NOT LIKE ('Transf. de %') OR Detalle is NULL)";
 /* $sqlAsientos = ";WITH Results_CTE AS (SELECT ROW_NUMBER() OVER (ORDER BY dbo.AsientosDetalle.idAsiento) AS RowNum, DISTINCT dbo.AsientosDetalle.idAsiento, , Detalle, Fecha, dbo.ModelosContables.Nombre FROM dbo.AsientosDetalle, dbo.Asientos, dbo.ModelosContables WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento AND dbo.asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable AND Importe=$_REQUEST[importe] AND Detalle NOT LIKE ('Transf. de PLAYA a Tesoreria') $andFecha) SELECT * FROM Results_CTE WHERE RowNum >= $offset AND RowNum < $offset + $limit;"; */
 
 $sqlAsientos = trim("SELECT DISTINCT dbo.AsientosDetalle.idAsiento, Detalle, Fecha FROM dbo.AsientosDetalle, dbo.Asientos WHERE dbo.AsientosDetalle.idAsiento=dbo.Asientos.idAsiento{$fuzziness}{$leyenda}{$cuenta}{$incluyeTransferencias} $andFecha{$excluyeAnulados};");
@@ -83,7 +83,8 @@ while($rowAsientos = sqlsrv_fetch_array($stmt)){
   //echo $sqlDetalles;
   $stmt2 = odbc_exec2( $mssql, $sqlDetalles, __LINE__, __FILE__);
   $fecha = date_format($rowAsientos['Fecha'], "d/m/Y");
-  echo "<tbody class='asiento' id='$rowAsientos[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$rowAsientos[Detalle], $fecha</td><td colspan='3'>Nº $rowAsientos[idAsiento]</td></tr>";
+ 
+  echo "<tbody class='asiento' id='$rowAsientos[idAsiento]'><tr class='encabezaAsiento'><td align='left'>$rowAsientos[Detalle], $fecha".((isset($_REQUEST['inc_det']))?"<br>$rowAsientos[Detalle]":'')."</td><td colspan='3'>Nº $rowAsientos[idAsiento]</td></tr>";
   $debe=$haber=0;
   while($rowDetalles = sqlsrv_fetch_array($stmt2, SQLSRV_FETCH_ASSOC)){
     $monto = sprintf("%.2f",$rowDetalles['Importe']);

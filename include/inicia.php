@@ -233,7 +233,7 @@ $fechaCambioTurno = new DateTime('2017-07-01');
 $hoy = new DateTime();
 $cuantosDiasDesdeElCambio = $hoy->diff($fechaCambioTurno);
 $cuantosMesesDesdeElCambio = ($cuantosDiasDesdeElCambio->format('%y') * 12) + $cuantosDiasDesdeElCambio->format('%m');
-$cuantosMeses=($cuantosMesesDesdeElCambio<12)?$cuantosMesesDesdeElCambio:12;
+$cuantosMeses=($cuantosMesesDesdeElCambio<12)?$cuantosMesesDesdeElCambio-1:12;
 
 $comisionPorTantoPorciento = 10;
 $ponderaNoche = 1.5;           // multiplicador para los turnos noches de un solo empleado

@@ -59,7 +59,7 @@ while($rowTurnos = sqlsrv_fetch_array($stmt)){
     }
     
     
-    $sqlGrabaTurno = "INSERT INTO coop.dbo.despachosTurnos (idCierreTurno, qDespachos, idEmpleado1, idEmpleado2, idEmpleado3, fecha, mixNI, mixID, qElaionL, qElaion, qXV) VALUES ($rowTurnos[0], $qDespachos $rellenaEmpleados, '".$rowTurnos[1]->format('Y-m-d H:i:s')."', $mixInfinia, $mixInfiniaDiesel, '{$qAceites['571L']}', '{$qAceites['574L']}', '{$qAceites['1']}');";
+    $sqlGrabaTurno = "INSERT INTO coop.dbo.despachosTurnos (idCierreTurno, qDespachos, idEmpleado1, idEmpleado2, idEmpleado3, fecha, mixNI, mixID, qElaionL, qElaion, qXV) VALUES ($rowTurnos[0], $qDespachos $rellenaEmpleados, '".$rowTurnos[1]->format('Y-m-d H:i:s')."', $mixInfinia, $mixInfiniaDiesel, '".$qAceites['571L']."', '".$qAceites['574L']."', '{$qAceites['1']}');";
     //echo $sqlGrabaTurno.'<br>';
     $stmt3 = odbc_exec2( $mssql, $sqlGrabaTurno, __FILE__, __LINE__);
     ChromePhp::log($sqlGrabaTurno);

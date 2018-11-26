@@ -2,7 +2,7 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$fechaDesde = '2018-02-01';
+$fechaDesde = '2018-07-01';
 
 // acomodar asientos que son de movistar carga de documentos para que la cuenta sea la de movistar.
 // idem repsol
@@ -38,7 +38,7 @@ $s['Representacion'] = array(52, 1, "209, 199, 263, 32, 371, 64, 102, 47, 38, 27
 $s['Campo'] = array(38, 1, "284, 368, 363, 188, 280, 246, 41, 355, 203");
 $s['Sistemas'] = array(11, 1, "394, 416, 5, 427, 463, 170, 438, 500, 365, 510, 117, 450, 419, 70, 490, 249, 476, 405, 320, 454, 477, 222, 211");
 $s['Seguros'] = array(29, 1, "162, 435, 77, 379");
-$s['Cafeteria'] = array(57, 2, "168, 28, 485, 501, 480, 107, 173, 219, 1572");
+$s['Cafeteria'] = array(57, 2, "168, 28, 485, 501, 480, 107, 173, 219, 1572, 1618");
 $s['RepuestosYVarios'] = array(41, 1, "242, 201, 491, 29, 149, 25, 7, 167, 515, 36");// 36, 515
 $s['Edenred'] = array(17, 1, "547");// 36, 515
 
@@ -46,17 +46,19 @@ $s['Edenred'] = array(17, 1, "547");// 36, 515
 
 
 // ASIENTOS
-$sql['RepuestosYVariosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=543 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[RepuestosYVarios][2]}))";
+$sql['RepuestosYVariosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=543 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['RepuestosYVarios'][2]}))";
 
-$sql['GastosVariosComercializacionAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=607 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[GastosVariosComercializacion][2]}))";
+//$sql['CafeteriaAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=543 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[Cafeteria][2]}))";
+
+$sql['GastosVariosComercializacionAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=607 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['GastosVariosComercializacion'][2]}))";
 
 $sql['ServiciosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=603 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[Servicios][2]}))";
 
-$sql['PublicidadAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=623 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[Publicidad][2]}))";
+$sql['PublicidadAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=623 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['Publicidad'][2]}))";
 
-$sql['MantenimientoPlayaAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=763 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[MantenimientoPlaya][2]}))";
+$sql['MantenimientoPlayaAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=763 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['MantenimientoPlaya'][2]}))";
 
-$sql['LimpiezaAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=763 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[Limpieza][2]}))";
+$sql['LimpiezaAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=763 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['Limpieza'][2]}))";
 
 // NETOS
 $sql['GastosVariosComercializacionNetos'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN ({$s['GastosVariosComercializacion'][2]}) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde'); 
@@ -94,6 +96,8 @@ foreach($s as $rubro => $array){
   } else {
     $excepto = "";
   }
+  $sql['verifica'.$rubro] = "SELECT * FROM dbo.MovimientosDetallePro where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where idproveedor in ($array[2]) AND IdCuentaGastos<>$array[0] AND Fecha>='$fechaDesde' ))$excepto";
+  
   $sql[$rubro] = "update dbo.MovimientosDetallePro set idcuentagastos=$array[0], idcentrocostos=$array[1] where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where idproveedor in ($array[2]) AND IdCuentaGastos<>$array[0] AND Fecha>='$fechaDesde' ))$excepto";
   //echo $sql[$rubro].'<br><br>';
 }
@@ -113,6 +117,11 @@ foreach($s as $rubro => $array){
 //$sql['TarjetasCelulares'] = "update dbo.MovimientosDetallePro set idcuentagastos=39, idcentrocostos=2 where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where idproveedor in (348) AND IdCuentaGastos<>39 AND Fecha>='$fechaDesde')) ";
 
 $sql['TarjetasCredito'] = "update dbo.MovimientosDetallePro set idcuentagastos=17, idcentrocostos=1 where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where IdTipoMovimientoProveedor='ACR' AND IdCuentaGastos<>17 AND Fecha>='$fechaDesde')) ";
+
+
+//////////////////////////////////////////////////////
+// CIGARRILLOS
+$sql['CigarrillosAsientos'] = "update dbo.AsientosDetalle set IdCuentaContable=795 where IdAsientoDetalle in (select IdAsientoDetalle from dbo.AsientosDetalle, dbo.CuentasContables where IdAsiento in (select IdAsiento from dbo.MovimientosPro, dbo.MovimientosDetallePro where dbo.MovimientosPro.IdMovimientoPro=dbo.MovimientosDetallePro.IdMovimientoPro AND IdProveedor in (252, 259, 502, 1601) and Fecha>='$fechaDesde') and dbo.CuentasContables.IdCuentaContable=dbo.AsientosDetalle.IdCuentaContable and IdExpresionContable in (63, 64) and dbo.asientosdetalle.IdCuentaContable<>795)"; 
 
 
 ////////////////////////////////////////////////////////
@@ -223,6 +232,17 @@ $sql['Donaciones2'] = "update dbo.MovimientosFac set IdCliente=5235 where IdTipo
 
 asort($sql);
 foreach ($sql as $rubro => $acomoda){
+  if(isset($sql['verifica'.$acomoda])){
+    $stmt = odbc_exec2( $mssql, 'verifica'.$acomoda, __LINE__, __FILE__);
+    if(sqlsrv_num_rows($stmt)>0){
+      echo "<b>$rubro</b>: ".sqlsrv_num_rows($stmt)." cambios<br><small>$acomoda</small><br><br>";
+      while($rowAsientos = sqlsrv_fetch_array($stmt)){
+        echo "<b>$rowAsientos[RazonSocial]</b>, $rowAsientos[PuntoVenta]-$rowAsientos[Numero], \$$rowAsientos[Total]<br>";
+      }
+    } else {
+      echo "<b>$rubro</b>: Sin cambios<br>";
+    }
+  }
   $stmt = odbc_exec2( $mssql, $acomoda, __LINE__, __FILE__);
   //echo $acomoda;
   if(sqlsrv_num_rows($stmt)>0){

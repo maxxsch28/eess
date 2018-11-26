@@ -4,9 +4,10 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
 // selecciono todos los turnos de las 22 del mes
-$sqlTurnos = "SELECT IdCierreTurno, fecha FROM dbo.CierresTurno WHERE IdCaja=1 AND DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=23 AND fecha>='".date('Y-m-d', strtotime('last day of previous month'))."' ORDER BY fecha DESC";
+$sqlTurnos = "SELECT IdCierreTurno, fecha FROM dbo.CierresTurno WHERE IdCaja=1 AND DATEPART(hh, Fecha)>=19 AND (DATEPART(hh, Fecha)<=23 AND DATEPART(mm, Fecha)<=59) AND fecha>='".date('Y-m-d', strtotime('last day of previous month'))."' ORDER BY fecha DESC";
+// $sqlTurnos = "SELECT IdCierreTurno, fecha FROM dbo.CierresTurno WHERE IdCaja=1 AND DATEPART(hh, Fecha)>=19 AND (DATEPART(hh, Fecha)<=23 AND DATEPART(mm, Fecha)<=50) AND fecha>='2017-12-31' ORDER BY fecha DESC";
 //$sqlTurnos = "SELECT IdCierreTurno, fecha FROM dbo.CierresTurno WHERE IdCaja=1 AND DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=23 AND fecha>='2017-12-01' ORDER BY fecha DESC";
-//$sqlTurnos = "SELECT IdCierreTurno, fecha FROM dbo.CierresTurno WHERE IdCaja=1 AND DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=23 and Fecha>'".date("Y")."-02-01' ORDER BY fecha DESC";
+//$sqlTurnos = "SELECT IdCierreTurno, fecha FROM dbo.CierresTurno WHERE IdCaja=1 AND DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=23 and Fecha>'".date("Y")."-01-01' ORDER BY fecha DESC";
 $stmt = odbc_exec2( $mssql, $sqlTurnos, __FILE__, __LINE__);
 while($rowTurnos = sqlsrv_fetch_array($stmt)){
     if(!isset($fechaCierre))$fechaCierre=$rowTurnos[1];

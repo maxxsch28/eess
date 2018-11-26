@@ -1,6 +1,6 @@
 ﻿<?php 
 // inicia.php
-
+setlocale(LC_NUMERIC, 'en_US');
 $dbg=1;
 $controlTiempo=microtime();
 //Database Information
@@ -8,12 +8,6 @@ $dbtype = "mysqli";
 $db_host = "localhost";
 $db_user = "coopetrans";
 $db_pass = "vGCP6eZ6dqUFZ2pB";
-$db_pass2= "vGCP6eZ6dqUFZ2pB";
-$db_pass3= "vGCP6eZ6dqUFZ2pB";
-//$db_user = "root";
-//$db_pass = "e757g4a";
-//$db_pass2= "e757g4a";
-//$db_pass3= "e757g4a";
 $db_name = "pedidosypf";
 $db_name2 = "transporte";
 $db_name3 = 'cuentaypf';
@@ -33,7 +27,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/classes/mysqli.php");
 //Construct a db instance
 $db = new $sql_db();
 if(is_array($db->sql_connect($db_host, $db_user,$db_pass,$db_name, $db_port, false, false))){
-  die("Unable to connect to the database");
+  die("No se puede conectar a la base de datos");
 }
 	
 require_once($_SERVER['DOCUMENT_ROOT']."/include/es.php");
@@ -44,7 +38,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/classes/class.newuser.php");
 require_once($_SERVER['DOCUMENT_ROOT'].'/classes/ChromePhp.php'); //firebug
 
 session_start();
-ob_start(); //firebug
+//ob_start(); //firebug
 $remember_me_length = "1wk";
 //Global User Object Var
 //loggedInUser can be used globally if constructed
@@ -87,37 +81,6 @@ if ($mysqli3->connect_error) {
 
 
 ini_set('mssql.charset', 'UTF-8');
-/* Specify the server and connection string attributes. */
-$serverName = "sqlserver";
-$uid = 'sa';
-$pwd = 'B8000ftq';
-$database1 = "calden";
-$database2 = "sqlcoop_dbimplemen";
-$database3 = "sqlcoop_dbshared";
-
-/* Connect using SQL Server Authentication. */
-//$mssql = sqlsrv_connect($serverName, $connectionInfo);
-/*
-$mssql = odbc_connect("calden",$uid, $pwd);
-if( $mssql === false ){
-     echo "MSSQL - No pudo conectarse:</br>";
-     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
-}
-$mssql2 = odbc_pconnect("dbimplemen",$uid, $pwd);
-if( $mssql2 === false ){
-     echo "MSSQL - No pudo conectarse:</br></br></br>";
-     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
-}
-$mssql3 = odbc_pconnect("dbshared",$uid, $pwd);
-if( $mssql3 === false ){
-     echo "MSSQL - No pudo conectarse:</br></br></br>";
-     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
-}
-$mssql4 = odbc_pconnect("dbimplemen2",$uid, $pwd);
-if( $mssql3 === false ){
-     echo "MSSQL - No pudo conectarse:</br></br></br>";
-     die( print_r( odbc_error().' - '.odbc_errormsg(), true));
-}*/
 
 /* cambio de odbc por nuevo driver MS */
 $serverName = "192.168.1.13";
@@ -137,7 +100,27 @@ $connectionOptions3 = array(
     "PWD" => "B8000ftq"
 );
 //Establishes the connection
+
+
+/* Connect using Windows Authentication. */  
+
+try  
+{  
+$conn = new PDO( "sqlsrv:server=$serverName ; Database=CoopDeTrabajo.Net", "sa", "B8000ftq");  
+$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );  
+}  
+catch(Exception $e)  
+{   
+die( print_r( $e->getMessage() ) );   
+}  
+
+
+
+if (!function_exists('sqlsrv_connect')) {
+    echo "sqlsrv_connect functions are not available.<br />\n";
+}
 $mssql = sqlsrv_connect($serverName, $connectionOptions);
+//print_r(sqlsrv_server_info($mssql));
 if( $mssql === false ){
   echo "MSSQL - No pudo conectarse:</br>";
   die( print_r( sqlsrv_error().' - '.sqlsrv_errormsg(), true));
@@ -273,7 +256,7 @@ $langauge = "es";
 
 //Generic website variables
 $websiteName = "Cooperativa de Transporte";
-$websiteUrl = "http://cooptransporte.caldenoil.com:3128/ypf/"; //including trailing slash
+$websiteUrl = "http://cooptransporte.ddns,net/"; //including trailing slash
 
 //Do you wish UserPie to send out emails for confirmation of registration?
 //We recommend this be set to true to prevent spam bots.
@@ -355,10 +338,12 @@ function odbc_exec2($db, $sql, $linea=__LINE__, $script=__FILE__){
   $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
   $stmt = sqlsrv_query($db, $sql, $params, $options);
   if( $stmt === false ){
-    if(odbc_error()==23000||sqlsrv_errors()[0][0]==23000){
+    $errorSQL = sqlsrv_errors();
+    // en formato viejo se usaba la funcion odbc_error()
+    if(sqlsrv_errors()[0][0]==23000){
       ChromePhp::log("Error SQL, en $script, linea $linea: $sql. INDICE REPETIDO");
-    } elseif(odbc_error()==37000||sqlsrv_errors()[0][0]==37000){
-      ChromePhp::log("Error SQL, en $script, linea $linea: $sql || ".odbc_errormsg().' - '.odbc_error());
+    } elseif(sqlsrv_errors()[0][0]==37000){
+      ChromePhp::log("Error SQL, en $script, linea $linea: $sql || ".$errorSQL['code'].' - '.$errorSQL['message']);
       echo "<span class='alert alert-danger'>Error SQL - 37000</span><br/>$sql";
       die();
     } else {
@@ -414,8 +399,7 @@ function fecha($fecha, $res='dmy', $tipo='ymd'){
   return $tmp;
 }
 
-function is_decimal( $val )
-{
+function is_decimal( $val ){
     return is_numeric( $val ) && floor( $val ) != $val;
 }
 
@@ -453,4 +437,7 @@ if (!function_exists('stats_standard_deviation')) {
   }
 }
 
+function peso($valor){
+  return number_format($valor, 2, ',', '.');
+}
 ?>

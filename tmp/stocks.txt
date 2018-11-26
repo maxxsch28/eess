@@ -1,0 +1,170 @@
+Tanque,1
+Fecha,25/11/18 21:52:47
+Producto,INFINIA DIESEL
+Nivel, ,713.06,mm
+Litros, ,5923.2,litros
+Litros Vacio, ,13680.5,litros
+Merma mes,-14.7,litros
+Nivel Agua, ,0,mm
+Temperatura,21.4,grados
+Perdidas,0.0,litros/hora
+Tanque,2
+Fecha,25/11/18 21:50:00
+Producto,ULTRA DIESEL
+Nivel, ,1839.09,mm
+Litros, ,18493.8,litros
+Litros Vacio, ,1109.9,litros
+Merma mes,-47.4,litros
+Nivel Agua, ,0,mm
+Temperatura,22.9,grados
+Perdidas,0.0,litros/hora
+Tanque,3
+Fecha,25/11/18 21:53:04
+Producto,SUPER
+Nivel,*,124.02,mm
+Litros,*,727.5,litros
+Litros Vacio,*,18876.2,litros
+Merma mes,-61.1,litros
+Nivel Agua,*,0,mm
+Temperatura,19.4,grados
+Perdidas,0.0,litros/hora
+Tanque,4
+Fecha,25/11/18 21:54:16
+Producto,INFINIA DIESEL
+Nivel, ,867.28,mm
+Litros, ,5728.4,litros
+Litros Vacio, ,5125.9,litros
+Merma mes,-7.3,litros
+Nivel Agua, ,0,mm
+Temperatura,20.8,grados
+Perdidas,0.0,litros/hora
+Tanque,5
+Fecha,25/11/18 21:54:29
+Producto,INFINIA NAFTA
+Nivel, ,1300.32,mm
+Litros, ,9195.0,litros
+Litros Vacio, ,1688.4,litros
+Merma mes,-29.7,litros
+Nivel Agua, ,0,mm
+Temperatura,22.6,grados
+Perdidas,0.0,litros/hora
+Tanque,6
+Fecha,25/11/18 21:54:40
+Producto,ULTRA DIESEL
+Nivel, ,1669.08,mm
+Litros, ,33713.1,litros
+Litros Vacio, ,6997.8,litros
+Merma mes,-109.8,litros
+Nivel Agua, ,0,mm
+Temperatura,21.6,grados
+Perdidas,0.0,litros/hora
+DESCARGA EN TANQUE,1
+Fecha,22/11/18 18:27:02
+Producto,INFINIA DIESEL
+Liquido Inicial, ,3559.1,litros
+Liquido Final, ,13498.4,litros
+Liquido Total, ,9939.3,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,9939.3,litros
+DESCARGA EN TANQUE,2
+Fecha,25/11/18 21:10:00
+Producto,ULTRA DIESEL
+Liquido Inicial, ,11754.3,litros
+Liquido Final, ,18579.9,litros
+Liquido Total, ,6825.6,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,6825.6,litros
+DESCARGA EN TANQUE,2
+Fecha,24/11/18 09:26:39
+Producto,ULTRA DIESEL
+Liquido Inicial, ,7806.2,litros
+Liquido Final,? ,14741.3,litros
+Liquido Total,? ,6935.1,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total,? ,6935.1,litros
+DESCARGA EN TANQUE,2
+Fecha,21/11/18 21:52:02
+Producto,ULTRA DIESEL
+Liquido Inicial, ,12539.7,litros
+Liquido Final, ,12628.5,litros
+Liquido Total, ,88.8,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,88.8,litros
+DESCARGA EN TANQUE,3
+Fecha,22/11/18 14:43:18
+Producto,SUPER
+Liquido Inicial,? ,724.9,litros
+Liquido Final,? ,752.7,litros
+Liquido Total,? ,27.8,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total,? ,27.8,litros
+DESCARGA EN TANQUE,3
+Fecha,22/11/18 08:37:38
+Producto,SUPER
+Liquido Inicial,? ,3431.4,litros
+Liquido Final, ,20015.0,litros
+Liquido Total,? ,16583.6,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total,? ,16583.6,litros
+DESCARGA EN TANQUE,4
+Fecha,21/11/18 21:32:20
+Producto,INFINIA DIESEL
+Liquido Inicial, ,8551.1,litros
+Liquido Final, ,8580.0,litros
+Liquido Total, ,28.9,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,28.9,litros
+DESCARGA EN TANQUE,5
+Fecha,25/11/18 21:20:30
+Producto,INFINIA NAFTA
+Liquido Inicial, ,4154.6,litros
+Liquido Final, ,9195.5,litros
+Liquido Total, ,5040.9,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,5040.9,litros
+DESCARGA EN TANQUE,5
+Fecha,24/11/18 09:06:11
+Producto,INFINIA NAFTA
+Liquido Inicial, ,967.8,litros
+Liquido Final, ,5917.7,litros
+Liquido Total, ,4949.9,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,4949.9,litros
+DESCARGA EN TANQUE,6
+Fecha,25/11/18 21:53:40
+Producto,ULTRA DIESEL
+Liquido Inicial, ,20600.0,litros
+Liquido Final, ,33715.6,litros
+Liquido Total, ,13115.6,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,13115.6,litros
+DESCARGA EN TANQUE,6
+Fecha,24/11/18 10:02:22
+Producto,ULTRA DIESEL
+Liquido Inicial, ,11938.3,litros
+Liquido Final, ,25030.2,litros
+Liquido Total, ,13091.9,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,13091.9,litros

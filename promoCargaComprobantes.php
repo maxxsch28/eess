@@ -38,7 +38,7 @@ setlocale(LC_ALL, 'es_ES');
               <div class='col-md-9'>
                 <table id='cupones' class='table'>
                   <thead>
-                    <tr><th width='20%'>Empleado</th><th width='18%' colspan='2'>Factura</th><th width='10%'>Fecha canje</th><th>Datos factura</th><th>Mes asignado</th><th></th></tr>
+                    <tr><th width='20%'>Empleado</th><th width='18%' colspan='2'>Factura</th><th width='10%'>Fecha canje</th><th>Datos factura</th><th>Mes asignado</th><th><input type='checkbox' name='viejos' id='viejos' value='1'/></th></tr>
                     <tr><td><select name='empleado' id='empleado' data-plus-as-tab='true' class='input-sm form-control' method='POST'>
                     <?php
                     asort($empleado[1]);
@@ -50,12 +50,12 @@ setlocale(LC_ALL, 'es_ES');
                     <td><input type='hidden' name='IdMovimientoFac' id='IdMovimientoFac'/><input type='text' name='pv' id='pv' data-plus-as-tab='true'  placeholder='PV' class='input-sm form-control' disabled='disabled'/></td>
                     <td><input type='text' name='ticket' id='ticket' data-plus-as-tab='true'  placeholder='Nº Ticket' class='input-sm form-control'/></td>
                     <td><input type='hidden' name='FechaTicket' id='FechaTicket'/><input type='text' name='fcanje' id='fcanje' data-plus-as-tab='true'  placeholder='Canje' class='input-sm form-control' <?php if(isset($_SESSION['fCanje']))echo "value='$_SESSION[fCanje]'";?>/></td>
-                    <td><span id='datosTicket'></span></td>
+                    <td><span id='datosTicket'></span><span id="grabaLoading2" style='display:none'><img src='img/ajax-loader-chico.gif'/></span></td>
                     <td><select name='mesAsignado' id='mesAsignado' data-plus-as-tab='true' >
                       <?php 
-                      for ($abc = 3; $abc >= 0; $abc--) {
-                          $mes = date("m/y", mktime(0, 0, 0, date("m")-$abc, date("d")-2, date("Y")));
-                          $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d")-2, date("Y")));
+                      for ($abc = 9; $abc >= 0; $abc--) {
+                          $mes = date("m/y", mktime(0, 0, 0, date("m")-$abc, date("d")-1, date("Y")));
+                          $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d")-1, date("Y")));
                           echo "<option value='$valorMes'".(((date('d')>10&&$abc==0)||(date('d')<10&&$abc==1))?' selected="selected"':'').">$mes</option>";
                       }?>
                     </select></td>
@@ -98,8 +98,11 @@ setlocale(LC_ALL, 'es_ES');
       },"json");
       $('#empleado').focus();
       $("#ticket").focusout(function() {
-        $.post('func/ajaxBuscaDatosTicket.php', { ticket: $(this).val(), idEmpleado: $('#empleado').val() }, function(data) {
+        $('#datosTicket').html('');
+        $('#grabaLoading2').show();
+        $.post('func/ajaxBuscaDatosTicket.php', { ticket: $(this).val(), idEmpleado: $('#empleado').val(), viejos: $('#viejos:checked').val()}, function(data) {
           if(data.status === 'single'){
+            $('#grabaLoading2').hide();
             $('#datosTicket').html(data.message).removeClass('alert alert-danger');
             $('#pv').val(data.pv);
             $('#IdMovimientoFac').val(data.IdMovimientoFac);
@@ -131,9 +134,11 @@ setlocale(LC_ALL, 'es_ES');
               $('#fcanje').val('');
             });
           } else if(data.status ==='multiple'){
+          
+            $('#grabaLoading2').hide();
             $('#datosTicket').html(data.message).removeClass('alert alert-danger');
             $('.multi').click(function(){
-              $.post('func/ajaxBuscaDatosTicket.php', { IdMovimientoFac: $(this).val() }, function(data) {
+              $.post('func/ajaxBuscaDatosTicket.php', { IdMovimientoFac: $(this).val(), viejos: $('#viejos:checked').val() }, function(data) {
                 $('#datosTicket').html(data.message).removeClass('alert alert-danger');
                 if(data.fCanje){
                   $('#fcanje').val(data.fCanje);
@@ -165,6 +170,8 @@ setlocale(LC_ALL, 'es_ES');
               },"json");
             });
           } else {
+          
+            $('#grabaLoading2').hide();
             $('#datosTicket').html(data.message).addClass('alert alert-danger');
           }
         }, "json");

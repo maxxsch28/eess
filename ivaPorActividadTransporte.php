@@ -2,7 +2,7 @@
 $nivelRequerido = 3;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 setlocale(LC_ALL, 'es_ES.utf-8');
-$titulo="Detalle productos por Fleteros";
+$titulo="Detalle IVA por Actividad";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -45,6 +45,7 @@ $titulo="Detalle productos por Fleteros";
     <div class="container">
     <div class='row'>
       <div class="col-md-12">
+        <h1>A ver si nos calmamos?!!</h1>
         <form class='form-horizontal'>
           <input type="hidden" name='muestraSoloExternos' value='0' id='muestraSoloExternos'/>
           <input type="hidden" name='muestraComprimido' value='0' id='muestraComprimido'/>

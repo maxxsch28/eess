@@ -72,13 +72,19 @@ $titulo = "Calcula ajustes de precios";
                 <div class="form-group col-md-7 col-md-offset-1">
                   <div class="controls">
                     <label class="checkbox">
-                      <input type="checkbox" name="precioAnterior" id="precioAnterior" value="1" checked>Calcula respecto al precio inmediato anterior (ya se han calculado ajustes previos)
+                      <input type="checkbox" name="precioAnterior" id="precioAnterior" value="1" checked>Calcula respecto al precio inmediato anterior
                     </label>
                 </div></div>
                 <div class="form-group col-md-7 col-md-offset-1">
                   <div class="controls">
                     <label class="checkbox">
-                      <input type="checkbox" name="ordenArticulo" id="ordenArticulo" value="1">Ordena por articulo (default por fecha)
+                      <input type="checkbox" name="ordenArticulo" id="ordenArticulo" value="1">Ordena por articulo
+                    </label>
+                </div></div>
+                <div class="form-group col-md-7 col-md-offset-1">
+                  <div class="controls">
+                    <label class="checkbox">
+                      <input type="checkbox" name="yerContado" id="yerContado" value="1">Precio YER Contado
                     </label>
                 </div></div>
               </fieldset>

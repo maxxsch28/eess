@@ -49,15 +49,15 @@ $result = $mysqli->query($sqlCierreTanques);
 
 
 
-// Saco el estado de los tanques al último cierre de las 22
-$sqlMediciones = "select IdArticulo, SUM(medicion) from dbo.CierresDetalleTanques where IdCierreTurno=(select top 1 IdCierreTurno from dbo.CierresTurno where IdCaja=1 AND idCierreTurno<=(select top 1 idCierreturno FROM dbo.Cierresturno where DATEPART(hh, Fecha)>=21 AND DATEPART(hh, Fecha)<=22 order by Fecha desc) order by fecha desc) GROUP BY IdArticulo";
+// Saco el estado de los tanques al último cierre de las 24
+$sqlMediciones = "select IdArticulo, SUM(medicion) from dbo.CierresDetalleTanques where IdCierreTurno=(select top 1 IdCierreTurno from dbo.CierresTurno where IdCaja=1 AND idCierreTurno<=(select top 1 idCierreturno FROM dbo.Cierresturno where DATEPART(hh, Fecha)>=21 AND DATEPART(hh, Fecha)<=24 order by Fecha desc) order by fecha desc) GROUP BY IdArticulo";
 $stmt = odbc_exec2( $mssql, $sqlMediciones, __FILE__, __LINE__);
 while($rowMediciones = sqlsrv_fetch_array($stmt)){
   $mediciones[$rowMediciones[0]]=$rowMediciones[1];
 }
 
-// selecciono los dos turnos de las 22 de ayer y antes de ayer
-$sqlTurnos = "select top 2 IdCierreTurno, fecha from dbo.CierresTurno where IdCaja=1 AND idCierreTurno<=(select top 1 idCierreturno FROM dbo.Cierresturno where DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=22 order by Fecha desc) AND  DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=22 order by fecha desc";
+// selecciono los dos turnos de las 24 de ayer y antes de ayer
+$sqlTurnos = "select top 2 IdCierreTurno, fecha from dbo.CierresTurno where IdCaja=1 AND idCierreTurno<=(select top 1 idCierreturno FROM dbo.Cierresturno where DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=24 order by Fecha desc) AND  DATEPART(hh, Fecha)>=19 AND DATEPART(hh, Fecha)<=24 order by fecha desc";
 $stmt = odbc_exec2( $mssql, $sqlTurnos, __FILE__, __LINE__);
 while($rowTurnos = sqlsrv_fetch_array($stmt)){
   //print_r($rowTurnos);

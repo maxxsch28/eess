@@ -3,20 +3,24 @@
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 ChromePhp::log($_POST);
+
+
+
+
+
+/* Para Lolen */
+$sqlDetalle = "select IdTipoMovimiento, PuntoVenta, numero, Fecha, c.descripcion, cantidad, precio, b.iva as IVA_unitario, b.iva*cantidad as IVA_Renglon, b.ImpuestoInterno as IMP_INT_Unitario, b.ImpuestoInterno*cantidad as ImpuestosInternos_Renglon, b.Tasas as Tasa_unitario, b.Tasas*Cantidad as Tasas_Renglon from dbo.movimientosfac a , dbo.MovimientosDetalleFac b, dbo.articulos c where a.IdMovimientoFac=b.IdMovimientoFac and b.idarticulo=c.idarticulo and a.numero=43609 and a.PuntoVenta=12 and a.IdTipoMovimiento='FAA';";
+
 if(isset($_POST['viejos'])&&is_numeric($_POST['viejos'])){
   $maximoMesesAtras = 8;
-  $filtroHastaFecha = " AND dbo.movimientosfac.fecha<DATEADD(month, -".($maximoMesesAtras-4).", GETDATE())";
-//   $filtroHastaFecha = "";
 } else {
   $maximoMesesAtras = 2;
-  $filtroHastaFecha = "";
 }
 
 //$maximoMesesAtras2 = 5;
 if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
-  //$sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, IdCierreTurno from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras2, GETDATE()) $filtroHastaFecha AND IdCierreTurno IS NOT NULL;";
-  
-  $sqlTicket = "SELECT DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, IdCierreTurno FROM dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) $filtroHastaFecha AND IdCierreTurno IS NOT NULL;";
+  $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, IdCierreTurno from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras2, GETDATE()) AND IdCierreTurno IS NOT NULL;";
+  $sqlTicket = "select DISTINCT PuntoVenta, Numero, FechaEmision, IdArticulo, Total, Cantidad, dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, IdCierreTurno from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idArticulo IN (2076, 2068) AND Numero=$_POST[ticket] AND Total>=570 AND dbo.movimientosfac.fecha>DATEADD(month, -$maximoMesesAtras, GETDATE()) AND IdCierreTurno IS NOT NULL;";
   $empleados = '';
   ChromePhp::log($sqlTicket);
   $stmt = odbc_exec2( $mssql, $sqlTicket, __LINE__, __FILE__);

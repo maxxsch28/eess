@@ -50,7 +50,7 @@ setlocale(LC_ALL, 'es_ES');
               <div class="controls">
                 <div class="input-group"> 
                     <span class="input-group-addon" >Mes</span>
-                    <select name='periodo' id='periodo' data-plus-as-tab='true' class='input-lg form-control'>
+                    <select name='periodo' id='periodo' data-plus-as-tab='true' class='input-lg form-control' disabled='disabled'>
                       <?php
                       for ($i = 2; $i >= 0; $i--) {
                         $mes = date("F Y", mktime(0, 0, 0, date("m")-$i, date("d"),   date("Y")));

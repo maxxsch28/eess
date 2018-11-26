@@ -5,8 +5,10 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_GET);
  // $array=array();
 //$_POST['mes']='201411';
-
 $teresa = (isset($_GET['teresa']))?" AND Fecha>'".date("Y-m-d")."'":" AND Fecha>'".date("Y")."-01-01'";
+//$teresa = " AND Fecha>'2017-01-01' AND Fecha<='2017-12-31'";
+
+
 
 if($loggedInUser->display_username<>'maxxs'){
   $SoloParaTeresa = "AND dbo.movimientosfac.UserName NOT LIKE ('%@SCHIMMEL2') AND dbo.movimientosfac.UserName NOT LIKE ('%@HEGEL')";

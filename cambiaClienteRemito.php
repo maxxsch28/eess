@@ -46,7 +46,7 @@ $titulo = "Remitos Municipalidad";
                 <div class="input-group" id='rop'>
                   <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="01/01/<?php echo date("Y")?>" data-date-format="mm/dd/yy"  data-plus-as-tab='true'/>
                   <span class="input-group-addon">a</span>
-                  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="12/31/<?php echo date("Y")?>" data-date-format="mm/dd/yy" data-plus-as-tab='true'/>
+                  <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="31/12/<?php echo date("Y")?>" data-date-format="dd/mm/yy" data-plus-as-tab='true'/>
                   <span class="input-group-addon presetAnio btn" id="1000">TODOS</span>
                   <span class="input-group-addon presetAnio btn" id="<?php echo date('Y', strtotime("-1 year"))?>"><?php echo date('Y', strtotime("-1 year"))?></span>
                   <span class="input-group-addon presetAnio btn" id="<?php echo date('Y')?>"><?php echo date('Y')?></span>

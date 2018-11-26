@@ -15,6 +15,7 @@ $titulo='Ventas de lubricantes por empleado';
 	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/menuSuperior.php');?>
 	<div class="container">
 		<div class='row'>
+		<h2></h2>
 			<div class="col-md-12">
                 <h2>Ventas ELAION mensual y promedio  <select name='periodo' id='periodo' class=''>
                             <?php

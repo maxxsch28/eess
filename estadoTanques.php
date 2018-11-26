@@ -70,7 +70,7 @@ $picos = new Picos();
 ChromePhp::log($tanques);
 ChromePhp::log($combustibles);
 ChromePhp::log($picos);
-       ChromePhp::log("hola");
+//ChromePhp::log("hola");
        
        
        
@@ -291,21 +291,21 @@ $sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2
 $sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2069, avg(ed) as l2068, diaSemana FROM `ventasDiarias`  WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' GROUP BY diaSemana";
 $result = $mysqli->query($sqlPromedioDiario);
 if($result && $result->num_rows>0 && !$_SESSION['esMovil']){
-    $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
-    while($rowPromedioDiaSemana = $result->fetch_assoc()){
-        //print_r($rowPromedioDiaSemana);
-        //Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio
-        //Array ( [0] => Wednesday [] => 1084 [1] => 76340.9271 [2] => 2068 [IdArticulo] => 2068 [3] => 1084 )
-        $tablaPromedioDiaSemana.="<tr class='".
-                (((date("N")==$rowPromedioDiaSemana['diaSemana'])||(date("N")==0))?'label-warning':'').
-                "'><td>".$date2[$rowPromedioDiaSemana['diaSemana']]
-                ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2068'])
-                ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2069'])
-                ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2076'])
-                ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2078'])
-                ."</td></tr>";
-    }
-    $tablaPromedioDiaSemana.="<tr class='label-info'><td>General</td><td>".sprintf("%01.2f",$promedioHistorico['l2068'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2069'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2076'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2078'])."</td></tr></tbody></table>";
+  $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
+  while($rowPromedioDiaSemana = $result->fetch_assoc()){
+    //print_r($rowPromedioDiaSemana);
+    //Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio
+    //Array ( [0] => Wednesday [] => 1084 [1] => 76340.9271 [2] => 2068 [IdArticulo] => 2068 [3] => 1084 )
+    $tablaPromedioDiaSemana.="<tr class='".
+      (((date("N")==$rowPromedioDiaSemana['diaSemana'])||(date("N")==0))?'label-warning':'').
+      "'><td>".$date2[$rowPromedioDiaSemana['diaSemana']]
+      ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2068'])
+      ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2069'])
+      ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2076'])
+      ."</td><td>".sprintf("%01.2f",$rowPromedioDiaSemana['l2078'])
+      ."</td></tr>";
+  }
+  $tablaPromedioDiaSemana.="<tr class='label-info'><td>General</td><td>".sprintf("%01.2f",$promedioHistorico['l2068'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2069'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2076'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2078'])."</td></tr></tbody></table>";
 }
     
 
@@ -717,19 +717,19 @@ if($result&&$result->num_rows>0 ){//&& !$_SESSION['esMovil']
             ."</td></tr>";
           }
         }
-        $mixInfinia = round(($sumaProductoElectronico['2076']+$estadoComb[2076]['vtasDdeCierre'])/($sumaProductoElectronico['2076']+$estadoComb[2076]['vtasDdeCierre']+$sumaProductoElectronico['2078']+$estadoComb[2078]['vtasDdeCierre']),2);
-        $mixEuro = round(($sumaProductoElectronico['2068']+$estadoComb[2068]['vtasDdeCierre'])/($sumaProductoElectronico['2068']+$estadoComb[2068]['vtasDdeCierre']+$sumaProductoElectronico['2069']+$estadoComb[2069]['vtasDdeCierre']),2);
+        $mixInfinia = round(($sumaProductoElectronico['2076']+$estadoComb['2076']['vtasDdeCierre'])/($sumaProductoElectronico['2076']+$estadoComb['2076']['vtasDdeCierre']+$sumaProductoElectronico['2078']+$estadoComb['2078']['vtasDdeCierre']),2);
+        $mixEuro = round(($sumaProductoElectronico['2068']+$estadoComb['2068']['vtasDdeCierre'])/($sumaProductoElectronico['2068']+$estadoComb['2068']['vtasDdeCierre']+$sumaProductoElectronico['2069']+$estadoComb['2069']['vtasDdeCierre']),2);
         $colorMixInfinia = (($mixInfinia>.18)?'success':(($mixInfinia>.16)?'info':(($mixInfinia>.14)?'warning':'danger')));
         $colorMixEuro = (($mixEuro>.18)?'success':(($mixEuro>.16)?'info':(($mixEuro>.14)?'warning':'danger')));
-        $totalMesActual = $sumaProductoElectronico['2078']+$sumaProductoElectronico['2076']+$sumaProductoElectronico['2068']+$sumaProductoElectronico['2069']+$estadoComb[2068]['vtasDdeCierre']+$estadoComb[2069]['vtasDdeCierre']+$estadoComb[2076]['vtasDdeCierre']+$estadoComb[2078]['vtasDdeCierre'];
+        $totalMesActual = $sumaProductoElectronico['2078']+$sumaProductoElectronico['2076']+$sumaProductoElectronico['2068']+$sumaProductoElectronico['2069']+$estadoComb['2068']['vtasDdeCierre']+$estadoComb['2069']['vtasDdeCierre']+$estadoComb[2076]['vtasDdeCierre']+$estadoComb[2078]['vtasDdeCierre'];
         $totalMesEstimado = $totalMesActual/(date('d')-1+date('H')/24)*date('t');
         $tablaVentasMensuales.="<tr class='label-warning'><td>".$mes[date("n")]
-        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2068']+$estadoComb[2068]['vtasDdeCierre']). " <span class='label label-$colorMixEuro'>"
+        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2068']+$estadoComb['2068']['vtasDdeCierre']). " <span class='label label-$colorMixEuro'>"
         .sprintf("%01.0f",100*$mixEuro).'%</span>'
-        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2069']+$estadoComb[2069]['vtasDdeCierre']) 
-        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2076']+$estadoComb[2076]['vtasDdeCierre']). " <span class='label label-$colorMixInfinia'>"
+        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2069']+$estadoComb['2069']['vtasDdeCierre']) 
+        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2076']+$estadoComb['2076']['vtasDdeCierre']). " <span class='label label-$colorMixInfinia'>"
         .sprintf("%01.0f",100*$mixInfinia).'%</span>'
-        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2078']+$estadoComb[2078]['vtasDdeCierre'])
+        ."</td><td>".sprintf("%01.0f",$sumaProductoElectronico['2078']+$estadoComb['2078']['vtasDdeCierre'])
         ."</td><td>".sprintf("%01.0f",$totalMesActual)
         ."<br/>".sprintf("%01.0f",$totalMesEstimado)."</td></tr>";
         //$tablaPromedioDiaSemana.="<tr class='label-info'><td>General</td><td>".sprintf("%01.2f",$promedioHistorico['l2068'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2069'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2076'])."</td><td>".sprintf("%01.2f",$promedioHistorico['l2078'])."</td></tr></tbody></table>";

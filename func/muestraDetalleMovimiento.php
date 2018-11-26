@@ -101,7 +101,7 @@ switch($tipo){
     if(trim($rowAsiento['Nombre'])=='TARJETAS01'){
       // ACREDITACIONES:
       $sqlMovimiento = "select * from dbo.AcreditacionesTarjetasCredito where IdAsiento=$_GET[idAsiento]";
-      $sqlMovimiento = "select dbo.Bancos.Nombre, NumeroCuenta, Numero, FechaAcreditacion, AcreditacionNeta, Comisiones,   RetencionIIB, IVA,  TotalRechazadas, AnioImputacionIVACompras, MesImputacionIVACompras, ImporteAcreditado, dbo.AcreditacionesTarjetasCredito.IdTarjeta, LotePrefijo,dbo.AcreditacionesTarjetasCredito.RetencionGanancias, dbo.AcreditacionesTarjetasCredito.RetencionIIB, dbo.AcreditacionesTarjetasCredito.RetencionIVA, dbo.LotesTarjetasCredito.Fecha, dbo.LotesTarjetasCredito.Importe, LoteNumero FROM dbo.bancos, dbo.CuentasBancarias, dbo.AcreditacionesTarjetasCredito, dbo.LotesAcreditados, dbo.LotesTarjetasCredito where dbo.AcreditacionesTarjetasCredito.IdAsiento=$_GET[idAsiento] AND dbo.LotesAcreditados.IdAcreditacionTarjetasCredito = dbo.AcreditacionesTarjetasCredito.IdAcreditacionTarjetasCredito AND  dbo.LotesAcreditados.IdLoteTarjetasCredito=dbo.LotesTarjetasCredito.IdLoteTarjetasCredito AND dbo.bancos.IdBanco=dbo.CuentasBancarias.IdBanco AND dbo.CuentasBancarias.IdCuentaBancaria=dbo.AcreditacionesTarjetasCredito.IdCuentaBancaria";
+      $sqlMovimiento = "select dbo.Bancos.Nombre, NumeroCuenta, Numero, FechaAcreditacion, AcreditacionNeta, Comisiones,   RetencionIIB, IVA,  TotalRechazadas, AnioImputacionIVACompras, MesImputacionIVACompras,  dbo.AcreditacionesTarjetasCredito.ImporteAcreditado, dbo.AcreditacionesTarjetasCredito.IdTarjeta, LotePrefijo,dbo.AcreditacionesTarjetasCredito.RetencionGanancias, dbo.AcreditacionesTarjetasCredito.RetencionIIB, dbo.AcreditacionesTarjetasCredito.RetencionIVA, dbo.LotesTarjetasCredito.Fecha, dbo.LotesTarjetasCredito.Importe, LoteNumero, dbo.AcreditacionesTarjetasCredito.username FROM dbo.bancos, dbo.CuentasBancarias, dbo.AcreditacionesTarjetasCredito, dbo.LotesAcreditados, dbo.LotesTarjetasCredito where dbo.AcreditacionesTarjetasCredito.IdAsiento=$_GET[idAsiento] AND dbo.LotesAcreditados.IdAcreditacionTarjetasCredito = dbo.AcreditacionesTarjetasCredito.IdAcreditacionTarjetasCredito AND  dbo.LotesAcreditados.IdLoteTarjetasCredito=dbo.LotesTarjetasCredito.IdLoteTarjetasCredito AND dbo.bancos.IdBanco=dbo.CuentasBancarias.IdBanco AND dbo.CuentasBancarias.IdCuentaBancaria=dbo.AcreditacionesTarjetasCredito.IdCuentaBancaria";
       //echo $sqlMovimiento;
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
       // hacer loop;
@@ -119,6 +119,7 @@ switch($tipo){
           echo "<br>";
         }
         echo "$rowMovimiento[LotePrefijo]-$rowMovimiento[LoteNumero], $".sprintf("%.2f",$rowMovimiento['Importe'])." (Presentado ".fecha($rowMovimiento['Fecha']).")<br/>";
+        $operador = $rowMovimiento['username'];
       }
     } elseif(trim($rowAsiento['Nombre'])=='TARJETAS03'){
     // ACREDITACIONES CON TARJETAS
@@ -144,6 +145,9 @@ switch($tipo){
       }
     } else {
       // PRESENTACIONES:
+      
+      // todo: agregar un botón que te permita modificar los lotes del turno directametne.
+      
       if(!isset($_SESSION['TipoManejoTarjetasCredito'])||$_SESSION['TipoManejoTarjetasCredito']==0){
         $sqlMovimiento = "select LotePrefijo, LoteNumero, dbo.LotesTarjetasCredito.Fecha, dbo.CierresTurno.Fecha as fechaTurno, dbo.CierresTurno.IdCaja, Importe, Nombre, dbo.LotesTarjetasCredito.Username from dbo.LotesTarjetasCredito, dbo.CierresTurno, dbo.TarjetasCredito where  dbo.LotesTarjetasCredito.IdCierreTurno=dbo.CierresTurno.IdCierreTurno AND  dbo.LotesTarjetasCredito.IdTarjeta=dbo.TarjetasCredito.IdTarjeta AND  dbo.LotesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
         $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
@@ -153,13 +157,14 @@ switch($tipo){
         // select * from dbo.LotesAcreditados where IdLoteTarjetasCredito=135755
 //         $sqlAcreditacion = 
         
-        
+        $operador = $rowMovimiento['Username'];
         
       } elseif($_SESSION['TipoManejoTarjetasCredito']==1) {
         $sqlMovimiento = "select * from dbo.CuponesTarjetasCredito where IdAsiento=$_GET[idAsiento]";
         $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
         $rowMovimiento = sqlsrv_fetch_array($stmt2);
         echo "<br/>Número $rowMovimiento[NumeroCupon], ingresa en";
+        $operador = $rowMovimiento['Username'];
 
         if($rowMovimiento['idCliente']>0){
           $sql3 = "select * from dbo.Recibos where IdRecibo=$rowMovimiento[IdRecibo]";
@@ -171,7 +176,7 @@ switch($tipo){
         }
       }
     }
-    echo "<br><small>OPERADOR: $rowMovimiento[UserName]</small>";
+    echo "<br><br><small>OPERADOR: $operador</small>";
     break;
   case "COBRANZAS":
     //select * from dbo.Recibos where IdAsiento

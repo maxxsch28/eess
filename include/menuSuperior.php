@@ -50,6 +50,7 @@ $ypfUrl = '';
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/calculaSaldoCaja.php")echo ' class="active"';?>><a href="/cierreMensual.php?saldoCaja=1">Saldo Caja</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/litrosDisponibles.php")echo ' class="active"';?>><a href="/litrosDisponibles.php">Litros disponibles</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/cargaMovistar.php")echo ' class="active"';?>><a href="/cargaMovistar.php">Carga facturas</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listaFacturacion.php")echo ' class="active"';?>><a href="/listaFacturacion.php">Refacturacion</a></li>
@@ -109,10 +110,31 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/verificaConciliaYPF.php")echo ' class="active"';?>><a href="/verificaConciliaYPF.php">Verifica conciliación YPF</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/conciliaBAPRO.php")echo ' class="active"';?>><a href="/conciliaBAPRO.php">Concilia BAPRO Setup</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanques.php")echo ' class="active"';?>><a href="/estadoTanques.php?juli=1">¿Hay Nafta?</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/libroDiarioTransporte.php")echo ' class="active"';?>><a href="/libroDiarioTransporte.php">Busca desbalances Transporte</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/cierreMensual.php")echo ' class="active"';?>><a href="/cierreMensual.php">Cierre mensual Tesorería</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/ivaPorActividadEESS.php")echo ' class="active"';?>><a href="/ivaPorActividadEESS.php">Detalle IVA por actividad EESS</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/ivaPorActividadTransporte.php")echo ' class="active"';?>><a href="/ivaPorActividadTransporte.php">Detalle IVA por actividad Transporte</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/libroDiario2.php")echo ' class="active"';?>><a href="/libroDiario2.php">Libro Diario comprimido</a></li>
                         </ul>
                     </li>
                 <?php }
-                if($loggedInUser->group_id==2||$loggedInUser->group_id==6||$loggedInUser->group_id==7){ // Transporte?>
+                if($loggedInUser->group_id==2||$loggedInUser->group_id==5||$loggedInUser->group_id==7){ // MENU YPF?>
+                    <li role="presentation" class="dropdown" style='height:50px'>
+                        <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
+                            YPF
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/cargaPromoSC.php")echo ' class="active"';?>><a href="/cargaPromoSC.php">Carga conceptos promos SC</a></li>
+
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listaPromoSC.php")echo ' class="active"';?>><a href="/listaPromoSC.php">Listados promos SC Infinia</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listaYER.php")echo ' class="active"';?>><a href="/listaYER.php">Listados devoluciones YER</a></li>
+                        </ul>
+                    </li>
+                <?php }
+                
+                
+                if($loggedInUser->group_id==2||$loggedInUser->group_id==6||$loggedInUser->group_id==5||$loggedInUser->group_id==7){ // Transporte?>
                     
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaIVA.php">

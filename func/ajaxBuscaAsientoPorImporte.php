@@ -4,7 +4,6 @@
   
 */
 include_once('../include/inicia.php');
-
 $rangoFin=($_REQUEST['rangoFin']=='31/12/69')?'2069/12/31':$_REQUEST['rangoFin'];
 
 $fInicio = explode('/', $_REQUEST['rangoInicio']);

@@ -4,19 +4,19 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 $titulo="Busca turnos para abrir y cerrar";
 
-if(!isset($_SESSION['ultimosMeses'])||1){
-	$_SESSION['ultimosMeses']='';
-	$currentMonth = (int)date('m');
-	for($x = $currentMonth; $x > $currentMonth-6; $x--) {
-		$_SESSION['ultimosMeses'] .= "<option value='".date('Y-m-01', mktime(0, 0, 0, $x, 1))."'>".date('F, Y', mktime(0, 0, 0, $x, 1))."</option>";
-	}
+if(!isset($_SESSION['ultimosMeses'])){
+  $_SESSION['ultimosMeses']='';
+  $currentMonth = (int)date('m');
+  for($x = $currentMonth; $x > $currentMonth-6; $x--) {
+    $_SESSION['ultimosMeses'] .= "<option value='".date('Y-m-01', mktime(0, 0, 0, $x, 1))."'>".date('F, Y', mktime(0, 0, 0, $x, 1))."</option>";
+  }
 }
 if(!isset($_SESSION['ultimosCierresTesoreria'])){
 	// carga los datos de esta orden
 	$sqlCajas = "SELECT IdCierreCajaTesoreria, FechaCierre FROM dbo.CierresCajaTesoreria WHERE FechaCierre>=DATEADD(month, -1, GETDATE()) ORDER BY FechaCierre desc;";
-	$stmt = odbc_exec( $mssql, $sqlCajas);
+	$stmt = odbc_exec2( $mssql, $sqlCajas, __FILE__, __LINE__);
 	$_SESSION['ultimosCierresTesoreria']='';
-	while($rowCuentas = odbc_fetch_array($stmt)){
+	while($rowCuentas = sqlsrv_fetch_array($stmt)){
 		$_SESSION['ultimosCierresTesoreria'].="<option value='$rowCuentas[IdCierreCajaTesoreria]'>".date_format($rowCuentas['FechaCierre'], "d/m/Y H:i:s")."</option>";
 	}
 }

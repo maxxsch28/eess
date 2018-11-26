@@ -114,7 +114,7 @@ while($rowYER = sqlsrv_fetch_array($stmt)){
                             echo "<tr class='alert alert-{$arrayClasses[$pico]}'><td>{$arrayPicos[$pico]}</td>
                             <td><input type='text' id='ant_$pico' name='ant_$pico' class='input-sm form-control anterior' value='$aforador' disabled='disabled'/></td>
                             <td><input type='hidden' name='calc_$pico' id='hcalc_$pico'/><input type='number' min='0'  id='calc_$pico' class='input-sm form-control' disabled='disabled'/></td>
-                            <td><input type='number' min='0'  max='2000000' step='any' id='$pico' name='$pico' class='input-sm form-control actual' required='required' data-plus-as-tab='true'/></td></tr>";
+                            <td><input type='number' min='0'  max='15000' step='any' id='$pico' name='$pico' class='input-sm form-control actual' required='required' data-plus-as-tab='true'/></td></tr>";
                             
                             }
                         }?>

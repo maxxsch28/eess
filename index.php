@@ -1,2 +1,2 @@
 <?php
-header('Location: /estadoTanques.php');die;
+header('Location: /estadoTanquesV3.php');die;

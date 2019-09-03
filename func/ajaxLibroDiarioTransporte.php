@@ -2,9 +2,9 @@
 // calculaPromedios.php
 include_once('../include/inicia.php');
 
-ChromePhp::log($_POST, 'POST');
+//ChromePhp::log($_POST, 'POST');
 
-ChromePhp::log($_REQUEST['libroDiario'], 'Request');
+//ChromePhp::log($_REQUEST['libroDiario'], 'Request');
 
 
 $fInicio = explode('/', $_REQUEST['rangoInicio']);
@@ -18,7 +18,7 @@ $andFecha=(isset($_REQUEST['rangoInicio']))?" AND dbo.concasie.fecha_asie>='20$f
 
 $sqlAsientos = trim(" SELECT DISTINCT dbo.asiecont.asiento, detalle, fecha, asiecont.transaccio, [sqlcoop_dbimplemen].[dbo].[concasie].concepto, [sqlcoop_dbimplemen].[dbo].[concasie].idtranglob, dbo.asiecont.cod_libro FROM dbo.asiecont, dbo.concasie WHERE dbo.asiecont.asiento=dbo.concasie.asiento AND dbo.asiecont.cod_libro=dbo.concasie.cod_libro $andFecha order by fecha asc;");
 
-ChromePhp::log($sqlAsientos);
+// ChromePhp::log($sqlAsientos);
 
 $dbg=0;
 

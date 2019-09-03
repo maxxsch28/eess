@@ -7,6 +7,8 @@ if(isset($_GET['calden'])){
 } else {
   $origen = 'cem';
 }
+$tanques = array(1=>2068, 2=>2069, 3=>2078, 4=>2068, 5=>2076, 6=>2069);
+$articulo = array(2068=>"Infinia D.",2069=>"Ultra",2076=>"Infinia",2078=>"Super");
 ?>
 <!DOCTYPE html>
 <html lang="es">

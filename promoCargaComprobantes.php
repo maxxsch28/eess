@@ -148,6 +148,8 @@ setlocale(LC_ALL, 'es_ES');
                 $('#pv').val(data.pv);
                 $('#IdMovimientoFac').val(data.IdMovimientoFac);
                 $('#FechaTicket').val(data.FechaTicket);
+                
+
                 $('#fcanje').focusout(function(){
                   var d = new Date();
                   if($('#fcanje').val().length<3){
@@ -160,6 +162,7 @@ setlocale(LC_ALL, 'es_ES');
                     $('#fcanje').val(dia);
                   }
                   $('#mesAsignado').val(mesAsignado( data.FechaTicket, $('#fcanje').val())).change();
+                  $('#fcanje').focus();
                   //$.post('func/ajaxBuscaDatosTicketMesAsignado.php', { fechaTicket: data.FechaTicket, fechaCanje: $(this).val() }, function(data2) {
                   //  $('#mesAsignado').val(data2.mesAsignado).change();
                  // }, "json");

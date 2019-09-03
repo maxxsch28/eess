@@ -24,8 +24,10 @@ $ypfUrl = '';
                 </ul>
             </li>
                 <?php if($loggedInUser){
-                    if($loggedInUser->group_id==2||$loggedInUser->group_id==4||$loggedInUser->group_id==7){ // Playa?>
-                    <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanques.php")echo ' class="active"';?>><a href="/">Combustibles</a></li>
+                    if($loggedInUser->group_id==2||$loggedInUser->group_id==4||$loggedInUser->group_id==7&&$loggedInUser->display_username=='maxxs'){ // Playa?>
+                    <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanquesV3.php")echo ' class="active"';?>><a href="/">C</a></li>
+                <?php } else if($loggedInUser->group_id==2||$loggedInUser->group_id==4||$loggedInUser->group_id==7){ // Playa?>
+                    <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estadoTanquesV3.php")echo ' class="active"';?>><a href="/">Combustibles</a></li>
                 <?php } 
                 if($loggedInUser->group_id==2){ // Gestion?>
                     <li role="presentation" class="dropdown" style='height:50px'>
@@ -33,16 +35,39 @@ $ypfUrl = '';
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li<?php if($_SERVER['PHP_SELF']=='/cargaCierreCEM.php')echo ' class="active"';?>><a href="/cargaCierreCEM.php">Cierre CEM</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/cargaCierreCIO.php')echo ' class="active"';?>><a href="/cargaCierreCIO.php">Cierre CIO</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/saldoYER.php')echo ' class="active"';?>><a href="/saldoYER.php">Saldo YPF en Ruta</a></li>
-                            <li<?php if($_SERVER['PHP_SELF']=='/stockTanques.php')echo ' class="active"';?>><a href="/stockTanques.php">Control de stock de tanques</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/stockTanques.2.php')echo ' class="active"';?>><a href="/stockTanques.2.php">Control de stock de tanques</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/combTrackingVentas.php')echo ' class="active"';?>><a href="/combTrackingVentas.php">Tracking Ventas</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/registroRemito.php')echo ' class="active"';?>><a href="/registroRemito.php">Recepcion combustible</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/stockCierre.php')echo ' class="active"';?>><a href="/stockCierre.php">Stocks al cierre</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/evolucionDespachos.php')echo ' class="active"';?>><a href="/evolucionDespachos.php">CREA - Despachos horarios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/preciosCombustibles.php')echo ' class="active"';?>><a href="/preciosCombustibles.php">Precio Combustibles</a></li>
                         </ul>
                     </li>
                 <?php } 
+                    if($loggedInUser->group_id==7||$loggedInUser->display_username=='maxxs'){ // Comision?>
+                    <li role="presentation" class="dropdown" style='height:50px'>
+                        <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/informesComision.php">
+                            Comisión
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/informesComision.php")echo ' class="active"';?>><a href="/informesComision.php">Introduccion a los informes</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/stockTanques.php')echo ' class="active"';?>><a href="/stockTanques.php">Control de stock de tanques</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/calculaSaldoCaja.php")echo ' class="active"';?>><a href="/cierreMensual.php">Saldo de Tesorería</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/informeMensual.php')echo ' class="active"';?>><a href="/informeMensual.php">Informe mensual Gastos EESS</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/muestraFacturasIVA.php')echo ' class="active"';?>><a href="/muestraFacturasIVA.php">Facturas por diferencia socios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/setupCargadora.php')echo ' class="active"';?>><a href="/setupCargadora.php">Resumen anual Cargadora</a></li>
+                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/comisionesTransporte.php")echo ' class="active"';?>><a href="/comisionesTransporte.php">Comisiones viajes Socios</a></li>
+                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupPagoAdelantos.php")echo ' class="active"';?>><a href="/setupPagoAdelantos.php">Detalle pagos adelantos Socios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupProductosPorCliente.php")echo ' class="active"';?>><a href="/setupProductosPorCliente.php">Detalle de facturación Transporte</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupTableroSocios.php")echo ' class="active"';?>><a href="/setupTableroSocios.php">Tablero socios (flecha)</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupOrdenesDeServicioImputadas.php")echo ' class="active"';?>><a href="/setupOrdenesDeServicioImputadas.php">Ordenes de servicio imputadas en pagos a Socios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupViajesPendientesLiquidacion.php")echo ' class="active"';?>><a href="/setupViajesPendientesLiquidacion.php">Viajes pendientes de liquidación</a></li>
+                        </ul>
+                    </li>
+                    <?php }
                     if($loggedInUser->group_id==2||$loggedInUser->group_id==3){ // Movistar?>
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
@@ -57,7 +82,7 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php } 
-                    if($loggedInUser->group_id==2||$loggedInUser->group_id==7){ // Gestion?>
+                    if($loggedInUser->group_id==2){ // Gestion?>
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" >
                             Gestión
@@ -68,7 +93,6 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/buscaFacturasPorDiferencia.php")echo ' class="active"';?>><a href="/buscaFacturasPorDiferencia.php">Fc x Diferencia</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/calculaLubricantes.php")echo ' class="active"';?>><a href="/calculaLubricantes.php">Premios Lubricantes</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/estimuloShop.php")echo ' class="active"';?>><a href="/estimuloShop.php">Ventas en Servicompras</a></li>
-                            <li<?php if($_SERVER['PHP_SELF']=='/preparaInforme.php')echo ' class="active"';?>><a href="/preparaInforme.php">Informe mensual</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/buscaTurnosTarjetas.php')echo ' class="active"';?>><a href="/buscaTurnosTarjetas.php">Lotes presentados x Turnos</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/cambiaClienteRemito.php')echo ' class="active"';?>><a href="/cambiaClienteRemito.php">Cambia clientes remitos</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/calculaAjustesPrecios.php')echo ' class="active"';?>><a href="/calculaAjustesPrecios.php">Ajustes cambio de precio</a></li>
@@ -78,10 +102,13 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/setupCargadora.php')echo ' class="active"';?>><a href="/setupCargadora.php">Cargadora</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/informeMensual.php')echo ' class="active"';?>><a href="/informeMensual.php">Informe mensual</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=='/muestraFacturasIVA.php')echo ' class="active"';?>><a href="/muestraFacturasIVA.php">Facturas x dif socios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/buscaTurnos.php")echo ' class="active"';?>><a href="/buscaTurnos.php">Abre y cierra Turnos</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/listadoPrecios.php")echo ' class="active"';?>><a href="/listadoPrecios.php">Listas de precios</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/tableroTurnos.php")echo ' class="active"';?>><a href="/tableroTurnos.php">Tablero objetivos</a></li>
                         </ul>
                     </li>
                 <?php } 
-                    if($loggedInUser->group_id==2){ // Turnos?>
+                    if($loggedInUser->group_id==4){ // Turnos?>
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" >
                             Turnos
@@ -95,7 +122,7 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php } 
-                    if($loggedInUser->group_id==2||$loggedInUser->group_id==5||$loggedInUser->group_id==7){ // Contables?>
+                    if($loggedInUser->group_id==2||$loggedInUser->group_id==5){ // Contables?>
                     
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
@@ -118,7 +145,7 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php }
-                if($loggedInUser->group_id==2||$loggedInUser->group_id==5||$loggedInUser->group_id==7){ // MENU YPF?>
+                if($loggedInUser->group_id==2||$loggedInUser->group_id==5){ // MENU YPF?>
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
                             YPF
@@ -132,13 +159,31 @@ $ypfUrl = '';
                         </ul>
                     </li>
                 <?php }
+                if($loggedInUser->group_id==2||$loggedInUser->group_id==5){ // MENU ASOCIADOS?>
+                    <li role="presentation" class="dropdown" style='height:50px'>
+                        <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaMovistar.php">
+                            Socios
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/sociosAlta.php")echo ' class="active"';?>><a href="/sociosAlta.php">Nuevo Asociado</a></li>
+
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/sociosListados.php")echo ' class="active"';?>><a href="/sociosListados.php">Listados Asociados</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/sociosComision.php")echo ' class="active"';?>><a href="/sociosComision.php">Listados Comisiones</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/sociosEventos.php")echo ' class="active"';?>><a href="/sociosEventos.php">Modificaciones Asociados</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/sociosListaEventos.php")echo ' class="active"';?>><a href="/sociosListaEventos.php">Resúmenes eventos asociados</a></li>
+                            <li>   -----------------   </li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/cooptransporte.ddns.net/sociosLibrosAlta.php")echo ' class="active"';?>><a href="/sociosLibrosAlta.php">Carga foja libro</a></li>
+                        </ul>
+                    </li>
+                <?php }
                 
                 
                 if($loggedInUser->group_id==2||$loggedInUser->group_id==6||$loggedInUser->group_id==5||$loggedInUser->group_id==7){ // Transporte?>
                     
                     <li role="presentation" class="dropdown" style='height:50px'>
                         <a class="dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-expanded="false" href="/cargaIVA.php">
-                            TRANSPORTE
+                            Transporte
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
@@ -153,6 +198,12 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupTableroSocios.php")echo ' class="active"';?>><a href="/setupTableroSocios.php">Tablero socios</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupOrdenesDeServicioImputadas.php")echo ' class="active"';?>><a href="/setupOrdenesDeServicioImputadas.php">Ordenes imputadas por Socio</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupViajesPendientesLiquidacion.php")echo ' class="active"';?>><a href="/setupViajesPendientesLiquidacion.php">Viajes pendientes de liquidación</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupOrdenesImpagas.php")echo ' class="active"';?>><a href="/setupOrdenesImpagas.php">Adelantos de EESS pendientes de pago</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/setupCargadora.php')echo ' class="active"';?>><a href="/setupCargadora.php">Resumen anual Cargadora</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=='/setupFlujoBanco.php')echo ' class="active"';?>><a href="/setupFlujoBanco.php">Flujo banco Provincia</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupChequesDiferidos.php")echo ' class="active"';?>><a href="/setupChequesDiferidos.php">Cheques diferidos a fin de ejercicio</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupOrdenesDescontadasMensuales.php")echo ' class="active"';?>><a href="/setupOrdenesDescontadasMensuales.php">Ordenes descontadas por mes</a></li>
+
                         </ul>
                     </li>
                 <?php }
@@ -162,7 +213,9 @@ $ypfUrl = '';
                         <div class="input-group">
                             <input type="text" class="form-control input input-sm" placeholder="Asiento" name="srch-term" id="srch-term">
                             <div class="input-group-btn">
-                                <button class="btn btn-default btn-sm" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                                <button class="btn btn-default btn-sm" type="submit">
+                                <i class="glyphicon glyphicon-search"></i>
+                                </button>
                             </div>
                         </div>
                         </form>

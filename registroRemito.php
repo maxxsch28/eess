@@ -46,29 +46,29 @@ $titulo="Descarga camión | YPF";
               </div>
             </div>
             <div class="form-group">
-              <label for="totalUD" class="col-sm-3 control-label">Ultra Diesel</label>
+              <label for="inputUD" class="col-sm-3 control-label">Ultra Diesel</label>
               <div class="col-sm-7 input-group">
-                <input type="number" class="form-control litros ud" id='totalUd' name="totalUD" placeholder="Total" data-plus-as-tab='true' min='1000' max='40000'><span class="input-group-addon" id='inputTq6'>Tanque 6</span>
-                <input type="number" class="form-control litros ud" id='inputTq2' name="inputTq2" placeholder="Tanque 2" data-plus-as-tab='true' max='40000'><span id='sumaUltra'></span>
+                <input type="number" class="form-control litros" name="inputTq6" placeholder="Tanque 6" data-plus-as-tab='true' min='1000' max='40000'>
               </div>
             </div>
             <div class="form-group">
-              <label for="inputNS" class="col-sm-3 control-label">Nafta Super</label>
+              <label for="totalNS" class="col-sm-3 control-label">Nafta Super</label>
               <div class="col-sm-7 input-group">
-                <input type="number" class="form-control litros" name="inputTq3" placeholder="Tanque 3" data-plus-as-tab='true' min='1000' max='20000'>
+                <input type="number" class="form-control litros ns" id='totalNS' name="totalNS" placeholder="Total" data-plus-as-tab='true' min='1000' max='30000'><span class="input-group-addon" id='inputTq5'>Tanque 5</span>
+                <input type="number" class="form-control litros ns" id='inputTq3' name="inputTq3" placeholder="Tanque 3" data-plus-as-tab='true' max='20000'>
               </div>
             </div>
             <div class="form-group">
               <label for="inputNP" class="col-sm-3 control-label">Nafta Infinia</label>
               <div class="col-sm-7 input-group">
-                <input type="number" class="form-control litros" name="inputTq5" placeholder="Tanque 5" data-plus-as-tab='true' min='1000' max='10000'>
+                <input type="number" class="form-control litros" name="inputTq2" placeholder="Tanque 2" data-plus-as-tab='true' min='1000' max='20000'>
               </div>
             </div>
             <div class="form-group">
               <label for="totalEd" class="col-sm-3 control-label">Infinia Diesel</label>
               <div class="col-sm-7 input-group">
                 <input type="number" class="form-control litros ed" id='totalEd' name="totalEd" placeholder="Total" data-plus-as-tab='true' min='1000' max='20000'><span class="input-group-addon" id='inputTq4'>Tanque 4</span>
-                <input type="number" class="form-control litros ed" id='inputTq1' name="inputTq1" placeholder="Tanque 1" data-plus-as-tab='true'  max='20000'>
+                <input type="number" class="form-control litros ed" id='inputTq1' name="inputTq1" placeholder="Tanque 1" data-plus-as-tab='true'  max='31000'>
               </div>
             </div>
           </div>
@@ -141,15 +141,16 @@ $(document).ready(function() {
    $('#fecha2').datepicker({
     autoclose: true
   });
-  $('.ud').change(function(){
-    if(isNaN($('#inputTq2').val())){
-      var tq2 = 0;
+  $('.ns').change(function(){
+    if(isNaN($('#inputTq3').val())){
+      var tq3 = 0;
     } else {
-      var tq2 = $('#inputTq2').val();
+      var tq3 = $('#inputTq3').val();
     }
-    var tq6 = parseInt($('#totalUd').val()-tq2);
-    $('#inputTq6').html(tq6);
+    var tq5 = parseInt($('#totalNS').val()-tq3);
+    $('#inputTq5').html(tq5);
   });
+  
   $('.ed').change(function(){
     if(isNaN($('#inputTq1').val())){
       var tq1 = 0;

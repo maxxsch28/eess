@@ -51,9 +51,17 @@ if(isset($_POST['idcliente'])&&is_numeric($_POST['idcliente'])){
       $_SESSION['precioAnterior'][$fila['IdArticulo']]=$row2['PrecioPublico'];
     }
     $signo = ($fila['IdTipoMovimiento']=='FAA'||$fila['IdTipoMovimiento']=='FAB')?1:-1;
-    $precioAnterior = (isset($_POST['precioAnterior']))?$_SESSION['precioAnterior'][$fila['IdArticulo']]:$fila['Precio'];
     
-    $ajuste = (isset($_POST['precioAnterior']))?$fila['Cantidad']*($precioActual-$_SESSION['precioAnterior'][$fila['IdArticulo']]):$fila['Ajuste'];
+    if($fila['Precio']<>$fila['PrecioPublico']||(isset($precioYER[$fila['IdArticulo']])&&$precioYER[$fila['IdArticulo']]<>$fila['Precio'])){
+      $precioAnterior = (isset($_POST['precioAnterior']))?$_SESSION['precioAnterior'][$fila['IdArticulo']]:$fila['Precio'];
+      
+      $ajuste = (isset($_POST['precioAnterior']))?$fila['Cantidad']*($precioActual-$_SESSION['precioAnterior'][$fila['IdArticulo']]):$fila['Ajuste'];
+    } else {
+      $precioAnterior = $fila['Precio'];
+      
+      $ajuste = 0;
+    }
+    
     $fecha = $fila['Fecha']->format('d/m/Y');
     $tabla .= "<tr id='f$fila[IdMovimientoFac]'".(($signo<0)?" class='bg-danger'":'')."><td>$fecha</td><td>$fila[IdTipoMovimiento] $fila[PuntoVenta]-$fila[Numero]</td><td>$fila[Descripcion]</td><td>".sprintf("%01.2f", $fila['Cantidad'])." lts</td>
     <td>$".sprintf("%01.2f", $precioAnterior)."</td><td>$".sprintf("%01.2f", $precioActual)."</td><td>$".sprintf("%01.2f", $signo*$ajuste)."</td></tr>";

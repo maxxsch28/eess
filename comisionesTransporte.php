@@ -48,8 +48,12 @@ $titulo="Lista comisiones mensuales";
                     <input type="hidden" name='muestraSoloExternos' value='0' id='muestraSoloExternos'/>
                     <input type="hidden" name='muestraComprimido' value='0' id='muestraComprimido'/>
                     <div class="form-group">
-                        <label for='periodo' class="control-label">Comisiones sobre viajes de: <select name='periodo' id='periodo' class='input-sm '>
+                        <label for='periodo' class="control-label">Comisiones sobre viajes de: <select name='periodo' id='periodo'>
                             <?php 
+                            
+                            echo "<option value='".date('Y')."' >".date('Y')."</option>";
+                            echo "<option value='".(date('Y')-1)."' >".(date('Y')-1)."</option>";
+
                             for ($abc = 12; $abc >= 0; $abc--) {
                                 $mes = date("F Y", mktime(0, 0, 0, date("m")-$abc, 1, date("Y")));
                                 $valorMes = date("Y-m", mktime(0, 0, 0, date("m")-$abc, 1, date("Y")));

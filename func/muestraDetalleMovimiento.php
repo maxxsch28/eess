@@ -123,7 +123,7 @@ switch($tipo){
       }
     } elseif(trim($rowAsiento['Nombre'])=='TARJETAS03'){
     // ACREDITACIONES CON TARJETAS
-      $sqlMovimiento = "select dbo.AcreditacionesTarjetasCredito.Numero, FechaAcreditacion, AcreditacionNeta, Comisiones, RetencionIIB, IVA, TotalRechazadas, AnioImputacionIVACompras, MesImputacionIVACompras, ImporteAcreditado, dbo.AcreditacionesTarjetasCredito.IdTarjeta, LotePrefijo,dbo.AcreditacionesTarjetasCredito.RetencionGanancias, dbo.AcreditacionesTarjetasCredito.RetencionIIB, dbo.AcreditacionesTarjetasCredito.RetencionIVA, dbo.LotesTarjetasCredito.Fecha, dbo.LotesTarjetasCredito.Importe, LoteNumero, dbo.ChequesTerceros.Numero as NumeroCheque, dbo.ChequesTerceros.IdBanco, Localidad, dbo.ChequesTerceros.Fecha, FechaSalida, TipoSalida, IdOrdenPago, Nombre, dbo.AcreditacionesTarjetasCredito.Username FROM dbo.AcreditacionesTarjetasCredito, dbo.LotesAcreditados, dbo.LotesTarjetasCredito, dbo.ChequesTerceros, dbo.Bancos WHERE dbo.Bancos.idBanco=dbo.ChequesTerceros.IdBanco AND dbo.AcreditacionesTarjetasCredito.IdAsiento=$_GET[idAsiento] AND dbo.LotesAcreditados.IdAcreditacionTarjetasCredito = dbo.AcreditacionesTarjetasCredito.IdAcreditacionTarjetasCredito AND dbo.LotesAcreditados.IdLoteTarjetasCredito=dbo.LotesTarjetasCredito.IdLoteTarjetasCredito AND dbo.AcreditacionesTarjetasCredito.IdAcreditacionTarjetasCredito=dbo.ChequesTerceros.IdAcreditacionTarjetasCredito";
+      $sqlMovimiento = "select dbo.AcreditacionesTarjetasCredito.Numero, FechaAcreditacion, AcreditacionNeta, Comisiones, RetencionIIB, IVA, TotalRechazadas, AnioImputacionIVACompras, MesImputacionIVACompras, ImporteAcreditado, dbo.AcreditacionesTarjetasCredito.IdTarjeta, LotePrefijo,dbo.AcreditacionesTarjetasCredito.RetencionGanancias, dbo.AcreditacionesTarjetasCredito.RetencionIIB, dbo.AcreditacionesTarjetasCredito.RetencionIVA, dbo.LotesTarjetasCredito.Fecha, dbo.LotesTarjetasCredito.Importe, LoteNumero, dbo.ChequesTerceros.Numero as NumeroCheque, dbo.ChequesTerceros.IdBanco, Localidad, dbo.ChequesTerceros.Fecha, FechaSalida, TipoSalida, IdOrdenPago, Nombre, dbo.AcreditacionesTarjetasCredito.UserName FROM dbo.AcreditacionesTarjetasCredito, dbo.LotesAcreditados, dbo.LotesTarjetasCredito, dbo.ChequesTerceros, dbo.Bancos WHERE dbo.Bancos.idBanco=dbo.ChequesTerceros.IdBanco AND dbo.AcreditacionesTarjetasCredito.IdAsiento=$_GET[idAsiento] AND dbo.LotesAcreditados.IdAcreditacionTarjetasCredito = dbo.AcreditacionesTarjetasCredito.IdAcreditacionTarjetasCredito AND dbo.LotesAcreditados.IdLoteTarjetasCredito=dbo.LotesTarjetasCredito.IdLoteTarjetasCredito AND dbo.AcreditacionesTarjetasCredito.IdAcreditacionTarjetasCredito=dbo.ChequesTerceros.IdAcreditacionTarjetasCredito";
       //echo $sqlMovimiento;
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
       // hacer loop;
@@ -149,7 +149,7 @@ switch($tipo){
       // todo: agregar un botón que te permita modificar los lotes del turno directametne.
       
       if(!isset($_SESSION['TipoManejoTarjetasCredito'])||$_SESSION['TipoManejoTarjetasCredito']==0){
-        $sqlMovimiento = "select LotePrefijo, LoteNumero, dbo.LotesTarjetasCredito.Fecha, dbo.CierresTurno.Fecha as fechaTurno, dbo.CierresTurno.IdCaja, Importe, Nombre, dbo.LotesTarjetasCredito.Username from dbo.LotesTarjetasCredito, dbo.CierresTurno, dbo.TarjetasCredito where  dbo.LotesTarjetasCredito.IdCierreTurno=dbo.CierresTurno.IdCierreTurno AND  dbo.LotesTarjetasCredito.IdTarjeta=dbo.TarjetasCredito.IdTarjeta AND  dbo.LotesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
+        $sqlMovimiento = "select LotePrefijo, LoteNumero, dbo.LotesTarjetasCredito.Fecha, dbo.CierresTurno.Fecha as fechaTurno, dbo.CierresTurno.IdCaja, Importe, Nombre, dbo.LotesTarjetasCredito.UserName from dbo.LotesTarjetasCredito, dbo.CierresTurno, dbo.TarjetasCredito where  dbo.LotesTarjetasCredito.IdCierreTurno=dbo.CierresTurno.IdCierreTurno AND  dbo.LotesTarjetasCredito.IdTarjeta=dbo.TarjetasCredito.IdTarjeta AND  dbo.LotesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
         $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
         $rowMovimiento = sqlsrv_fetch_array($stmt2);
         
@@ -157,14 +157,14 @@ switch($tipo){
         // select * from dbo.LotesAcreditados where IdLoteTarjetasCredito=135755
 //         $sqlAcreditacion = 
         
-        $operador = $rowMovimiento['Username'];
+        $operador = $rowMovimiento['UserName'];
         
       } elseif($_SESSION['TipoManejoTarjetasCredito']==1) {
         $sqlMovimiento = "select * from dbo.CuponesTarjetasCredito where IdAsiento=$_GET[idAsiento]";
         $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
         $rowMovimiento = sqlsrv_fetch_array($stmt2);
         echo "<br/>Número $rowMovimiento[NumeroCupon], ingresa en";
-        $operador = $rowMovimiento['Username'];
+        $operador = $rowMovimiento['UserName'];
 
         if($rowMovimiento['idCliente']>0){
           $sql3 = "select * from dbo.Recibos where IdRecibo=$rowMovimiento[IdRecibo]";
@@ -197,7 +197,7 @@ switch($tipo){
           $tituloChequesPropios=true;
           echo "<br/><br/>Cheques de terceros:<br/>";
         }
-        echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
+        echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $".sprintf('%01.2f',$rowCheque['Importe']).", ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
         //print_r($rowCheque);
 
         // $rowCheque[IdCuentaBancaria] => 1
@@ -211,7 +211,7 @@ switch($tipo){
           echo "<br/><br/>Cupones de tarjetas:<br/>";
         }
         //print_r($rowCheque);
-        echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[NumeroCupon], $$rowCheque[Importe]</span><br/>";
+        echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[NumeroCupon], $".sprintf('%01.2f',$rowCheque['Importe'])."</span><br/>";
       }			
     } else {
       // Cobranzas contado con tarjeta o cheques:
@@ -252,7 +252,7 @@ switch($tipo){
           $row3 = sqlsrv_fetch_array($stmt3);
           echo " turno <b>".date_format($row3['Fecha'], "d/m/Y H:i:s").",</b> (".(($row3['IdEmpleado2']>0)?'+'.$_SESSION['empleados'][$row3['IdEmpleado2']]:'')." ".(($row3['IdEmpleado3']>0)?'+'.$_SESSION['empleados'][$row3['IdEmpleado3']]:'').")<br/>"; 
         }
-        echo "<br/><span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
+        echo "<br/><span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $".sprintf('%01.2f',$rowCheque['Importe']).", ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
       }
     }
     
@@ -261,7 +261,7 @@ switch($tipo){
   case "VALES":
     echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
     // CANCELA
-
+    // TODO
     // EMITE
     
     break;
@@ -275,7 +275,7 @@ switch($tipo){
         {echo "<br/>Cargado el ".fecha($rowMovimiento['FechaContable']).'<br/>';}
     else 
         {echo "<br/>Cargado manualmente, no tiene fecha (REVISAR)<br/>";}
-    echo "<br/>Movimiento: $rowMovimiento[Descripcion], en Caja Nº $rowMovimiento[Numero] del ".fecha($rowMovimiento['FechaCierre'], "dmyH").'<br/>';
+    echo "<br/>Movimiento: $rowMovimiento[Descripcion] Nº $rowMovimiento[NumeroComprobante], en Caja Nº $rowMovimiento[Numero] del ".fecha($rowMovimiento['FechaCierre'], "dmyH").'<br/>';
     $sqlCheque = "select * from dbo.ChequesTerceros, dbo.Bancos where IdMovimientoBancario=$rowMovimiento[IdMovimientoBancario] AND dbo.ChequesTerceros.IdBanco=dbo.Bancos.IdBanco";
     $stmt3 = odbc_exec2( $mssql, $sqlCheque, __LINE__, __FILE__);
     $totalCheques=0;
@@ -366,7 +366,7 @@ switch($tipo){
     echo "<br><small>OPERADOR: $rowMovimiento[UserName]</small>";
     break;
   case "IMPUESTOS":
-    echo "$tipo";
+    echo "10. $tipo";
     break;
   case "PAGOS":
     echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
@@ -389,7 +389,7 @@ switch($tipo){
         $tituloChequesPropios=true;
         echo "<br/>Cheques propios:<br/>";
       }
-      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['FechaEmision'], "dmyH")."</span><br/>";
+      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $".sprintf('%01.2f',$rowCheque['Importe']).", ".fecha($rowCheque['FechaEmision'], "dmyH")."</span><br/>";
       //print_r($rowCheque);
 
       // $rowCheque[IdCuentaBancaria] => 1
@@ -402,7 +402,7 @@ switch($tipo){
         $tituloChequesPropios=true;
         echo "<br/>Cheques de terceros:<br/>";
       }
-      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
+      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $".sprintf('%01.2f',$rowCheque['Importe']).", ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
       //print_r($rowCheque);
 
       // $rowCheque[IdCuentaBancaria] => 1
@@ -429,7 +429,7 @@ switch($tipo){
     echo "<br><small>OPERADOR: $rowMovimiento[UserName]</small>";
     break;
   case "STOCK":
-    echo "$tipo<br/>";
+    echo "11. $tipo<br/>";
     echo "Descripcion: $rowAsiento[Descripcion]<br/>Concepto: $rowAsiento[Concepto]";
 
     $sqlMovimiento = "select * from dbo.OtrosMovimientosStock, dbo.MotivosStock where MotivosStock.IdMotivoStock=OtrosMovimientosStock.IdMotivo AND IdAsiento=$_GET[idAsiento];";
@@ -442,10 +442,11 @@ switch($tipo){
     break;
   case "TESORERIA":
     echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
-    $sqlMovimiento = "select dbo.OtrosMovimientosCajaTesoreria.IdOtroMovimientoCajaTesoreria, dbo.OtrosMovimientosCajaTesoreria.Fecha, Detalle, Importe, Efectivo, Descripcion, dbo.CierresCajaTesoreria.Numero, dbo.CierresCajaTesoreria.FechaCierre from dbo.OtrosMovimientosCajaTesoreria, dbo.GruposOtrosMovimientosCajaTesoreria, dbo.CierresCajaTesoreria where dbo.GruposOtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria=dbo.OtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria AND dbo.CierresCajaTesoreria.IdCierreCajaTesoreria=dbo.OtrosMovimientosCajaTesoreria.IdCierreCajaTesoreria AND IdAsiento=$_GET[idAsiento]";
+    $sqlMovimiento = "select dbo.OtrosMovimientosCajaTesoreria.IdOtroMovimientoCajaTesoreria, dbo.OtrosMovimientosCajaTesoreria.Fecha, Detalle, Importe, Efectivo, Descripcion, dbo.CierresCajaTesoreria.Numero, dbo.CierresCajaTesoreria.FechaCierre, dbo.OtrosMovimientosCajaTesoreria.UserName FROM dbo.OtrosMovimientosCajaTesoreria, dbo.GruposOtrosMovimientosCajaTesoreria, dbo.CierresCajaTesoreria WHERE dbo.GruposOtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria=dbo.OtrosMovimientosCajaTesoreria.IdGrupoOtrosMovimientosCajaTesoreria AND dbo.CierresCajaTesoreria.IdCierreCajaTesoreria=dbo.OtrosMovimientosCajaTesoreria.IdCierreCajaTesoreria AND IdAsiento=$_GET[idAsiento]";
     $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
     $rowMovimiento = sqlsrv_fetch_array($stmt2);
-    echo "<br/>$rowMovimiento[Detalle]<br/>";
+    if($rowAsiento['Concepto']<>$rowMovimiento['Detalle']){
+    echo "<br/>$rowMovimiento[Detalle]<br/>";}
     echo "<br/>Cargado el ".fecha($rowMovimiento['Fecha'], 'dmyH').'<br/>';
     echo "<br/>Movimiento: $rowMovimiento[Descripcion], en Caja Nº $rowMovimiento[Numero] del ".fecha($rowMovimiento['FechaCierre'], "dmYH").'<br/>';
     $sqlCheque = "select * from dbo.ChequesPropios where IdOtroMovimientoCajaTesoreriaSalida=$rowMovimiento[IdOtroMovimientoCajaTesoreria]";
@@ -455,7 +456,7 @@ switch($tipo){
         $tituloChequesPropios=true;
         echo "<br/>Cheques propios:<br/>";
       }
-      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['FechaEmision'], "dmyH")."</span><br/>";
+      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $".sprintf('%01.2f',$rowCheque['Importe']).", ".fecha($rowCheque['FechaEmision'], "dmyH")."</span><br/>";
       //print_r($rowCheque);
 
       // $rowCheque[IdCuentaBancaria] => 1
@@ -468,7 +469,7 @@ switch($tipo){
         $tituloChequesTerceros=true;
         echo "<br/>Cheques de terceros:<br/>";
       }
-      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $$rowCheque[Importe], ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad]</span><br/>";
+      echo "<span class='".((($rowCheque['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowCheque['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowCheque['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Nº $rowCheque[Numero], $".sprintf('%01.2f',$rowCheque['Importe']).", ".fecha($rowCheque['Fecha'], "dmyH").", CP $rowCheque[Localidad] (".ucwords(strtolower($rowCheque['Emisor'])).")</span><br/>";
     }
     if(!isset($tituloChequesPropios)&&!isset($tituloChequesTerceros)){
       echo "<br/><span class='".((($rowMovimiento['Importe']==$_GET['monto'])||($_REQUEST['fuzzy']&&$rowMovimiento['Importe']>=floor($_GET['monto']-$_REQUEST['fuzziness'])&&$rowMovimiento['Importe']<=ceil($_GET['monto']+$_REQUEST['fuzziness'])))?'montoBuscado':'')."'>Efectivo de caja $$rowMovimiento[Importe]</span><br/>";
@@ -481,7 +482,7 @@ switch($tipo){
           $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
           $rowMovimiento = sqlsrv_fetch_array($stmt2);
           print_r($rowMovimiento);
-          echo "$tipo";
+          echo "1. $tipo";
           break;
   case "VARIOS":
           echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
@@ -489,7 +490,7 @@ switch($tipo){
           $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
           $rowMovimiento = sqlsrv_fetch_array($stmt2);
           print_r($rowMovimiento);
-          echo "$tipo";
+          echo "2. $tipo";
           break;
   case "SUELDOS":
           echo "$rowAsiento[Descripcion], $rowAsiento[Concepto]";
@@ -497,14 +498,14 @@ switch($tipo){
           $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
           $rowMovimiento = sqlsrv_fetch_array($stmt2);
           print_r($rowMovimiento);
-          echo "$tipo";
+          echo "3. $tipo";
           break;
   case "MANUAL":
           echo "Asiento manual / sin modelo de asiento";
           
           break;
   default:
-          echo "$tipo";
+          echo "4. $tipo";
           break;
 		
 }

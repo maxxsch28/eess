@@ -10,9 +10,19 @@ if(isset($_POST['id'])){
   //ChromePhp::log($sqlYPF);
   $result = $mysqli3->query($sqlYPF);
   $rowYPF = $result->fetch_assoc();
-  $mes = substr($rowYPF['femision'],3,2);
-  $dia = substr($rowYPF['femision'],0,2);
-  $ano = substr($rowYPF['femision'],6,4);
+  // tengo que determinar como está conformado el campo femision
+  if(is_numeric(substr($rowYPF['femision'],0,4))){
+    // el campo es yyyy-mm-dd
+    $mes = substr($rowYPF['femision'],5,2);
+    $dia = substr($rowYPF['femision'],8,2);
+    $ano = substr($rowYPF['femision'],0,4);
+  } else {
+    // el campo es dd/mm/yyyy
+    $mes = substr($rowYPF['femision'],3,2);
+    $dia = substr($rowYPF['femision'],0,2);
+    $ano = substr($rowYPF['femision'],6,4);
+  }
+  
   $limiteInferior = (is_decimal(abs($rowYPF['Importe'])))?6:2;
   $limiteSuperior = (is_decimal(abs($rowYPF['Importe'])))?4:1;
   //ChromePhp::log($rowYPF['clase']);
@@ -109,7 +119,7 @@ if(isset($_POST['id'])){
       if(!isset($rowCalden)||($rowCalden['Total']<>$rowCalden['PagoEfectivo'])){
         // Busco cheques de terceros
         //$sqlCalden = "select IdChequeTercero FROM dbo.OrdenesPago as o, dbo.ChequesTerceros as c WHERE o.IdProveedor=4 AND c.IdOrdenPago=o.IdOrdenPago AND  (datepart(MONTH, o.Fecha)=$mes AND datepart(YEAR, o.Fecha)=$ano   ) AND Importe=".abs($rowYPF['Importe']).";";
-        $sqlCalden = "select IdChequeTercero FROM dbo.OrdenesPago as o, dbo.ChequesTerceros as c WHERE o.IdProveedor=4 AND c.IdOrdenPago=o.IdOrdenPago AND o.Fecha>=dateadd(day, -$limiteInferior, '$ano-$mes-$dia') AND o.Fecha<=dateadd(day, +$limiteSuperior, '$ano-$mes-$dia') AND Importe=".abs($rowYPF['Importe']).";";
+        $sqlCalden = "select IdChequeTercero FROM dbo.OrdenesPago as o, dbo.ChequesTerceros as c WHERE o.IdProveedor=4 AND c.IdOrdenPago=o.IdOrdenPago AND o.Fecha>=dateadd(day, -$limiteInferior-3, '$ano-$mes-$dia') AND o.Fecha<=dateadd(day, +$limiteSuperior, '$ano-$mes-$dia') AND Importe=".abs($rowYPF['Importe']).";";
         
         
         //ChromePhp::log($sqlCalden);

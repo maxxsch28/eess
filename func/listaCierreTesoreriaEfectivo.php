@@ -5,14 +5,20 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //print_r($_POST); 
 // $array=array();
  // 14/08/2018
+ $sql = array();
 if(isset($_POST['fechaCierre'])&&$_POST['fechaCierre']<>''){
   $mm=substr($_POST['fechaCierre'],3,2);
   $aa=substr($_POST['fechaCierre'],6,4);
   $dd=substr($_POST['fechaCierre'],0,2);
+  $teresa = "";
+  $fechaHasta = date("Y-m-d", strtotime("$aa-$mm-$dd")+32400);
 } elseif(isset($_POST['saldoCaja'])){
   $mm=date("m");
   $aa=date("Y");
   $dd=date("d");
+//   TODO: hacer que no muestre vales desde turnos
+  $fechaHasta = date("Y-m-d", strtotime("tomorrow"));
+  $teresa = " AND IdCierreTurno IS NOT NULL";
 }
 
 
@@ -30,6 +36,7 @@ $ultimoCierre = sqlsrv_fetch_array($stmt);
 $jsonCierre[] = array('t' => 'Efectivo', 'clase' => '', 'txt' => "Según cierre Nº$ultimoCierre[Numero] del ".$ultimoCierre['FechaCierre']->format('d/m/Y H:i'), 'importe' => peso($ultimoCierre['ArqueoEfectivo']));
 
 $jsonCierre[] = array('t' => 'Cheques', 'clase' => '', 'txt' => "Según cierre Nº$ultimoCierre[Numero] del ".$ultimoCierre['FechaCierre']->format('d/m/Y H:i'), 'importe' => peso($ultimoCierre['ArqueoChequesTerceros']));
+
 
 $efectivo = $ultimoCierre['ArqueoEfectivo'];
 $cheques = $ultimoCierre['ArqueoChequesTerceros'];
@@ -119,14 +126,15 @@ $sql['depositosCheques'] = "";
 // Si hago de esto una opción "Teresa", debe quedar así, entonces este script muestra lo que debe dar la caja sin tomar los turnos.
 // Sacar para la opción de cierre de caja contrastable contre la Contabilidad, además que debemos incorporar un histórico de los Vales pendientes de cancelación.
 
-$sql['vales'] = "select -1 as signo, b.RazonSocial as nombre, Prefijo, Numero, Importe, IdCierreCajaTesoreria, IdCierreTurno, Fecha from dbo.ValesClientes a, dbo.clientes b WHERE a.IdCliente=b.IdCliente AND Convert(date, Fecha)>='".$ultimoCierre['FechaCierre']->format('Y-m-d')."' AND (IdCierreCajaTesoreria IS NULL OR IdCierreCajaTesoreria>$ultimoCierreMes) AND  Numero NOT IN (SELECT Numero FROM dbo.CierresDetalleVales WHERE Tipo=0 AND Fecha>='".$ultimoCierre['FechaCierre']->format('Y-m-d')."') UNION 
+$sql['vales'] = "select -1 as signo, b.RazonSocial as nombre, Prefijo, Numero, Importe, IdCierreCajaTesoreria, IdCierreTurno, Fecha from dbo.ValesClientes a, dbo.clientes b WHERE a.IdCliente=b.IdCliente AND Convert(date, Fecha)>='".$ultimoCierre['FechaCierre']->format('Y-m-d')."' AND Convert(date, Fecha)<'$fechaHasta' AND (IdCierreCajaTesoreria IS NULL OR IdCierreCajaTesoreria>$ultimoCierreMes) AND  Numero NOT IN (SELECT Numero FROM dbo.CierresDetalleVales WHERE Tipo=0 AND Fecha>='".$ultimoCierre['FechaCierre']->format('Y-m-d')."') $teresa UNION 
 
-select -1 as signo, b.Empleado as nombre, Prefijo, Numero, Importe, IdCierreCajaTesoreria, IdCierreTurno, Fecha from dbo.ValesEmpleados a, dbo.Empleados b WHERE a.IdEmpleado=b.IdEmpleado AND Convert(date, Fecha)>='".$ultimoCierre['FechaCierre']->format('Y-m-d')."' AND (IdCierreCajaTesoreria IS NULL OR IdCierreCajaTesoreria>$ultimoCierreMes) UNION 
+select -1 as signo, b.Empleado as nombre, Prefijo, Numero, Importe, IdCierreCajaTesoreria, IdCierreTurno, Fecha from dbo.ValesEmpleados a, dbo.Empleados b WHERE a.IdEmpleado=b.IdEmpleado AND Convert(date, Fecha)>='".$ultimoCierre['FechaCierre']->format('Y-m-d')."' AND Convert(date, Fecha)<'$fechaHasta' AND (IdCierreCajaTesoreria IS NULL OR IdCierreCajaTesoreria>$ultimoCierreMes) UNION 
 
 select 1 as signo, concat('RECIBO ',b.Empleado) as nombre, Prefijo, Numero, Importe, IdCierreCajaTesoreria, 0 as IdCierreTurno, Fecha from dbo.RecibosValesEmpleados a, dbo.Empleados b WHERE a.IdEmpleado=b.IdEmpleado AND Convert(date, Fecha)='".$ultimoCierre['FechaCierre']->format('Y-m-d')."' AND (IdCierreCajaTesoreria IS NULL OR IdCierreCajaTesoreria>$ultimoCierreMes) UNION 
 
 select 1 as signo, concat('RECIBO ',b.RazonSocial) as nombre, Prefijo, Numero, Importe, IdCierreCajaTesoreria, 0 as IdCierreTurno, Fecha from dbo.RecibosValesClientes a, dbo.Clientes b WHERE a.IdCliente=b.IdCliente AND Convert(date, Fecha)='".$ultimoCierre['FechaCierre']->format('Y-m-d')."' AND (IdCierreCajaTesoreria IS NULL OR IdCierreCajaTesoreria>$ultimoCierreMes) order by fecha;";
 
+// //echo $sql['vales'] ;
 ChromePhp::log('Vales '.$sql['vales']);
 $stmt = odbc_exec2( $mssql, $sql['vales'], __LINE__, __FILE__);
 while($fila = sqlsrv_fetch_array(($stmt))){
@@ -136,6 +144,11 @@ while($fila = sqlsrv_fetch_array(($stmt))){
   $jsonCierre[] = array('t' => 'Efectivo', 'clase' => "$class", 'txt' => "$texto $fila[Prefijo]-$fila[Numero], $fila[nombre], ".$fila['Fecha']->format('d/m/Y H:i'), 'importe' => peso($fila['Importe']));
   $efectivo += $fila['signo']*$fila['Importe'];
 }
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////
 // Efectivo declarado en turnos

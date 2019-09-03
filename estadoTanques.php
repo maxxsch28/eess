@@ -10,7 +10,7 @@ $titulo="Estado tanques | YPF";
 
 
 $sqlUltimoUpdate = $mysqli->query("SELECT fecha, tipo FROM ultimaactualizacion order by id desc limit 1");
-ChromePhp::log($sqlUltimoUpdate);
+//ChromePhp::log($sqlUltimoUpdate);
 $ultimoUpdate = $sqlUltimoUpdate->fetch_array();
 $datetime1 = date_create($ultimoUpdate[0]);
 $datetime2 = new DateTime("now");
@@ -161,7 +161,6 @@ function muestraDetallesTanquesTelemedidos(){
 			</tbody>	
 		</table>";
 	echo trim($detalleTanques);
-    //echo microtime()-$a;
 }
 
 function muestraDetalleTanques(){
@@ -1036,7 +1035,7 @@ function muestraProyeccion(){
                     <h3 class="panel-title">Detalle tanques</h3>
                 </div>
                 <div class="panel-body gris" id="panelDetalle">
-                    <?php $b=microtime();muestraDetallesTanquesTelemedidos();?>
+                    <?php muestraDetallesTanquesTelemedidos();?>
                     <?php //muestraDetalleTanques()?>
                 </div>
             </div></div>
@@ -1069,7 +1068,7 @@ function muestraProyeccion(){
                     <h3 class="panel-title">Recibido mensual</h3>
                 </div>
                 <div class="panel-body gris">
-                    <?php $a=microtime();recepcionMensual();?>
+                    <?php recepcionMensual();?>
                 </div>
             </div>
             </div><?php } ?>
@@ -1093,8 +1092,8 @@ function muestraProyeccion(){
         <?php if(!$_SESSION['esMovil']){?>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         </div><!-- /.modal-dialog -->
-        <?php } ?>
-        <?php include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
+        <?php } 
+        include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
     </div> <!-- /container -->
 	<?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
 	<script src="js/jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>

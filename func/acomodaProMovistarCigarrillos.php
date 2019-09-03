@@ -2,14 +2,14 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$fechaDesde = '2018-07-01';
+$fechaDesde = '2019-06-01';
 
 // acomodar asientos que son de movistar carga de documentos para que la cuenta sea la de movistar.
 // idem repsol
 // idem peysse y tabacalera
 
 // acomodar Movistar para que si es un gasto de administracion no lo cambie.
-
+$sql = array();
 $s['cigarrillos']=array(44, 2, "252, 259, 502, 1601", "48");
 $s['TarjetasCelulares']=array(39, 2, "348");
 $s['Movistar']=array(8, 3, "323, 229, 392, 95, 362", "3, 20");
@@ -52,7 +52,7 @@ $sql['RepuestosYVariosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaConta
 
 $sql['GastosVariosComercializacionAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=607 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['GastosVariosComercializacion'][2]}))";
 
-$sql['ServiciosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=603 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s[Servicios][2]}))";
+$sql['ServiciosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=603 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['Servicios'][2]}))";
 
 $sql['PublicidadAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=623 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['Publicidad'][2]}))";
 

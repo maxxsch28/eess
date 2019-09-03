@@ -1,4 +1,4 @@
-<?php
+// <?php
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
@@ -99,7 +99,7 @@ while($rowTurnos0 = sqlsrv_fetch_array($stmt0)){
 if($cierresTurnos==''&&$andFecha==''&&$soloabiertos=='')$top=' TOP 10 ';else $top='';
 
 
-$sqlTurnos = "SELECT {$top}dbo.CierresTurno.IdCierreTurno, Fecha, IdCaja, IdEmpleado2, IdEmpleado3, IdEmpleado4, EmitioFacturaComplemento, dbo.CierresTurno.IdCierreCajaTesoreria, dbo.Table_1.idCierreCajaTesoreria, dbo.Table_1.lotesRevisados FROM dbo.CierresTurno, dbo.Table_1 WHERE dbo.CierresTurno.IdCierreTurno=dbo.Table_1.idCierreTurno{$cierresTurnos}{$soloabiertos}{$andFecha}{$factdif}{$idCaja}{$soloNoRevisados} ORDER BY dbo.CierresTurno.IdCierreTurno DESC;";
+$sqlTurnos = "SELECT {$top}dbo.CierresTurno.IdCierreTurno, Fecha, IdCaja, IdEmpleado2, IdEmpleado3, IdEmpleado4, IdEmpleado1, EmitioFacturaComplemento, dbo.CierresTurno.IdCierreCajaTesoreria, dbo.Table_1.idCierreCajaTesoreria, dbo.Table_1.lotesRevisados FROM dbo.CierresTurno, dbo.Table_1 WHERE dbo.CierresTurno.IdCierreTurno=dbo.Table_1.idCierreTurno{$cierresTurnos}{$soloabiertos}{$andFecha}{$factdif}{$idCaja}{$soloNoRevisados} ORDER BY dbo.CierresTurno.IdCierreTurno DESC;";
 
 ChromePhp::log($sqlTurnos);
 
@@ -116,9 +116,12 @@ while($rowTurnos = sqlsrv_fetch_array($stmt)){
   $debe=$haber=0;
   
   $empleados = '';
-  $empleados .= (isset($rowTurnos['IdEmpleado2']))?'+'.$_SESSION['empleados'][$rowTurnos['IdEmpleado2']]:'';
-  $empleados .= (isset($rowTurnos['IdEmpleado3']))?' +'.$_SESSION['empleados'][$rowTurnos['IdEmpleado3']]:'';
-  $empleados .= (isset($rowTurnos['IdEmpleado4']))?' +'.$_SESSION['empleados'][$rowTurnos['IdEmpleado4']]:'';
+  $empleados .= (isset($rowTurnos['IdEmpleado1']))?', '.apellidoEmpleado($_SESSION['empleados'][$rowTurnos['IdEmpleado1']]):'';
+  $empleados .= (isset($rowTurnos['IdEmpleado2']))?', '.apellidoEmpleado($_SESSION['empleados'][$rowTurnos['IdEmpleado2']]):'';
+  $empleados .= (isset($rowTurnos['IdEmpleado3']))?', '.apellidoEmpleado($_SESSION['empleados'][$rowTurnos['IdEmpleado3']]):'';
+  $empleados .= (isset($rowTurnos['IdEmpleado4']))?', '.apellidoEmpleado($_SESSION['empleados'][$rowTurnos['IdEmpleado4']]):'';
+  
+  $empleados = substr($empleados,2);
   
   if($_POST['buscador']=='tarjetas'){
     $lotesRevisados = "<td class='lotesRevisados'><span class='label label-".(($rowTurnos['lotesRevisados']==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></td>";

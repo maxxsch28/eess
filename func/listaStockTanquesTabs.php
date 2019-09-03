@@ -4,6 +4,20 @@
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // print_r($_POST);
  // $array=array();
+ 
+ 
+$tanques = array(1=>2068, 2=>2069, 3=>2078, 4=>2068, 5=>2076, 6=>2069);
+$articulo = array(2068=>"Infinia D.",2069=>"Ultra",2076=>"Infinia",2078=>"Super");
+ $arrayPicos = array('ed1'=>'1a - Infinia D.', 'ns1'=>'1b - Super', 'ni1'=>'1c -Infinia', 'ed2'=>'2a - Infinia D.', 'ns2'=>'2b - Super', 'ni2'=>'2c -Infinia','ud3'=>'3 - Ultra', 'ed4'=>'4 - Infinia D.', 'ud5'=>'5 - Ultra', 'ud6'=>'6 - Ultra', 'ed7'=>'7 - Infinia D.');
+$arrayPicosNumeros = array(1 => 'ed1', 2=>'ns1', 3=> 'ni1', 4=>'ed2', 5=>'ns2', 6=>'ni2',7=>'ud3', 8=>'ed4', 9=>'ud5', 10=>'ud6', 11=>'ed7');
+$arrayPicosTanques = array('ed1'=>4, 'ns1'=>3, 'ni1'=>5, 'ed2'=>4, 'ns2'=>3, 'ni2'=>5,'ud3'=>2, 'ed4'=>1, 'ud5'=>6, 'ud6'=>6, 'ed7'=>1);
+$arrayClasses = array('ed1'=>'success', 'ns1'=>'info', 'ni1'=>'info', 'ed2'=>'success', 'ns2'=>'info', 'ni2'=>'info','ud3'=>'warning', 'ed4'=>'success', 'ud5'=>'warning', 'ud6'=>'warning', 'ed7'=>'success');
+// para el resto
+$surtidores = array('ns1' => 1, 'ns2' => 1, 'ed1' => 1, 'ed2' => 1, 'np1' => 1, 'np2' => 1, 'ud1' => 2, 'ed3' => 3, 'ed4' => 4, 'ud5' => 4, 'ud6' => 4);
+$productoPorSurtidor = array('ns1' => 'Nafta Super', 'ns2' => 'Nafta Super', 'ed1' => 'Infinia D.', 'ed2' => 'Infinia D.', 'np1' => 'Infinia', 'np2' => 'Infinia', 'ud1' => 'Ultra Diesel', 'ed3' => 'Infinia D.', 'ed4' => 'Infinia D.', 'ud5' => 'Ultra Diesel', 'ud6' => 'Ultra Diesel');
+$tanquePorSurtidor = array('ns1' => 3, 'ns2' => 3, 'ed1' => 4, 'ed2' => 4, 'np1' => 5, 'np2' => 5, 'ud1' => 2, 'ed3' => 1, 'ed4' => 4, 'ud5' => 6, 'ud6' => 6);
+
+ 
 if(!isset($_POST['producto'])&&!isset($_POST['resumen'])){
   if(isset($_POST['mes'])&&is_numeric($_POST['mes'])&&strlen($_POST['mes'])==6){
     $mes=substr($_POST['mes'],4,2);

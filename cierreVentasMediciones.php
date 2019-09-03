@@ -24,7 +24,8 @@ if(strpos($file, 'DESCARGA EN TANQUE')){
 }
 //var_dump($file2);
 $lecturaTanque = array();
-foreach($tanques as $idTanque => $idArticulo){
+$tanque = tanques();
+foreach($tanque as $idTanque => $detalleTanque){
   $lecturaTanque[$idTanque] = explode(',', $file2[$idTanque]);
   echo "Tanque $idTanque, {$lecturaTanque[$idTanque][8]} lts<br>";
   echo "Nivel tq $idTanque, {$lecturaTanque[$idTanque][5]} mm<br>";
@@ -83,15 +84,15 @@ foreach($turnos as $idcierreturno){
         $mecanicos2[$idcierreturno][$rowAforadores2[0]]=$rowAforadores2[2];
     }
 }
-
+//TODO desmarcar todo esto para dejarlo automatized
 // para stock
 // obtengo los aforadores según CEM del último registro de mysqli
-$sqlUltimoRegistro = "SELECT * FROM cierres_calden_aforadores WHERE idCierreturno=$turnos[1]";
+$sqlUltimoRegistro = "SELECT * FROM cierres_calden_aforadores2 WHERE idCierreturno=$turnos[1]";
 //echo "$sqlUltimoRegistro<br>";
 $result = $mysqli->query($sqlUltimoRegistro);
 $ultimosAforadores = $result->fetch_assoc();
 //print_r($ultimosAforadores);
-$sqlGrabaAforadoresDiarios = "INSERT INTO cierres_calden_aforadores (idCierreTurno, fechaCarga, fechaCierre, ed1, ns1, ni1, ed2, ns2, ni2, ud3, ed4, ud5, ud6, ed7) values ($turnos[0], now(), '".date_format($fechaCierre, 'Y-m-d 22:00:00')."'";
+$sqlGrabaAforadoresDiarios = "INSERT INTO cierres_calden_aforadores2 (idCierreTurno, fechaCarga, fechaCierre, 01a_14, 	01b_15 	,01c_16 	,01d_17 	,02a_18 	,02b_19 	,02c_20 	,02d_21 	,03a_22 	,03b_23 	,03c_24 	,03d_25 	,04a_26 	,04b_27 	,04c_28 	,04d_29 	,05_38 	,06_39 	,07_40 	,08_41 ) values ($turnos[0], now(), '".date_format($fechaCierre, 'Y-m-d 22:00:00')."'";
 foreach($electronicos2[$turnos[1]] as $pico => $aforador) {
   $sqlGrabaAforadoresDiarios .=", '".($ultimosAforadores[$arrayPicosNumeros[$pico]]+($electronicos2[$turnos[0]][$pico]-$aforador))."'";
   // calculé cuanto fue la venta por diferencia de aforadores.
@@ -135,7 +136,7 @@ foreach($articulo as $key=>$producto){
   }
 }
 $sqlGrabaYER = substr($sqlGrabaYER,0,-2).");";
-ChromePhp::log($sqlGrabaYER);
+//ChromePhp::log($sqlGrabaYER);
 $result = $mysqli->query($sqlGrabaYER);
-ChromePhp::log($arrayYER);
+//ChromePhp::log($arrayYER);
 ?>

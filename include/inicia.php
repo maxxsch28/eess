@@ -2,7 +2,7 @@
 // inicia.php
 setlocale(LC_NUMERIC, 'en_US');
 $dbg=1;
-$controlTiempo=microtime();
+$controlTiempo=microtime(true);
 //Database Information
 $dbtype = "mysqli"; 
 $db_host = "localhost";
@@ -13,6 +13,7 @@ $db_name2 = "transporte";
 $db_name3 = 'cuentaypf';
 $db_port = "3306";
 $db_table_prefix = "users_";
+$clienteYER = 1283;
 
 $tercerEmpleado = 24; // federico
 $CFG = new stdClass(); 
@@ -27,7 +28,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/classes/mysqli.php");
 //Construct a db instance
 $db = new $sql_db();
 if(is_array($db->sql_connect($db_host, $db_user,$db_pass,$db_name, $db_port, false, false))){
-  die("No se puede conectar a la base de datos");
+  die("MYSQL No se puede conectar a la base de datos");
 }
 	
 require_once($_SERVER['DOCUMENT_ROOT']."/include/es.php");
@@ -99,6 +100,11 @@ $connectionOptions3 = array(
     "Uid" => "sa",
     "PWD" => "B8000ftq"
 );
+$connectionOptions4 = array(
+    "Database" => "coop",
+    "Uid" => "sa",
+    "PWD" => "B8000ftq"
+);
 //Establishes the connection
 
 
@@ -137,15 +143,62 @@ if( $mssql3 === false ){
   echo "MSSQL3 - No pudo conectarse:</br>";
   die( print_r( sqlsrv_error().' - '.sqlsrv_errormsg(), true));
 }
+$mssql4 = sqlsrv_connect($serverName, $connectionOptions4);
+if( $mssql4 === false ){
+  echo "MSSQL4 - No pudo conectarse:</br>";
+  die( print_r( sqlsrv_error().' - '.sqlsrv_errormsg(), true));
+}
 
 $date = array("Sunday"=>"Domingo", "Monday"=>"Lunes", "Tuesday"=>"Martes", "Wednesday"=>"Miércoles","Thursday"=>"Jueves", "Friday"=>"Viernes", "Saturday"=>"Sábado");
+$weekday = array("Sunday"=>"Dom", "Monday"=>"Lun", "Tuesday"=>"Mar", "Wednesday"=>"Mie","Thursday"=>"Jue", "Friday"=>"Vie", "Saturday"=>"Sab");
 $date2 = array(7=>"Domingo",1=>"Lunes",2=>"Martes",3=>"Miércoles",4=>"Jueves",5=>"Viernes",6=>"Sábado");
 $mes = array(1=>"Enero",2=>"Febrero",3=>"Marzo",4=>"Abril",5=>"Mayo",6=>"Junio",7=>"Julio",8=>"Agosto",9=>"Septiembre",10=>"Octubre",11=>"Noviembre",12=>"Diciembre");
 // codigo Calden para los combustibles
-$articulo = array(2068=>"Infinia D.",2069=>"Ultra",2076=>"Infinia",2078=>"Super");
-$classArticulo = array(2068=>"success",2069=>"warning",2076=>"info",2078=>"info2");
 
-$tanques = array(1=>2068, 2=>2069, 3=>2078, 4=>2068, 5=>2076, 6=>2069);
+
+
+$articulo = array();
+if(!isset($_POST['articulo'])){
+  $sql = "SELECT a.IdArticulo, a.Descripcion, ColorARGB, b.IdFamiliaArticulo, c.Descripcion as familia, CodigoControladorSurtidores, PrecioPublico FROM dbo.articulos a, dbo.gruposarticulos b, dbo.FamiliasArticulos c, dbo.CodigosArticulosPorControladorSurtidor d WHERE a.IdGrupoArticulo=b.IdGrupoArticulo AND b.Combustible=1 AND b.IdFamiliaArticulo=c.IdFamiliaArticulo AND d.IdArticulo=a.IdArticulo ORDER BY CodigoControladorSurtidores;";
+  $stmt = odbc_exec2($mssql, $sql);
+  while($fila = sqlsrv_fetch_array($stmt)){
+    $articulo[$fila['IdArticulo']]['idArticulo']=$fila['IdArticulo'];
+    $articulo[$fila['IdArticulo']]['descripcion']=ucwords(strtolower($fila['Descripcion']));
+    $articulo[$fila['IdArticulo']]['Color']=$fila['ColorARGB'];
+    $articulo[$fila['IdArticulo']]['familia']=$fila['familia'];
+    $articulo[$fila['IdArticulo']]['CodigoControladorSurtidores']=$fila['CodigoControladorSurtidores'];
+    $articulo[$fila['IdArticulo']]['precio']=$fila['PrecioPublico'];
+    if(!isset($premium[$fila['familia']])){
+      $premium[$fila['familia']] = $fila['familia'];
+      $premiumArticulo[$fila['familia']] = $fila['IdArticulo'];
+      $precioPremium[$fila['familia']] = $fila['PrecioPublico'];
+      $articulo[$fila['IdArticulo']]['premium']=true;
+      
+    } else if($premium[$fila['familia']]==$fila['familia']&&$precioPremium[$fila['familia']]<$fila['PrecioPublico']){
+      $articulo[$premiumArticulo[$fila['familia']]]['premium']=false;
+      $familia[$fila['familia']][] = $fila['IdArticulo'];
+      $precioPremium[$fila['familia']] = $fila['PrecioPublico'];
+      $articulo[$fila['IdArticulo']]['premium']=true;
+    }
+  }
+  $_SESSION['articulo']=$articulo;
+} else {
+  $articulo = $_SESSION['articulo'];
+}
+
+/*
+$sqlCombustibles = "select IdArticulo, a.Descripcion, ColorARGB, b.IdFamiliaArticulo, c.Descripcion as familia from dbo.articulos a, dbo.gruposarticulos b, dbo.FamiliasArticulos c where a.IdGrupoArticulo=b.IdGrupoArticulo and b.Combustible=1 and b.IdFamiliaArticulo=c.IdFamiliaArticulo;";
+$stmt = odbc_exec2($mssql, $sqlCombustibles);
+while($fila = sqlsrv_fetch_array($stmt)){
+  $articulo[$fila['IdArticulo']]=$fila['Descripcion'];
+  
+  //$this->articulo[$articulo['IdArticulo']]['descripcion']=$articulo['Descripcion'];
+  //$this->articulo[$articulo['IdArticulo']]['Color']=$articulo['ColorARGB'];
+  //$this->articulo[$articulo['IdArticulo']]['familia']=$articulo['familia'];
+}*/
+
+// No se como pasar esto a algo mas automático. Ahora queda Hardcodeado
+$classArticulo = array(2068=>"success",2069=>"warning",2076=>"info",2078=>"info2");
 
 $toleranciaTanques = 50; // cuantos litros mas menos están tolerados para el control de stock.
 
@@ -154,6 +207,8 @@ $toleranciaTanques = 50; // cuantos litros mas menos están tolerados para el co
 $arrayPicos = array('ed1'=>'1a - Infinia D.', 'ns1'=>'1b - Super', 'ni1'=>'1c -Infinia', 'ed2'=>'2a - Infinia D.', 'ns2'=>'2b - Super', 'ni2'=>'2c -Infinia','ud3'=>'3 - Ultra', 'ed4'=>'4 - Infinia D.', 'ud5'=>'5 - Ultra', 'ud6'=>'6 - Ultra', 'ed7'=>'7 - Infinia D.');
 $arrayPicosNumeros = array(1 => 'ed1', 2=>'ns1', 3=> 'ni1', 4=>'ed2', 5=>'ns2', 6=>'ni2',7=>'ud3', 8=>'ed4', 9=>'ud5', 10=>'ud6', 11=>'ed7');
 $arrayPicosTanques = array('ed1'=>4, 'ns1'=>3, 'ni1'=>5, 'ed2'=>4, 'ns2'=>3, 'ni2'=>5,'ud3'=>2, 'ed4'=>1, 'ud5'=>6, 'ud6'=>6, 'ed7'=>1);
+
+// TODO eliminar esto
 $arrayClasses = array('ed1'=>'success', 'ns1'=>'info', 'ni1'=>'info', 'ed2'=>'success', 'ns2'=>'info', 'ni2'=>'info','ud3'=>'warning', 'ed4'=>'success', 'ud5'=>'warning', 'ud6'=>'warning', 'ed7'=>'success');
 
 // para el resto
@@ -238,7 +293,7 @@ if(!isset($_SESSION['transporte_tipos_comisiones'])){
         $_SESSION['transporte_tipos_comisiones'][$rowVentas['codigo']]=$rowVentas['nombre'];
         if (preg_match("/(([0-9]+(.)+[0-9]+%)|([0-9]+%))/", $rowVentas['nombre'], $matches)) {
             $percentage = explode('%',$matches[0]);
-            $_SESSION['transporte_alicuotas_comisiones'][$rowVentas['codigo']] = $percentage[0];
+            $_SESSION['transporte_alicuotas_comisiones'][$rowVentas['codigo']] = trim($percentage[0]);
         }
     }
 }
@@ -256,7 +311,7 @@ $langauge = "es";
 
 //Generic website variables
 $websiteName = "Cooperativa de Transporte";
-$websiteUrl = "http://cooptransporte.ddns,net/"; //including trailing slash
+$websiteUrl = "http://cooptransporte.ddns.net/"; //including trailing slash
 
 //Do you wish UserPie to send out emails for confirmation of registration?
 //We recommend this be set to true to prevent spam bots.
@@ -364,7 +419,12 @@ function fecha($fecha, $res='dmy', $tipo='ymd'){
         $tmp = $fecha->format($res);
         break;
       case "dmyH":
-        $tmp = $fecha->format("d/m/Y H:i:s");
+        if($fecha->format("H:i:s")<>'00:00:00')
+          $tmp = $fecha->format("d/m/y H:i:s");
+        else {
+          $tmp = $fecha->format("d/m/y");  
+        }
+        
         break;
       case "dmy":
       case "dmY":
@@ -440,4 +500,66 @@ if (!function_exists('stats_standard_deviation')) {
 function peso($valor){
   return number_format($valor, 2, ',', '.');
 }
+
+function apellidoEmpleado($empleado){
+  // recibe nombre completo empleado y devuelve solo apellido
+  $partes = explode(" ", $empleado);
+  $apellido = $partes[0];
+  if(strlen($partes[0])<3){
+    $apellido = $apellido.' '.$partes[1];
+  }
+  return $apellido;
+}
+
+/* FUNCIONES AUTOMATICAS DE TANQUES Y PRODUCTOS */
+function tanques($desde='', $hasta=''){
+  global $mssql;
+  $tanque = array();
+  // obtengo datos de tanques de CaldenOil
+  $sql = "SELECT IdTanque, IdArticulo, Capacidad, AdvertirSiNivelCombustibleMenorALitros, SolicitarCombustibleCuandoNivelMenorALitros, 0 as LastUpdated, 0 as Litros, 0 as Agua FROM dbo.tanques  UNION SELECT tt.IdTanque, 0, 0, 0, 0, tt.LastUpdated, tt.Litros, tt.NivelAgua FROM dbo.tanquesmediciones tt INNER JOIN (SELECT IdTanque, MAX(lastupdated) AS MaxDateTime FROM dbo.TanquesMediciones GROUP BY IdTanque) groupedtt ON tt.IdTanque = groupedtt.IdTanque AND tt.LastUpdated = groupedtt.MaxDateTime ORDER BY IdTanque;";
+
+  $stmt = odbc_exec2($mssql, $sql, __FILE__, __LINE__);
+  while($fila = sqlsrv_fetch_array($stmt)){
+    if($fila['IdArticulo']>0){
+      $tanque[$fila['IdTanque']]['idArticulo']=$fila['IdArticulo'];
+      $tanque[$fila['IdTanque']]['capacidad']=$fila['Capacidad'];
+      $tanque[$fila['IdTanque']]['nivelSuspender']=$fila['AdvertirSiNivelCombustibleMenorALitros'];
+      $tanque[$fila['IdTanque']]['nivelPedir']=$fila['SolicitarCombustibleCuandoNivelMenorALitros'];
+    } else {
+      $tanque[$fila['IdTanque']]['litros']=$fila['Litros'];
+      $tanque[$fila['IdTanque']]['agua']=$fila['Agua'];
+      $tanque[$fila['IdTanque']]['ultimamedicion']=$fila['LastUpdated'];
+    }
+    if(isset($tanque[$fila['IdTanque']]['litros'])&&isset($tanque[$fila['IdTanque']]['capacidad'])){
+      $tanque[$fila['IdTanque']]['disponible'] = $tanque[$fila['IdTanque']]['capacidad']-$tanque[$fila['IdTanque']]['litros'];
+      $tanque[$fila['IdTanque']]['ocupacion'] = $tanque[$fila['IdTanque']]['litros']/$tanque[$fila['IdTanque']]['capacidad'];
+    }
+  }
+  return $tanque;
+}
+
+function picos($desde='', $hasta=''){
+  global $mssql, $articulo;
+  $pico = array();
+  // obtengo datos de tanques de CaldenOil
+  // si desde y hacia estan vacíos no da información de litros despachados
+  $sqlTanques = "SELECT IdManguera, IdArticulo, a.IdSurtidor, IdTanque, 0 as litros, 0 as importe, 0 as q FROM dbo.mangueras a, dbo.surtidores b WHERE a.IdSurtidor=b.IdSurtidor AND b.IdControladorSurtidores IS NOT NULL UNION select IdManguera, IdArticulo,0,0, SUM(Cantidad) as cantidad, SUM(importe) as importe, COUNT(Cantidad) as q FROM dbo.Despachos where fecha>='$desde' AND fecha<'$hasta' group by IdManguera, IdArticulo ORDER BY IdManguera ASC;";
+  $stmt = odbc_exec2($mssql, $sqlTanques);
+  while($fila = sqlsrv_fetch_array($stmt)){
+    if($fila['IdTanque']>0){
+      $pico[$fila['IdManguera']]['idArticulo']=$fila['IdArticulo'];
+      $pico[$fila['IdManguera']]['surtidor']=$fila['IdSurtidor'];
+      $pico[$fila['IdManguera']]['tanque']=$fila['IdTanque'];
+    } else {
+      $pico[$fila['IdManguera']]['litrosDiario']=$fila['litros'];
+      $pico[$fila['IdManguera']]['importeDiario']=$fila['importe'];
+      $pico[$fila['IdManguera']]['qDespachos']=$fila['q'];
+      // en el mismo momento que saco información por picos ya agrupo por tanques
+      $articulo[$fila['IdArticulo']]['litrosDiario'] += $fila['litros'];
+      $articulo[$fila['IdArticulo']]['qDespachos'] += $fila['q'];
+    }
+  }
+  return $pico;
+}
+
 ?>

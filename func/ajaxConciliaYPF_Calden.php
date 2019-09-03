@@ -10,16 +10,22 @@ $andFecha=(isset($_REQUEST['rangoInicio']))?" AND femision>='$_REQUEST[rangoInic
 
 $andConciliado = (isset($_POST['conciliado']))?" AND conciliado=1":"";
 if(!isset($_POST['anio'])){
-  $inicio = '2016-01-01';
-  $fin = "2017-12-31";
+  $inicio = '2018-12-01';
+  $fin = "2019-12-31";
 } else {
   $inicio = $_POST['anio'].'-01-01';
   $fin = $_POST['anio']."-12-31";
 }
 
-$sqlCalden = "select m.IdMovimientoPro as id, Fecha, IdTipoMovimientoProveedor as Tipo, PuntoVenta as pv, Numero, Total, Total as PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado from dbo.movimientospro as m where idproveedor IN (4, 422) and m.fecha>='$inicio' and m.fecha<='$fin' UNION select IdOrdenPago as id, Fecha, 'OP' as Tipo, Prefijo as pv, Numero, TotalAPagar as Total, PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado from dbo.OrdenesPago where idproveedor IN (4, 422) and fecha>='$inicio' and fecha<='$fin' UNION select IdChequeTercero as id, o.Fecha, 'Cheque' as Tipo, IdBanco as pv, o.Numero, Importe as Total, Importe as PagoEfectivo, ReemplazaRechazado, Rechazado from dbo.ChequesTerceros as c, dbo.OrdenesPago as o WHERE o.idproveedor IN (4, 422) AND c.IdOrdenPago=o.IdOrdenPago AND o.Fecha>='$inicio' AND o.Fecha<='$fin' UNION select IdTransferenciaBancaria as id, t.Fecha, 'Banco' as Tipo, IdCuentaBancaria as pv, o.Numero, Importe as Total, Importe as PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado from dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor IN (4, 422) AND o.IdOrdenPago=t.IdOrdenPago AND o.Fecha>='$inicio' AND o.Fecha<='$fin' ORDER BY Fecha ASC;";
+$sqlCalden = "select m.IdMovimientoPro as id, Fecha, IdTipoMovimientoProveedor as Tipo, PuntoVenta as pv, Numero, Total, Total as PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado FROM dbo.movimientospro as m where idproveedor IN (4, 422) and m.fecha>='$inicio' and m.fecha<='$fin' UNION 
 
-ChromePhp::log$sqlCalden);
+select IdOrdenPago as id, Fecha, 'OP' as Tipo, Prefijo as pv, Numero, TotalAPagar as Total, PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado FROM dbo.OrdenesPago where idproveedor IN (4, 422) and fecha>='$inicio' and fecha<='$fin' UNION 
+
+select IdChequeTercero as id, o.Fecha, 'Cheque' as Tipo, IdBanco as pv, o.Numero, Importe as Total, Importe as PagoEfectivo, ReemplazaRechazado, Rechazado FROM dbo.ChequesTerceros as c, dbo.OrdenesPago as o WHERE o.idproveedor IN (4, 422) AND c.IdOrdenPago=o.IdOrdenPago AND o.Fecha>='$inicio' AND o.Fecha<='$fin' UNION 
+
+select IdTransferenciaBancaria as id, t.Fecha, 'Banco' as Tipo, IdCuentaBancaria as pv, o.Numero, Importe as Total, Importe as PagoEfectivo, 0 as ReemplazaRechazado, 0 as Rechazado FROM dbo.TransferenciasBancarias as t, dbo.OrdenesPago as o where o.IdProveedor IN (4, 422) AND o.IdOrdenPago=t.IdOrdenPago AND o.Fecha>='$inicio' AND o.Fecha<='$fin' ORDER BY Fecha ASC;";
+
+ChromePhp::log($sqlCalden);
 
 $stmt = odbc_exec2( $mssql, $sqlCalden, __LINE__, __FILE__);
 
@@ -69,7 +75,7 @@ while($rowCalden = sqlsrv_fetch_array($stmt)){
     $result3 = $mysqli3->query($sqlConciliacion);
     $rowConciliado = $result3->fetch_assoc();
     //ChromePhp::log$rowConciliado);
-    $cuantos++;
+    @$cuantos++;
     if($rowConciliado['idConciliado']==0){
       // aun no conciliado
       $classConciliado='noConciliado2';

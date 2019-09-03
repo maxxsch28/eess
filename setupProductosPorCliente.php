@@ -48,21 +48,35 @@ $titulo="Detalle productos por Fleteros";
         <form class='form-horizontal'>
           <input type="hidden" name='muestraSoloExternos' value='0' id='muestraSoloExternos'/>
           <input type="hidden" name='muestraComprimido' value='0' id='muestraComprimido'/>
+          <input type="hidden" name='muestraSoloProducto' value='0' id='muestraSoloProducto'/>
           <div class="form-group">
             <label for='periodo' class="control-label">Detalle de: <select name='periodo' id='periodo' class=''>
             <?php 
-            for ($abc = 14; $abc >= 0; $abc--) {
+            for ($abc = 30; $abc >= 0; $abc--) {
               $mes = date("F Y", mktime(0, 0, 0, date("m")-$abc, 1, date("Y")));
               $valorMes = date("Y-m", mktime(0, 0, 0, date("m")-$abc, 1, date("Y")));
               if(mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y"))>=mktime(0,0,0,7,1,2015))
                 echo "<option value='$valorMes' ".(($abc==1)?' selected="selected"':'').">$mes</option>";
-            }?>
+            }
+            for ($abc = 3; $abc >= 0; $abc--) {
+              echo "<option value='".date("Y", strtotime("-$abc year"))."' >".date("Y", strtotime("-$abc year"))."</option>";
+            }
+            ?>
             </select></label>
-            <div style='float:right'><div id='comprimir' class='btn btn-success no2'>Ver comprimido</div>
+            <div style='float:right'>
+            <input type='checkbox' name='muestraPagos' id='muestraPagos' /> Muestra pagos
+            <div id='comprimir' class='btn btn-success no2'>Ver comprimido</div>
             <select name='filtroTipoViaje' id='filtroTipoViaje' class='btn btn-danger'>
               <option value='0' selected="selected">Todos los clientes</option>
               <option value='1' >Solo Fleteros</option>
               <option value='2' >Solo Clientes</option>
+            </select>
+            <select name='filtroProducto' id='filtroProducto' class='btn btn-danger'>
+              <option value='0' selected="selected">Todos los productos</option>
+              <?php foreach($_SESSION['productosTransporte'] as $codigo => $producto){
+                echo "<option value='$codigo' >$codigo - ".ucwords(strtolower($producto))."</option>";
+              
+              }?>
             </select>
             </div>
           </div>
@@ -71,11 +85,13 @@ $titulo="Detalle productos por Fleteros";
           <thead><tr><th class='nombre no2' width='30%'>Producto / Socio</th>
           <th width='5%'>Fecha</th>
           <th width='15%'>Comprobante</th>
-          <th width='10%'>Cantidad</th>
+          <th width='5%'>Cantidad</th>
           <th width='10%'>Precio</th>
           <th width='10%'>Neto Gravado</th>
           <th width='10%'>IVA</th>
           <th >Perc IIBB</th>
+          <th >Total</th>
+          <th>Pago</th>
           </tr></thead>
           <tbody></tbody>
         </table>
@@ -86,19 +102,23 @@ $titulo="Detalle productos por Fleteros";
   <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
   $(document).ready(function() {
-    $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-    $.post('func/setupProductosPorClientes.php', { mes: $('#periodo').val()}, function(data) {
-      $('#productosFleteros tbody').html(data);
-    });
-    $('#periodo').change(function(){
-      $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-        $.post('func/setupProductosPorClientes.php', { mes: $(this).val(), soloExternos: $('#filtroTipoViaje').val() }, function(data) {
-          $('#productosFleteros tbody').html(data);
-          if($('#muestraComprimido').val() == 1){
-            $('#comprimir').click();
-          }
-        });
+    actualiza();
+    
+    function actualiza(){
+      $('#productosFleteros tbody').html("<tr><td colspan='10'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
+      $.post('func/setupProductosPorClientes.php', { mes: $('#periodo').val(), soloExternos: $('#filtroTipoViaje').val(), soloProducto: $('#filtroProducto').val(), muestraPagos: $('#muestraPagos').prop("checked") }, function(data) {
+        $('#productosFleteros tbody').html(data);
+        if($('#muestraComprimido').val() == 1){
+          $('#comprimir').click();
+        }
       });
+    }
+    
+    
+    $('#periodo').change(function(){
+      actualiza();
+    });
+    
     $('#comprimir').click(function(){
       if($('.viaje').is(":visible") === true ) {
         $('#productosFleteros').removeClass('table-striped');
@@ -114,15 +134,30 @@ $titulo="Detalle productos por Fleteros";
       //$('.viaje').toggle();
     });
     $('#filtroTipoViaje').change(function(){
-      $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-      $.post('func/setupProductosPorClientes.php', { mes: $('#periodo').val(), soloExternos: $(this).val() }, function(data) {
-        $('#productosFleteros tbody').html(data);
-        if($('#muestraComprimido').val() == 1){
-          $('#comprimir').click();
-        }
-      });
-      //$('.viaje').toggle();
+      actualiza();
     });
+    $('#filtroProducto').change(function(){
+      actualiza();
+    });
+    
+    $('th').click(function(){
+      var table = $(this).parents('table').eq(0)
+      var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+      this.asc = !this.asc
+      if (!this.asc){rows = rows.reverse()}
+      for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+    })
+;
+    function comparer(index) {
+      return function(a, b) {
+        var valA = getCellValue(a, index), valB = getCellValue(b, index)
+        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+      }
+    }
+;
+    function getCellValue(row, index){ return $(row).children('td').eq(index).text()};
+    
+    
   });
   </script>
 </body>

@@ -7,7 +7,7 @@ $offset=0;
 
 
 
-$andFecha=(isset($_REQUEST['rangoInicio']))?" AND femision>='$_REQUEST[rangoInicio]' AND femision<='$_REQUEST[rangoFin]'":'';
+$andFecha=(isset($_REQUEST['rangoInicio']))?" AND femision>='$_REQUEST[rangoInicio]' AND femision<='$_REQUEST[rangoFin]'":" AND femision>='$_REQUEST[rangoInicio]'";
 // if(isset($_REQUEST['mes'])&&$_REQUEST['mes']<>''){
 //   $mesFin= date("Y-m-t", strtotime($_REQUEST['mes']));
 //   $andFecha=" AND femision>='$_REQUEST[mes]' AND femision<='$mesFin'";

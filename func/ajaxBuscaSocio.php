@@ -7,7 +7,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 if(isset($_GET['term'])){
   // borro todos los registros de este cliente
   //$sqlClientes = "SELECT * FROM `iva_socios` WHERE (razonsocial LIKE ('%$_GET[term]%') OR codigo LIKE ('%$_GET[term]%') OR cuit LIKE ('%$_GET[term]%')) ORDER BY razonsocial;";
-  $sqlClientes = "SELECT fletero, nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, cuit, tipo_resp, cliente FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
+  $sqlClientes = "SELECT fletero, nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, cuit, tipo_resp, cliente, direccion FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
   //echo $sqlOrdenes;
   
   $stmt = odbc_exec2( $mssql2, $sqlClientes, __LINE__, __FILE__);
@@ -15,9 +15,8 @@ if(isset($_GET['term'])){
    $array = "[";
   while($row = sqlsrv_fetch_array($stmt)){
     //echo "$fila[celular]";
-    $array.="{\"label\":\"$row[nombre]\", \"value\":\"$row[fletero]\"},";
+    $array.="{\"label\":\"".trim($row['nombre'])."\", \"value\":\"$row[fletero]\", \"cuit\":\"$row[cuit]\", \"iva\":\"$row[tipo_resp]\", \"domicilio\":\"".trim($row['direccion'])."\" } ";
     if(!isset($_SESSION['datosSocio'][$row['fletero']]))$_SESSION['datosSocio'][$row['fletero']] = $row['cuit'];
-    //[ { "id": "Sylvia borin", "label": "Garden Warbler", "value": "Garden Warbler" }, { "id": "Anas querquedula", "label": "Garganey", "value": "Garganey" } ]
   }
   $_SESSION['datosSocio'][$row['fletero']] = $row['cuit'];
   $array = substr($array,0,-1)."]";
@@ -31,6 +30,6 @@ if(isset($_POST['idCliente'])){
   if(trim(str_replace($arrayReemplazo, '', $row['Identificador']))<>''){
           $identificador = "(".str_replace($arrayReemplazo, '', $row['Identificador']).")";
   } else $identificador = "";
-  echo "$row[RazonSocial] $identificador";
+  echo "$row[RazonSocial] ".trim($identificador);
 }
 ?>

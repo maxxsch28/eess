@@ -16,7 +16,7 @@ if(isset($_POST['idcliente'])&&is_numeric($_POST['idcliente'])){
   
   // borro todos los registros de este cliente
   $sqlClientes = "SELECT dbo.MovimientosFac.IdMovimientoFac, dbo.MovimientosFac.Fecha, dbo.MovimientosFac.IdTipoMovimiento, dbo.MovimientosFac.PuntoVenta, dbo.MovimientosFac.Numero, dbo.movimientosdetalleFac.IdArticulo, Cantidad, Precio, dbo.Articulos.PrecioPublico, (Cantidad*(PrecioPublico-Precio)) as Ajuste, dbo.Articulos.Descripcion FROM dbo.MovimientosDetalleFac, dbo.MovimientosFac, MovimientosCta, dbo.Articulos WHERE dbo.Articulos.idArticulo=dbo.movimientosdetallefac.idArticulo AND dbo.movimientosFac.IdCondicionVenta=2 AND dbo.MovimientosDetalleFac.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosCta.IdMovimientoFac=dbo.MovimientosFac.IdMovimientoFac AND dbo.MovimientosFac.IdCliente=$_POST[idcliente] AND dbo.MovimientosFac.Fecha >= '$fInicio[2]-$fInicio[1]-$fInicio[0]' AND dbo.MovimientosFac.Fecha <= '$fFin[2]-$fFin[1]-$fFin[0]'  AND dbo.movimientoscta.IdMovimientoCta NOT IN (SELECT IdMovimientoImputado FROM dbo.MovimientosCta WHERE IdCliente=$_POST[idcliente] AND IdTipoMovimiento='REC' AND IdMovimientoImputado>0)$whereSoloComb ORDER BY $orden ASC;";
-//   ChromePhp::log($sqlClientes);
+   ChromePhp::log($sqlClientes);
   $stmt = odbc_exec2( $mssql, $sqlClientes, __LINE__, __FILE__);
   $a=0;$q=0;
 

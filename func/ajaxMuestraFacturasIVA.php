@@ -16,8 +16,8 @@ if($loggedInUser->display_username<>'maxxs'){
   $SoloParaTeresa = "";
 }
 
-$sql = "select dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, PuntoVenta, Numero, Fecha, RazonSocial, Total, Cantidad, IdArticulo, PercepcionIIBB from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idtipomovimiento IN ('FAA','FAB') AND IdCliente>0 AND IdCondicionVenta=1 AND NetoCombustibles>0 AND Consignado=1 AND DocumentoAnticipado=0 AND DocumentoCancelado=0  $teresa AND PuntoVenta IN (12, 8) AND dbo.movimientosfac.UserName NOT LIKE  ('%@PLAYA') AND dbo.movimientosfac.UserName NOT LIKE ('%@SERENO') $SoloParaTeresa order by dbo.MovimientosFac.IdMovimientoFac desc";
- //Chromephp::log($sql);
+$sql = "select dbo.movimientosfac.IdMovimientoFac, IdTipoMovimiento, PuntoVenta, Numero, Fecha, RazonSocial, Total, Cantidad, IdArticulo, PercepcionIIBB from dbo.movimientosfac, dbo.MovimientosDetalleFac WHERE dbo.movimientosfac.IdMovimientoFac=dbo.MovimientosDetalleFac.IdMovimientoFac AND idtipomovimiento IN ('FAA','FAB') AND IdCliente>0 AND IdCondicionVenta=1 AND NetoCombustibles>0 AND Consignado=1 AND DocumentoAnticipado=0 AND DocumentoCancelado=0  $teresa AND PuntoVenta IN (12, 8, 9, 13, 14) AND dbo.movimientosfac.UserName NOT LIKE  ('%@PLAYA') AND dbo.movimientosfac.UserName NOT LIKE ('%@SERENO') AND dbo.movimientosfac.UserName NOT LIKE ('%@SERVICOMPRAS')  AND dbo.movimientosfac.UserName NOT LIKE ('%@ISLA1')  AND dbo.movimientosfac.UserName NOT LIKE ('%@ISLA') $SoloParaTeresa order by dbo.MovimientosFac.IdMovimientoFac desc";
+ Chromephp::log($sql);
 $stmt = odbc_exec2( $mssql, $sql, __FILE__, __LINE__);
 
 $row_count = sqlsrv_num_rows( $stmt );

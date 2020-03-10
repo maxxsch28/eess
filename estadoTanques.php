@@ -1,4 +1,7 @@
 <?php
+header('Location: /estadoTanquesV3.php');
+die;
+
 if(substr($_SERVER['REMOTE_ADDR'], 0, 10)=='192.168.1.'){
     $nivelRequerido=5;
 }

@@ -203,6 +203,7 @@ $ypfUrl = '';
                             <li<?php if($_SERVER['PHP_SELF']=='/setupFlujoBanco.php')echo ' class="active"';?>><a href="/setupFlujoBanco.php">Flujo banco Provincia</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupChequesDiferidos.php")echo ' class="active"';?>><a href="/setupChequesDiferidos.php">Cheques diferidos a fin de ejercicio</a></li>
                             <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupOrdenesDescontadasMensuales.php")echo ' class="active"';?>><a href="/setupOrdenesDescontadasMensuales.php">Ordenes descontadas por mes</a></li>
+                            <li<?php if($_SERVER['PHP_SELF']=="$ypfUrl/setupFlujoCobranzas.php")echo ' class="active"';?>><a href="/setupFlujoCobranzas.php">Flujo cobranzas</a></li>
 
                         </ul>
                     </li>

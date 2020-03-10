@@ -15,7 +15,6 @@ $args = array(
 
 $post = filter_var_array($_POST, $args);
 
-//ChromePhp::log($_FILES);
 
 if(isset($_POST['idFoja'])){
   // Modificacion
@@ -37,7 +36,7 @@ if(isset($_POST['idFoja'])){
     $msg['msg'] = "Ya existe esa foja cargada. <a href='?idFoja=$idFoja[0]'>¿Desea modificarla?</a>";
   } else {
     // graba en sql los datos de la foja
-    $sql = "INSERT INTO dbo.[socios.libros] (libro, foja, actas, detalle, altas, bajas) VALUES ('$post[libro]', '$post[foja]', '$post[actas]', '$post[detalle]', '$post[altas]', '$post[bajas]');";
+    $sql = "INSERT INTO dbo.[socios.libros] (libro, foja) VALUES ('$post[libro]', '$post[foja]');";
     //echo $sql;
     
     $stmt = odbc_exec2( $mssql4, $sql, __LINE__, __FILE__);
@@ -45,6 +44,13 @@ if(isset($_POST['idFoja'])){
     $identificador = odbc_exec2( $mssql4, "SELECT @@IDENTITY AS ID", __LINE__, __FILE__);
     $idObtenido = sqlsrv_fetch_array($identificador);
     if(intval($idObtenido[0])>0){
+      // graba las actas
+      foreach($_POST['acta'] as $key => $acta){
+        $sql = "INSERT INTO dbo.[socios.actas] (idFoja, acta, fecha, altas, bajas, detalle) VALUES ('$idObtenido[0]', '$acta', '{$_POST['fecha'][$key]}', '{$_POST['altas'][$key]}', '{$_POST['bajas'][$key]}', '{$_POST['detalle'][$key]}')";
+        ChromePhp::log($sql);
+        $stmt = odbc_exec2( $mssql4, $sql, __LINE__, __FILE__);
+      }
+    
       if (isset($_FILES['archivo'])) {
         if(move_uploaded_file($_FILES['archivo']['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/pdf/$idObtenido[0].pdf")){
         //if(move_uploaded_file($_FILES['archivo']['tmp_name'], "../pdf/$idObtenido[0].pdf")){

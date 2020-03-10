@@ -64,6 +64,9 @@ $titulo="Proyección Banco Provincia";
           </tr></thead>
           <tbody></tbody>
         </table>
+        <h2>Referencias</h2>
+        <p>Si un cheque está resaltado <span class='alert-warning'>en amarillo</span> significa que está en poder de la Estación de servicio.<br/>
+        Los cheques resaltados <span class='alert-danger'>en rojo</span> son aquellos que estuvieron en poder de la Estación pero se utilizaron para pagos a proveedores</p>
         </div>
       </div>
     </div>
@@ -74,7 +77,7 @@ $titulo="Proyección Banco Provincia";
   $(document).ready(function() {
     $('#flujoBanco tbody').html("<tr><td colspan='32'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
     function actualizaProyeccion(){
-      $.post('func/setupFlujoBanco.php', { m:1, saldoBanco:$('#saldoBanco').val() }, function(data) {
+      $.post('func/setupAxFlujoBanco.php', { m:1, saldoBanco:$('#saldoBanco').val() }, function(data) {
         $('#flujoBanco tbody').html(data);
         $('#comprimir').click(function(){
           if($('.detalle').is(":visible") === true ) {
@@ -89,7 +92,7 @@ $titulo="Proyección Banco Provincia";
         });
         $(".pagado").click(function(){
           var cheque = this.id;
-          $.post('func/setupFlujoBancoMarcaPagado.php', { cheque:this.id }, function(data){
+          $.post('func/setupAxFlujoBancoMarcaPagado.php', { cheque:this.id }, function(data){
             if(data == 'yes'){
               $('#ch_'+cheque).remove();
             }
@@ -97,7 +100,7 @@ $titulo="Proyección Banco Provincia";
         });
         $(".pagado2").click(function(){
           var cheque = this.id;
-          $.post('func/setupFlujoBancoMarcaPagado.php', { deposito:this.id }, function(data){
+          $.post('func/setupAxFlujoBancoMarcaPagado.php', { deposito:this.id }, function(data){
             if(data == 'yes'){
               $('#ch_'+cheque).remove();
             }

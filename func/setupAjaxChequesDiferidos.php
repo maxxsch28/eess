@@ -19,7 +19,7 @@ if(isset($_POST['rangoFin'])){
 }
 
 
-$sqlCheques = "select * from dbo.histcomp where ingreso>='$rangoInicio' AND ingreso<='$fechaPago' and vencimien>'$fechaPago' and cuenta=1;";
+$sqlCheques = "select * from dbo.histcomp where ingreso>='$rangoInicio' AND ingreso<='$fechaPago' and vencimien>'$fechaPago' and cuenta=1 ORDER BY salida ASC;";
 
 ChromePhp::log($sqlCheques);
 

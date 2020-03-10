@@ -55,7 +55,7 @@ while($rowYPF = $result->fetch_assoc()){
     <td>$femision3[2]/$femision3[1]/$femision3[0]</td>
     <td>$rv</td>
     <td>$rowYPF[ns]</td>
-    <td>$rowYPF[ni]</td>
+    <td>$rowYPF[np]</td>
     <td>$rowYPF[ud]</td>
     <td>$rowYPF[ed]</td>
     $tdConciliado</tr>";

@@ -2,7 +2,7 @@
 // calculaPromedios.php
 include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
-$fechaDesde = '2019-06-01';
+$fechaDesde = date("Y-m-01", strtotime("-2 months"));
 
 // acomodar asientos que son de movistar carga de documentos para que la cuenta sea la de movistar.
 // idem repsol
@@ -10,7 +10,9 @@ $fechaDesde = '2019-06-01';
 
 // acomodar Movistar para que si es un gasto de administracion no lo cambie.
 $sql = array();
+// array (idcuentagastos, idcentrocostos, idproveedor, (idcuentagastos NOT in);
 $s['cigarrillos']=array(44, 2, "252, 259, 502, 1601", "48");
+$s['Mercaderias']=array(2, 2, "184, 413", "2");
 $s['TarjetasCelulares']=array(39, 2, "348");
 $s['Movistar']=array(8, 3, "323, 229, 392, 95, 362", "3, 20");
 $s['Servicios']=array(3, 1, "1, 302, 388, 3, 2");
@@ -38,7 +40,7 @@ $s['Representacion'] = array(52, 1, "209, 199, 263, 32, 371, 64, 102, 47, 38, 27
 $s['Campo'] = array(38, 1, "284, 368, 363, 188, 280, 246, 41, 355, 203");
 $s['Sistemas'] = array(11, 1, "394, 416, 5, 427, 463, 170, 438, 500, 365, 510, 117, 450, 419, 70, 490, 249, 476, 405, 320, 454, 477, 222, 211");
 $s['Seguros'] = array(29, 1, "162, 435, 77, 379");
-$s['Cafeteria'] = array(57, 2, "168, 28, 485, 501, 480, 107, 173, 219, 1572, 1618");
+$s['Cafeteria'] = array(57, 2, "168, 28, 485, 501, 480, 107, 173, 219, 1572, 1618", "10");
 $s['RepuestosYVarios'] = array(41, 1, "242, 201, 491, 29, 149, 25, 7, 167, 515, 36");// 36, 515
 $s['Edenred'] = array(17, 1, "547");// 36, 515
 

@@ -28,7 +28,7 @@ select vencimien as fecha, importe, 'cheques' as que, numero_val as numero FROM 
 select fechamovi as fecha, importe, 'depositos' as que, numero from dbo.moctacte where fechamovi>=DATEADD(day,-5,GETDATE()) AND fechamovi<DATEADD(month,+1,GETDATE())  AND conciliado=0 AND comprobant IS NULL AND tipomovi=2 AND numero NOT IN (SELECT deposito FROM [coop].[dbo].[flujoBanco] WHERE deposito IS NOT NULL)  order by fecha asc, numero asc;";
 // 26/6/19 Agregado "AND comprobant IS NULL" para que no incluya los ingresos a banco generados por recibos por transferencias recibidas. (esas transferencias ya se incluyen cuando el operador carga el saldo final real)
 
-//ChromePhp::log($sqlFlujoBanco);
+ChromePhp::log($sqlFlujoBanco);
 $stmt = odbc_exec2($mssql2, $sqlFlujoBanco, __LINE__, __FILE__);
 $tabla = "";$a=0;
 $obligaciones = array();
@@ -46,7 +46,7 @@ while($fila = sqlsrv_fetch_array($stmt)){
   if($fila['que']=='depositos'&&$fila['fecha']->format('d/m/Y')==date('d/m/Y')){
     //ChromePhp::log('hola'. $fila['fecha']->format('d/m/Y'));
     //var_dump(($fila['fecha']));
-    //$fila['fecha'] = date_create_from_format('d/m/Y:H:i:s', date("d/m/Y:H:i:s", strtotime(date('Y-m-d').' + 1 days')));
+    $fila['fecha'] = date_create_from_format('d/m/Y:H:i:s', date("d/m/Y:H:i:s", strtotime(date('Y-m-d').' + 1 days')));
     
   }
   
@@ -76,12 +76,27 @@ while($fila = sqlsrv_fetch_array($stmt)){
     }
   }
   if($fila['que']=='obligaciones'){
-    $obligaciones[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha']);
+    // prueba para ver si es muy lento revisar si el cheque está en Calden en cartera
+    $sqlCalden = "SELECT Ubicacion, FechaSalida, TipoSalida FROM dbo.chequesterceros WHERE numero='$fila[numero]' AND idbanco=4;";
+    $stmt2 = odbc_exec2($mssql, $sqlCalden, __LINE__, __FILE__);
+    $filaCalden = sqlsrv_fetch_array($stmt2);
+    // Ubicacion: 1 es en cartera
+    // TipoSalida: 2 es en orden de pago
+    $estaEnCalden=0;
+    if($filaCalden){
+      // está en Calden
+      $estaEnCalden=1;
+    } 
+    if($filaCalden[1]>0){
+      $estaEnCalden=2;
+    }
+    
+    $obligaciones[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha'], $estaEnCalden);
   } elseif($fila['que']=='depositos') {
-    $depositos[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha']);
+    $depositos[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha'], 0);
   } else {
     //ChromePhp::log($fecha, date("N")$fila['numero'], $fila['importe']);
-    $cheques[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha']);
+    $cheques[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha'], 0);
   }
 }
 //ChromePhp::log($cheques);
@@ -101,21 +116,29 @@ for($i=0;$i<=$j;$i++){
     $trObligaciones2.="<td>";
     $trDepositos2.="<td>";
     foreach($obligaciones[date('d/m', $d)] as $id => $key) {
-      $trObligaciones2 .= "<span class='cheque' id='ch_$key[0]'> Nº $key[0], $".number_format(-1*$key[1],2,',','.');
-      if($a==0){
+      if($key[3]==1){
+        $class = ' alert-warning';
+      } elseif($key[3]==2){
+        $class = ' alert-danger';
+      } else {
+        $class = '';
+      }
+      
+      $trObligaciones2 .= "<span class='cheque$class' id='ch_$key[0]'> Nº $key[0], $".number_format(-1*$key[1],2,',','.');
+      if($a==0||$a==1){
         // hoy, agrego botón para marcar como pagado
         $trObligaciones2 .= "<span class='glyphicon glyphicon-remove pagado' id='$key[0]' aria-hidden='true' ></span> - ".$key[2]->format('d/m');
       }
-      $trObligaciones2 .= '<br/></span>';
+      $trObligaciones2 .= "<br/></span>";
       $obligacionesDia[$i] += -1*$key[1];
     }
     foreach($depositos[date('d/m', $d)] as $id => $key) {
       $trDepositos2 .= "<span class='deposito' id='ch_$key[0]'>".number_format($key[1],2,',','.'); 
-      if($a==0){
+      if($a==0||$a==1){
         // hoy, agrego botón para marcar como pagado
         $trDepositos2 .= "<span class='glyphicon glyphicon-remove pagado2' id='$key[0]' aria-hidden='true' ></span> - ".$key[2]->format('d/m');
       }
-      $trDepositos2 .= '<br/></span>';
+      $trDepositos2 .= "<br/></span>";
       $depositosDia[$i] += $key[1];
     }
     foreach($cheques[date('d/m', $d)] as $id => $key) {

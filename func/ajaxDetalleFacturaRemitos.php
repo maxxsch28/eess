@@ -9,7 +9,7 @@ ChromePhp::log($_POST);
 
 
 /* Para Lolen */
-$sqlDetalle = r";
+$sqlDetalle = "select IdTipoMovimiento, PuntoVenta, numero, Fecha, c.descripcion, cantidad, precio, b.iva as IVA_unitario, b.iva*cantidad as IVA_Renglon, b.ImpuestoInterno as IMP_INT_Unitario, b.ImpuestoInterno*cantidad as ImpuestosInternos_Renglon, b.Tasas as Tasa_unitario, b.Tasas*Cantidad as Tasas_Renglon from dbo.movimientosfac a , dbo.MovimientosDetalleFac b, dbo.articulos c where a.IdMovimientoFac=b.IdMovimientoFac and b.idarticulo=c.idarticulo and a.numero=43609 and a.PuntoVenta=12 and a.IdTipoMovimiento='FAA';";
 
 if(isset($_POST['viejos'])&&is_numeric($_POST['viejos'])){
   $maximoMesesAtras = 8;
@@ -44,10 +44,10 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
             // turno con Cubre Vacaciones real
           } else {
             $empleados = "";
-          $empleados .= ($rowTurno[0]>0)?$vendedor[$rowTurno[0]].' ':'';
-          $empleados .= ($rowTurno[1]>0)?$vendedor[$rowTurno[1]].' ':'';
-          $empleados .= ($rowTurno[2]>0)?$vendedor[$rowTurno[2]].' ':'';
-          $empleados .= ($rowTurno[3]>0)?$vendedor[$rowTurno[3]].' ':'';
+            $empleados .= ($rowTurno[0]>0)?$vendedor[$rowTurno[0]].' ':'';
+            $empleados .= ($rowTurno[1]>0)?$vendedor[$rowTurno[1]].' ':'';
+            $empleados .= ($rowTurno[2]>0)?$vendedor[$rowTurno[2]].' ':'';
+            $empleados .= ($rowTurno[3]>0)?$vendedor[$rowTurno[3]].' ':'';
           }
         }
         $sqlYaAsignado = "SELECT IdMovimientoFac, IdEmpleado, fechaCanje from coop.dbo.promoDesayunos WHERE IdMovimientoFac=$rowTicket[6];";

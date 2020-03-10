@@ -2,20 +2,22 @@
 // cargaNuevosCelulares.php
 // recibe datos del form y los procesa en mysql
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
- // print_r($_POST);
+// print_r($_GET);
  // $array=array();
 if(isset($_GET['term'])){
-  // borro todos los registros de este cliente
-  //$sqlClientes = "SELECT * FROM `iva_socios` WHERE (razonsocial LIKE ('%$_GET[term]%') OR codigo LIKE ('%$_GET[term]%') OR cuit LIKE ('%$_GET[term]%')) ORDER BY razonsocial;";
-  $sqlClientes = "SELECT fletero, nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, cuit, tipo_resp, cliente, direccion FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
-  //echo $sqlOrdenes;
+  $sqlClientes = "SELECT fletero, nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, cuit, tipo_resp, cliente, direccion Collate SQL_Latin1_General_CP1253_CI_AI as direccion FROM fleteros WHERE (rehabfecha>=inhabfecha AND rehabhora>=inhabhora) AND nombre LIKE ('%$_GET[term]%') OR fletero LIKE ('%$_GET[term]%')";
+  ChromePHP::log($sqlClientes);
   
   $stmt = odbc_exec2( $mssql2, $sqlClientes, __LINE__, __FILE__);
+  if($stmt)sqlsrv_num_rows($stmt);
 
-   $array = "[";
+  $array = "[";
+  
   while($row = sqlsrv_fetch_array($stmt)){
     //echo "$fila[celular]";
-    $array.="{\"label\":\"".trim($row['nombre'])."\", \"value\":\"$row[fletero]\", \"cuit\":\"$row[cuit]\", \"iva\":\"$row[tipo_resp]\", \"domicilio\":\"".trim($row['direccion'])."\" } ";
+    ChromePhp::log($row);
+    $array.="{\"label\":\"".trim($row['nombre'])."\", \"value\":\"$row[fletero]\", \"cuit\":\"$row[cuit]\", \"iva\":\"$row[tipo_resp]\", \"domicilio\":\"".trim($row['direccion'])."\" },";
+    
     if(!isset($_SESSION['datosSocio'][$row['fletero']]))$_SESSION['datosSocio'][$row['fletero']] = $row['cuit'];
   }
   $_SESSION['datosSocio'][$row['fletero']] = $row['cuit'];

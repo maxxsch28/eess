@@ -8,6 +8,8 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 $desdeQueFechaBusco = date('Y-m-d', strtotime(date('Y-m-01').' -6 months'));
 $desdeQueFechaBuscoOrdenes = date('Y-m-d', strtotime(date('Y-m-01').' -7 months'));
+$desdeQueFechaBusco = '2018-01-01';
+$desdeQueFechaBuscoOrdenes = '2017-12-01';
 
 
 /* Genero array con histórico de precios de gasoil */

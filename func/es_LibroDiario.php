@@ -5,6 +5,7 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 //   print_r($_POST); die;
 
 $aa = $_POST['anio'];
+$ab = $aa + 1;
 setlocale(LC_ALL,"es_ES");
 setlocale(LC_ALL,"es_ES@euro","es_ES","esp");
 $tablaEfectivo = "";$a=$q=0;
@@ -21,8 +22,8 @@ if($_POST['periodicidad']=='true'){
 
 
 // obtengo los datos desde el último cierre de tesorería
-$sqlIVACategoria = "select $fecha as Fecha2, a.IdModeloContable, c.Codigo, c.IdCuentaContable, c.Descripcion, DebitoCredito, SUM(CASE DebitoCredito WHEN 0 THEN Importe ELSE 0 END) as Debe, SUM(CASE DebitoCredito WHEN 1 THEN Importe ELSE 0 END) as Haber, Concepto, AVG(a.IdAsiento) as IdAsiento2 from dbo.asientos a, dbo.asientosdetalle b, dbo.cuentascontables c where a.IdAsiento=b.IdAsiento AND fecha>='$aa-01-01' and Fecha<='$aa-12-31 23:59:59' AND b.idcuentaContable=c.IdCuentaContable AND a.IdModeloContable IS NULL GROUP BY  $fecha, a.IdAsiento, a.IdModeloContable, c.Codigo, c.IdCuentaContable, Descripcion, DebitoCredito, Concepto UNION 
-select $fecha as Fecha2, a.IdModeloContable, c.Codigo, c.IdCuentaContable, c.Descripcion, DebitoCredito, SUM(CASE DebitoCredito WHEN 0 THEN Importe ELSE 0 END) as Debe, SUM(CASE DebitoCredito WHEN 1 THEN Importe ELSE 0 END) as Haber, d.Descripcion as Concepto, 0 as IdAsiento2 from dbo.asientos a, dbo.asientosdetalle b, dbo.cuentascontables c, dbo.modeloscontables d where d.IdModeloContable=a.IdModeloContable AND a.IdAsiento=b.IdAsiento AND fecha>='$aa-01-01' and Fecha<='$aa-12-31 23:59:59' AND b.idcuentaContable=c.IdCuentaContable AND a.IdModeloContable IS NOT NULL GROUP BY  $fecha, a.IdModeloContable, c.Codigo, c.IdCuentaContable, c.Descripcion, DebitoCredito, d.Descripcion  ORDER BY Fecha2, Concepto, a.IdModeloContable, DebitoCredito;";
+$sqlIVACategoria = "select $fecha as Fecha2, a.IdModeloContable, c.Codigo, c.IdCuentaContable, c.Descripcion, DebitoCredito, SUM(CASE DebitoCredito WHEN 0 THEN Importe ELSE 0 END) as Debe, SUM(CASE DebitoCredito WHEN 1 THEN Importe ELSE 0 END) as Haber, Concepto, AVG(a.IdAsiento) as IdAsiento2 from dbo.asientos a, dbo.asientosdetalle b, dbo.cuentascontables c where a.IdAsiento=b.IdAsiento AND fecha>='$aa-01-01' and Fecha<'$ab-01-01 00:00:00' AND b.idcuentaContable=c.IdCuentaContable AND a.IdModeloContable IS NULL GROUP BY  $fecha, a.IdAsiento, a.IdModeloContable, c.Codigo, c.IdCuentaContable, Descripcion, DebitoCredito, Concepto UNION 
+select $fecha as Fecha2, a.IdModeloContable, c.Codigo, c.IdCuentaContable, c.Descripcion, DebitoCredito, SUM(CASE DebitoCredito WHEN 0 THEN Importe ELSE 0 END) as Debe, SUM(CASE DebitoCredito WHEN 1 THEN Importe ELSE 0 END) as Haber, d.Descripcion as Concepto, 0 as IdAsiento2 from dbo.asientos a, dbo.asientosdetalle b, dbo.cuentascontables c, dbo.modeloscontables d where d.IdModeloContable=a.IdModeloContable AND a.IdAsiento=b.IdAsiento AND fecha>='$aa-01-01' and Fecha<'$ab-01-01 00:00:00' AND b.idcuentaContable=c.IdCuentaContable AND a.IdModeloContable IS NOT NULL GROUP BY  $fecha, a.IdModeloContable, c.Codigo, c.IdCuentaContable, c.Descripcion, DebitoCredito, d.Descripcion  ORDER BY Fecha2, Concepto, a.IdModeloContable, DebitoCredito;";
 
 //ChromePhp::log('IVA EESS '.$sqlIVACategoria);
 
@@ -52,7 +53,7 @@ while($fila = sqlsrv_fetch_array(($stmt))){
         case $apertura:
           ChromePhp::log('Apertura ');
           // Estoy cerrando el asiento de apertura, mando todo adelante
-          $jsonCierre = array_merge($tmp, $jsonCierre);
+          $jsonCierre = array_merge($tmp, $jsonCierre); 
           break;
         case $cierre1:
           ChromePhp::log('Cierre1 ');
@@ -63,7 +64,7 @@ while($fila = sqlsrv_fetch_array(($stmt))){
           $tmpCierre2 = $tmp;
           break;
         default:
-         $jsonCierre =  array_merge($jsonCierre, $tmp);
+          $jsonCierre =  array_merge($jsonCierre, $tmp);
       }
       unset($tmp);$tmp = array();
     }
@@ -89,7 +90,7 @@ $error = (round($debe,2)-round($haber,2)<>0)?"error":'';
 $jsonCierre[] = array('clase' => "cierreAsiento", 'fecha' => '', 'txt' => "Total", 'debe' => peso($debe),  'haber' => peso($haber), 'error' => ((round($debe,2)-round($haber,2)<>0)?"error":''));
 $jsonCierre = array_merge($jsonCierre, $tmpCierre1);
 $jsonCierre = array_merge($jsonCierre, $tmpCierre2);
-$jsonCierre[] = array('clase' => 'cierreAsientoTotal', 'fecha' => '', 'txt' => "Gran Total", 'debe' => peso($debeTotal),  'haber' => peso($haberTotal));
+//$jsonCierre[] = array('clase' => 'cierreAsientoTotal', 'fecha' => '', 'txt' => "Gran Total", 'debe' => peso($debeTotal),  'haber' => peso($haberTotal));
 
 echo json_encode($jsonCierre);
 

@@ -180,10 +180,10 @@ while($rowYER = sqlsrv_fetch_array($stmt)){
                     </thead>
                     <tbody>
                         <tr id='ingreso'>
-                            <td><input type='number' id='yerNS' name='yerNS' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2078])?$arrayYER[2078]:0)?>'/></td>
-                            <td><input type='number' id='yerUD' name='yerUD' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2069])?$arrayYER[2069]:0)?>'/></td>
-                            <td><input type='number' id='yerNI' name='yerNI' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2076])?$arrayYER[2076]:0)?>'/></td>
-                            <td><input type='number' id='yerED' name='yerED' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2068])?$arrayYER[2068]:0)?>'/></td>
+                            <td><input type='number' id='yerNS' name='yerNS' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2078])?round($arrayYER[2078],2):0)?>'/></td>
+                            <td><input type='number' id='yerUD' name='yerUD' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2069])?round($arrayYER[2069],2):0)?>'/></td>
+                            <td><input type='number' id='yerNI' name='yerNI' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2076])?round($arrayYER[2076],2):0)?>'/></td>
+                            <td><input type='number' id='yerED' name='yerED' step='any' class='input-sm form-control yer' data-plus-as-tab='true' value='<?php echo (isset($arrayYER[2068])?round($arrayYER[2068],2):0)?>'/></td>
                         </tr>
                     </tbody>
                 </table>

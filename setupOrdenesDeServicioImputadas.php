@@ -40,7 +40,7 @@ setlocale(LC_ALL, 'es_ES');
               <label class="control-label" for="busca">Socio</label>
               <div class="controls">
                 <div class="input-group"> 
-                  <input type='text' name='busca' id='busca' maxlength="11" class='input-sm form-control'/>
+                  <input type='text' name='busca' id='busca' maxlength="20" class='input-sm form-control'/>
                   <span class="input-group-addon btn" id='addCliente'>-></span>
                   <input type='text' name='socio' id='socio' maxlength="255" class='input-sm form-control ui-widget' disabled='disabled'/>
                 </div>

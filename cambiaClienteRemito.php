@@ -44,7 +44,7 @@ $titulo = "Remitos Municipalidad";
                 <label class="control-label" for="rangoFechas">Rango de fechas</label>
                 <div class="controls">
                 <div class="input-group" id='rop'>
-                  <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="01/01/<?php echo date("Y")?>" data-date-format="mm/dd/yy"  data-plus-as-tab='true'/>
+                  <input type='text' name='rangoInicio' id='rangoInicio' class="input-sm form-control" value="<?php echo date('d/m/Y', strtotime("-1 month"))?>" data-date-format="mm/dd/yy"  data-plus-as-tab='true'/>
                   <span class="input-group-addon">a</span>
                   <input type='text' name='rangoFin' id='rangoFin' class="input-sm form-control"  value="31/12/<?php echo date("Y")?>" data-date-format="dd/mm/yy" data-plus-as-tab='true'/>
                   <span class="input-group-addon presetAnio btn" id="1000">TODOS</span>

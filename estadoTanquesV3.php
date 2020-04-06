@@ -29,7 +29,7 @@ $interval = date_diff($datetime1, $datetime2);
 
 function recepcionMensual(){
     global $mysqli;
-    global $articulo, $mes;
+    global $articulo, $mes, $combustible;
     //$sql="SELECT sum( ns ) , sum( np ) , sum( ud ) , sum( ed ) FROM `ventasDiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) AND MONTH( fecha ) = MONTH( CURDATE( ) ) ";
     
     $sql1 = "SELECT month(fecha) as mes,  sum( tq3 ) as l2078, sum( tq5 ) as l2076, sum( tq2 + tq6 ) as l2069, sum( tq1 + tq4 ) as l2068, count(remito2) as cuantoscamiones FROM `recepcioncombustibles` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR (YEAR(fecha)=YEAR(CURDATE())-1 AND MONTH(fecha)>=MONTH(CURDATE())-1) group by year(fecha),month(fecha)";
@@ -39,7 +39,7 @@ function recepcionMensual(){
     
     $result = $mysqli->query($sql1);
     if($result&&$result->num_rows>0 &&!$_SESSION['esMovil']){
-        $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
+        $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th></th><th>".ucwords(strtolower($articulo[2068]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2069]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2076]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2078]['descripcion']))."</th></tr></thead><tbody>";
         while($rowPromedioDiaSemana = $result->fetch_assoc()){
             //print_r($rowPromedioDiaSemana);
             //Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio
@@ -100,7 +100,7 @@ $sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2
 $sqlPromedioDiario = "SELECT avg(ns) as l2078 , avg(np) as l2076 , avg(ud) as l2069, avg(ed) as l2068, diaSemana FROM `ventasDiarias`  WHERE fecha>='{$CFG->fechaDesdeDondeTomoPromedioHistoricos}' GROUP BY diaSemana";
 $result = $mysqli->query($sqlPromedioDiario);
 if($result && $result->num_rows>0 && !$_SESSION['esMovil']){
-  $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th></tr></thead><tbody>";
+  $tablaPromedioDiaSemana="<table class='table'><thead><tr><th></th><th>".ucwords(strtolower($articulo[2068]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2069]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2076]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2078]['descripcion']))."</th></tr></thead><tbody>";
   while($rowPromedioDiaSemana = $result->fetch_assoc()){
     //print_r($rowPromedioDiaSemana);
     //Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio
@@ -197,7 +197,7 @@ $stmt = odbc_exec2( $mssql, $sqlInfoUltimoCierre);
 $tabla=$tabla2="";
 while($tanque = sqlsrv_fetch_array($stmt)){
 //    print_r($tanque);echo"<br><br>";
-  $tabla.="<tr><th>".$articulo[$tanque['idArticulo']]."</th><td>[$tanque[IdTanque]]</td><td>$tanque[Medicion]</td><td>$tanque[Capacidad]</td><td>".sprintf("%01.2f", $tanque['Ocupado'])."%</td><td>$tanque[Disponible]</td></tr>";
+  $tabla.="<tr><th>".$articulo[$tanque['idArticulo']]['descripcion']."</th><td>[$tanque[IdTanque]]</td><td>$tanque[Medicion]</td><td>$tanque[Capacidad]</td><td>".sprintf("%01.2f", $tanque['Ocupado'])."%</td><td>$tanque[Disponible]</td></tr>";
   $idCierre = $tanque['idT'];
   $dia = $tanque['Fecha'];
   $hora = $tanque['Hora'];
@@ -255,9 +255,9 @@ foreach($combustible as $key => $cb){
   else $classAlerta='btn-success btn';
   */
   $d = (isset($despachos['d'.$key]))?$despachos['d'.$key]:0;
-  $tabla2.="<tr$classQuiebre><th width='18%'>".$articulo[$cb['idArticulo']]."<br/>$cb[Capacidad] lts</th><td$classNoVentas>".$estadoComb[$key]['vtasDdeCierre']."<br>$d desp / $despachoPromedio lt</td><td>".$estadoComb[$key]['stock']."<br/>$promedio</td><td><span class='$classAlerta'>$porcentajeOcupado%</span></td><td>".$estadoComb[$key]['disponible']."</td></tr>";//<td>$stockCierre</td>
+  $tabla2.="<tr$classQuiebre><th width='18%'>".$articulo[$cb['idArticulo']]['descripcion']."<br/>$cb[Capacidad] lts</th><td$classNoVentas>".$estadoComb[$key]['vtasDdeCierre']."<br>$d desp / $despachoPromedio lt</td><td>".$estadoComb[$key]['stock']."<br/>$promedio</td><td><span class='$classAlerta'>$porcentajeOcupado%</span></td><td>".$estadoComb[$key]['disponible']."</td></tr>";//<td>$stockCierre</td>
   // corregir que no duplique después de las 22 hs
-  
+
   @$totalDiario['vtasDdeCierre']+=$estadoComb[$key]['vtasDdeCierre'];
   @$totalDiario['d']+=$d;
 }
@@ -386,7 +386,8 @@ $ultimoDiaMesAnterior = date('Y-m-d', strtotime('last day of previous month'));
 $ultimoCierre22 = (date('H')>22)?date('Y-m-d'):date('Y-m-d', strtotime('yesterday'));
 
 $sqlAforadoresAlUltimoTurnoMesAnterior = "select IdManguera, AforadorElectronico, AforadorMecanico, d.IdCierreSurtidores, Fecha from dbo.CierresDetalleSurtidores as d, dbo.cierressurtidores as s where d.IdCierreSurtidores=s.IdCierreSurtidores AND d.IdCierreSurtidores=(select IdCierreSurtidores from dbo.CierresSurtidores where Fecha>='$ultimoDiaMesAnterior 19:00:00' and Fecha<'$ultimoDiaMesAnterior 23:59:59') UNION select IdManguera, AforadorElectronico, AforadorMecanico, d.IdCierreSurtidores, Fecha from dbo.CierresDetalleSurtidores as d, dbo.cierressurtidores as s where d.IdCierreSurtidores=s.IdCierreSurtidores AND d.IdCierreSurtidores=(select IdCierreSurtidores from dbo.CierresSurtidores where Fecha>='$ultimoCierre22 19:00:00' and Fecha<'$ultimoCierre22 23:59:59') order by IdCierreSurtidores desc";
-
+#cuarentena
+$sqlAforadoresAlUltimoTurnoMesAnterior = "select IdManguera, AforadorElectronico, AforadorMecanico, d.IdCierreSurtidores, Fecha from dbo.CierresDetalleSurtidores as d, dbo.cierressurtidores as s where d.IdCierreSurtidores=s.IdCierreSurtidores AND d.IdCierreSurtidores=(select IdCierreSurtidores from dbo.CierresSurtidores where Fecha>='$ultimoDiaMesAnterior 12:00:00' and Fecha<'$ultimoDiaMesAnterior 23:59:59') UNION select IdManguera, AforadorElectronico, AforadorMecanico, d.IdCierreSurtidores, Fecha from dbo.CierresDetalleSurtidores as d, dbo.cierressurtidores as s where d.IdCierreSurtidores=s.IdCierreSurtidores AND d.IdCierreSurtidores=(select IdCierreSurtidores from dbo.CierresSurtidores where Fecha>='$ultimoCierre22 19:00:00' and Fecha<'$ultimoCierre22 23:59:59') order by IdCierreSurtidores desc";
 
 //$sqlAforadoresAlUltimoTurnoMesAnterior = "select IdManguera, AforadorElectronico, AforadorMecanico, IdCierreSurtidores from dbo.CierresDetalleSurtidores where IdCierreSurtidores=(select top 1 IdCierreSurtidores from dbo.CierresSurtidores where Fecha<'".date("Y-m-01")."' order by Fecha desc) OR IdCierreSurtidores=(select top 1 IdCierreSurtidores from dbo.CierresSurtidores order by Fecha desc)  order by IdCierreDetalleSurtidores desc";
 // echo $sqlAforadoresAlUltimoTurnoMesAnterior;
@@ -410,7 +411,7 @@ while($aforadores = sqlsrv_fetch_array($stmt)){
     }
     if(!isset($ultimoCierreAyer))$ultimoCierreAyer = $aforadores['Fecha'];
 }
-$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-m-d H:i:s')."' group by IdArticulo; ";
+@$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer->format('Y-m-d H:i:s')."' group by IdArticulo; ";
 //$sqlVentasDesdeUltimoCierre = "SELECT IdArticulo, sum(cantidad) from dbo.despachos where fecha>='".$ultimoCierreAyer."' group by IdArticulo; ";
 //ChromePhp::log($sqlVentasDesdeAyer);
 //echo $sqlVentasDesdeUltimoCierre;
@@ -425,7 +426,7 @@ while($ventasDesdeUltimoCierre = sqlsrv_fetch_array($stmt)){
 $sqlVentasMensuales = "SELECT month(fecha) as mes,  sum( ns ) as l2078, sum( np ) as l2076, sum( ud ) as l2069, sum( ed ) as l2068, year(fecha) as anio FROM `ventasDiarias` WHERE YEAR( fecha ) = YEAR( CURDATE( ) ) OR (YEAR(fecha)=YEAR(CURDATE())-1 AND MONTH(fecha)>=MONTH(CURDATE())-1) group by year(fecha),month(fecha)";
 $result = $mysqli->query($sqlVentasMensuales);
 if($result&&$result->num_rows>0 ){//&& !$_SESSION['esMovil']
-    $tablaVentasMensuales="<table class='table'><thead><tr><th></th><th>$articulo[2068]</th><th>$articulo[2069]</th><th>$articulo[2076]</th><th>$articulo[2078]</th><th>Total</th></tr></thead><tbody>";
+    $tablaVentasMensuales="<table class='table'><thead><tr><th></th><th>".ucwords(strtolower($articulo[2068]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2069]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2076]['descripcion']))."</th><th>".ucwords(strtolower($articulo[2078]['descripcion']))."</th><th>Total</th></tr></thead><tbody>";
         while($rowPromedioDiaSemana = $result->fetch_assoc()){
           //print_r($rowPromedioDiaSemana);
           //Tengo que sumar en un array para cada tipo de combustible, contar y luego hacer promedio

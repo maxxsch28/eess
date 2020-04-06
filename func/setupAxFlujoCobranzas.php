@@ -24,13 +24,23 @@ $hastaVencimiento=date("Y-m", strtotime("+2 months")).'-01 00:00:00';
 
 $idCliente = (!isset($_POST['idCliente']))?"histoven.cliente>=0 AND histoven.cliente<=999999":"histoven.cliente=$_POST[idCliente]";
  
+$filtraClientes = "";
+
+if(isset($_POST['filtro'])){
+  $filtraClientes = " AND clientes.codigo IN (";
+  foreach($_POST['filtro'] as $key => $codigo){
+    $filtraClientes .= "$codigo,";
+  }
+  $filtraClientes = substr($filtraClientes, 0, -1). ")";
+}
+ 
  
 // $sqlFlujoBanco = "SELECT histoven.emision as factura_emision, histoven.vencimien, histoven.comprobant as factura_comprobant, histoven.tipo, histoven.sucursal as factura_sucursal, histoven.numero as factura_numero, CONDICIO.detalle, clientes.codigo, clientes.nombre Collate SQL_Latin1_General_CP1253_CI_AI as nombre, histoven.importe as factura_importe, Recibos.emision as recibo_emision, Recibos.sucursal as recibo_sucursal, Recibos.numero as recibo_numero, Recibos.tipo, impuvent.importe as recibo_importe, DATEDIFF(d, histoven.emision, recibos.emision) AS qDias FROM (((((sqlcoop_dbimplemen.dbo.histoven histoven LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.impuvent impuvent ON (((histoven.comprobant=impuvent.comprobant) AND (histoven.tipo=impuvent.tipo)) AND (histoven.sucursal=impuvent.sucursal)) AND (histoven.numero=impuvent.numero))) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.CONDICIO CONDICIO ON histoven.condicion=CONDICIO.codigo) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.clientes clientes ON histoven.cliente=clientes.codigo) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.acobrar acobrar ON (((histoven.comprobant=acobrar.comprobant) AND (histoven.tipo=acobrar.tipo)) AND (histoven.sucursal=acobrar.sucursal)) AND (histoven.numero=acobrar.numero))   LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.histoven Recibos ON (((impuvent.comprobani=Recibos.comprobant) AND (impuvent.tipoi=Recibos.tipo)) AND (impuvent.sucursali=Recibos.sucursal)) AND (impuvent.numeroi=Recibos.numero) WHERE  histoven.comprobant IN ('FACTURA', 'NOTA DE CREDITO', 'NOTA DE DEBITO') AND ($idCliente) AND (histoven.emision>={ts '$desdeFacturas'} AND histoven.emision<{ts '$hastaFacturas'}) AND (histoven.vencimien>={ts '$desdeVencimiento'} AND histoven.vencimien<{ts '$hastaVencimiento'}) AND (Recibos.emision>={ts '$desdeRecibos'} AND Recibos.emision<={ts '$hastaRecibos'}) ORDER BY Recibos.emision DESC, histoven.cliente, histoven.emision";
 
 
-$sqlFlujoBanco = "SELECT histoven.emision as factura_emision, histoven.vencimien as factura_vencimiento, histoven.comprobant as factura_comprobant, histoven.tipo, histoven.sucursal as factura_sucursal, histoven.numero as factura_numero, CONDICIO.detalle, clientes.codigo, clientes.nombre  as nombre, histoven.importe as factura_importe, Recibos.emision as recibo_emision, Recibos.sucursal as recibo_sucursal, Recibos.numero as recibo_numero, Recibos.tipo, importei as recibo_importe, DATEDIFF(d, histoven.emision, recibos.emision) AS qDias FROM (((((sqlcoop_dbimplemen.dbo.histoven histoven LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.impuvent impuvent ON (((histoven.comprobant=impuvent.comprobant) AND (histoven.tipo=impuvent.tipo)) AND (histoven.sucursal=impuvent.sucursal)) AND (histoven.numero=impuvent.numero))) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.CONDICIO CONDICIO ON histoven.condicion=CONDICIO.codigo) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.clientes clientes ON histoven.cliente=clientes.codigo) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.acobrar acobrar ON (((histoven.comprobant=acobrar.comprobant) AND (histoven.tipo=acobrar.tipo)) AND (histoven.sucursal=acobrar.sucursal)) AND (histoven.numero=acobrar.numero))   LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.histoven Recibos ON (((impuvent.comprobani=Recibos.comprobant) AND (impuvent.tipoi=Recibos.tipo)) AND (impuvent.sucursali=Recibos.sucursal)) AND (impuvent.numeroi=Recibos.numero) WHERE  histoven.comprobant IN ('FACTURA', 'NOTA DE CREDITO', 'NOTA DE DEBITO') AND ($idCliente) AND (histoven.emision>={ts '$desdeFacturas'} AND histoven.emision<{ts '$hastaFacturas'}) AND (histoven.vencimien>={ts '$desdeVencimiento'} AND histoven.vencimien<{ts '$hastaVencimiento'}) AND (Recibos.emision>={ts '$desdeRecibos'} AND Recibos.emision<={ts '$hastaRecibos'}) ORDER BY Recibos.emision DESC, histoven.cliente, histoven.emision";
+$sqlFlujoBanco = "SELECT histoven.emision as factura_emision, histoven.vencimien as factura_vencimiento, histoven.comprobant as factura_comprobant, histoven.tipo, histoven.sucursal as factura_sucursal, histoven.numero as factura_numero, CONDICIO.detalle, clientes.codigo, clientes.nombre  as nombre, histoven.importe as factura_importe, Recibos.emision as recibo_emision, Recibos.sucursal as recibo_sucursal, Recibos.numero as recibo_numero, Recibos.tipo, importei as recibo_importe, DATEDIFF(d, histoven.emision, recibos.emision) AS qDias FROM (((((sqlcoop_dbimplemen.dbo.histoven histoven LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.impuvent impuvent ON (((histoven.comprobant=impuvent.comprobant) AND (histoven.tipo=impuvent.tipo)) AND (histoven.sucursal=impuvent.sucursal)) AND (histoven.numero=impuvent.numero))) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.CONDICIO CONDICIO ON histoven.condicion=CONDICIO.codigo) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.clientes clientes ON histoven.cliente=clientes.codigo) LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.acobrar acobrar ON (((histoven.comprobant=acobrar.comprobant) AND (histoven.tipo=acobrar.tipo)) AND (histoven.sucursal=acobrar.sucursal)) AND (histoven.numero=acobrar.numero))   LEFT OUTER JOIN sqlcoop_dbimplemen.dbo.histoven Recibos ON (((impuvent.comprobani=Recibos.comprobant) AND (impuvent.tipoi=Recibos.tipo)) AND (impuvent.sucursali=Recibos.sucursal)) AND (impuvent.numeroi=Recibos.numero) WHERE  histoven.comprobant IN ('FACTURA', 'NOTA DE CREDITO', 'NOTA DE DEBITO') AND ($idCliente) AND (histoven.emision>={ts '$desdeFacturas'} AND histoven.emision<{ts '$hastaFacturas'}) AND (histoven.vencimien>={ts '$desdeVencimiento'} AND histoven.vencimien<{ts '$hastaVencimiento'}) AND (Recibos.emision>={ts '$desdeRecibos'} AND Recibos.emision<={ts '$hastaRecibos'}) $filtraClientes ORDER BY Recibos.emision DESC, histoven.cliente, histoven.emision";
 
- ChromePhp::log($sqlFlujoBanco);
+   ChromePhp::log($sqlFlujoBanco);
 
 $stmt = odbc_exec2($mssql2, $sqlFlujoBanco, __LINE__, __FILE__);
 $tabla = "";$a=0;
@@ -135,9 +145,9 @@ while($fila = sqlsrv_fetch_array($stmt)){
     $perdida = round($ratio * floatval($fila['factura_importe']) , 2);
     $recibo[$recibo_actual]['perdida'] += $perdida;
     @$perdidaMensual[$mes] += $perdida;
-//     ChromePhp::log("Perdida $perdida  = ratio $ratio * fila[factura_importe] $fila[factura_importe]"); 
-//     ChromePhp::log("({$recibo[$recibo_actual]['cer']} / {$cer[$fila['factura_vencimiento']->format('Ymd')]}) {$fila['factura_vencimiento']->format('Ymd')}");
-// ChromePhp::log($recibo['recibo_numero']['perdida']);
+  ChromePhp::log("Perdida $perdida  = ratio $ratio * fila[factura_importe] $fila[factura_importe]"); 
+  ChromePhp::log("({$recibo[$recibo_actual]['cer']} / {$cer[$fila['factura_vencimiento']->format('Ymd')]}) {$fila['factura_vencimiento']->format('Ymd')}");
+  ChromePhp::log($recibo['recibo_numero']['perdida']);
     $recibo[$recibo_actual]['body'] .= "<span class='text-danger'>";
     $cierre = "<span class='perdida'>\$ $perdida</span></span>";
     $recibo[$recibo_actual]['vencido'] = 1;

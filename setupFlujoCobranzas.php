@@ -44,9 +44,35 @@ if(isset($_POST['qMeses'])){
     <div class='row'>
       <div class="col-md-12">
         <h2>&nbsp;</h2>
-        <div style='float:right'><div id='comprimir' class='btn btn-success no2'>Ver comprimido</div>&nbsp;
-        <div id='soloVencidas' class='btn btn-success no2'>Muestra solo vencidas</div></div>
+        <div style='float:right'>
+          <div id='comprimir' class='btn btn-success no2'>Comprimir</div>&nbsp;
+          <div id='soloVencidas' class='btn btn-success no2'>Solo vencidas</div>&nbsp;
+          <div id='filtraClientes' class='btn btn-success no2'>Filtra clientes</div>
+        </div>
         <h2>Flujo mensual de cobranza de cuentas corrientes</h2>
+      </div>
+      <div id='clientesFiltrados' class='row ' style='display:'>
+      <div class='col-md-12'>
+        <form class='form-horizontal'>
+          <legend >Clientes</legend>
+          <fieldset>
+          <div class='col-md-2'>
+            <div class="controls">
+              <div class="input">
+                <input type='text' name='busca' id='busca' maxlength="20" class='input-sm form-control col-md-5'/>
+              </div>
+            </div>
+          </div>
+          <div id='listaClientesFiltrados' class='col-md-9'>
+            <!--  borrar despues   
+             <span id="filtro_6988"><input type="hidden" name="filtro[]" class="filtro" value="6988"><button class="btn btn-info btn-xs" type="button">Facal Marcelo Adrian <span class="badge sacaFiltro">X</span></button></span> <span id="filtro_5148"><input type="hidden" name="filtro[]" class="filtro" value="5148"><button class="btn btn-info btn-xs" type="button">ROTH JAVIER EMILIO <span class="badge sacaFiltro">X</span></button></span> <span id="filtro_5157"><input type="hidden" name="filtro[]" class="filtro" value="5157"><button class="btn btn-info btn-xs" type="button">Tarayre Hector Pedro <span class="badge sacaFiltro">X</span></button></span> <span id="filtro_5122"><input type="hidden" name="filtro[]" class="filtro" value="5122"><button class="btn btn-info btn-xs" type="button">Futuro Ganadero Srl <span class="badge sacaFiltro">X</span></button></span>  <span id="filtro_5142"><input type="hidden" name="filtro[]" class="filtro" value="5142"><button class="btn btn-info btn-xs" type="button">Marios Sa <span class="badge sacaFiltro">X</span></button></span>  <span id="filtro_5142"><input type="hidden" name="filtro[]" class="filtro" value="5142"><button class="btn btn-info btn-xs" type="button">Marios Sa <span class="badge sacaFiltro">X</span></button></span>-->
+          </div>
+          </fieldset>
+        </form>
+      </div>
+      </div>
+      <div class='row'>
+      <div class='col-md-12'>
          <?php 
             for($i=0;$i<$qMeses;$i++){
               echo "<legend>".date('M y', strtotime("-$i months"))."</legend>";
@@ -62,21 +88,54 @@ if(isset($_POST['qMeses'])){
   <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
   $(document).ready(function() {
-    var i;
-    var d = new Date();
+    refresca();
+  
+    function refresca(){
+      var i;
+      var d = new Date();
       d.setDate(1);
-    for (i = 0; i < <?php echo $qMeses;?>; i++) {
-      mes = d.getFullYear() + ("0" + (d.getMonth()+1) ).slice(-2);
-      console.log('mes: ' + mes);
-      d.setMonth(d.getMonth() - 1);
-      $('#m'+mes).html("<center><img src='img/ajax-loader.gif'/></center>").fadeIn();
-      actualizaProyeccion(mes);
+      for (i = 0; i < <?php echo $qMeses;?>; i++) {
+        mes = d.getFullYear() + ("0" + (d.getMonth()+1) ).slice(-2);
+        console.log('mes: ' + mes);
+        d.setMonth(d.getMonth() - 1);
+        $('#m'+mes).html("<center><img src='img/ajax-loader.gif'/></center>").fadeIn();
+        actualizaProyeccion(mes);
+      }
     }
-
+    
+    
+    $('#filtraClientes').click(function(){
+      if($('#clientesFiltrados').is(":visible") === true ) {
+        $("#clientesFiltrados" ).hide();
+      } else {
+        $("#clientesFiltrados").show();
+        $("#busca").val('').focus();
+      }
+    });
+    
+    $("#busca").autocomplete({
+      source: "func/setupAxBuscaCliente.php",
+      minLength: 2,
+      select: function( event, ui ) {
+        $(this).value=ui.item.label;
+        $(this).val(ui.item.label);
+        $("#listaClientesFiltrados").append("<span id='filtro_"+ui.item.codigo+"'><input type='hidden' name='filtro[]' class='filtro' value='"+ui.item.codigo+"'/><button class='btn btn-info btn-xs' type='button'>"+ui.item.value+" <span class='badge sacaFiltro'>X</span></button></span> ");
+        $("#busca").val('asadasdadasd ').focus();
+        $(".sacaFiltro").click(function(){
+          $(this).parent().parent().remove();
+        });
+        refresca();
+      }
+    });
+  
+  
+  
+    
+    
     function actualizaProyeccion(mes){
-      $.post('func/setupAxFlujoCobranzas.php', { mes:mes }, function(data) {
+      var str = $( ".filtro" ).map(function() { return $( this ).val(); }).get();
+      $.post('func/setupAxFlujoCobranzas.php', { mes:mes, filtro:str }, function(data) {
         $('#m'+mes).html(data);
-        
         $('#soloVencidas').click(function(){
           if($('.sinD').is(":visible") === true ) {
             $('.rowspan').attr('rowspan', '1');
@@ -99,35 +158,9 @@ if(isset($_POST['qMeses'])){
             $('#muestraComprimido').val(0);
           }
         });
-        $(".pagado").click(function(){
-          var cheque = this.id;
-          $.post('func/setupFlujoBancoMarcaPagado.php', { cheque:this.id }, function(data){
-            if(data == 'yes'){
-              $('#ch_'+cheque).remove();
-            }
-          });
-        });
-        $(".pagado2").click(function(){
-          var cheque = this.id;
-          $.post('func/setupFlujoBancoMarcaPagado.php', { deposito:this.id }, function(data){
-            if(data == 'yes'){
-              $('#ch_'+cheque).remove();
-            }
-          });
-        });
       });
     }
-    //actualizaProyeccion();
-    $('#saldoBanco').change(function(){
-      actualizaProyeccion();
-    });
-    /*$('#flujoBanco').DataTable({
-      "scrollX": true,
-      "scrollY": 200,
-    });
-    $('.dataTables_length').addClass('bs-select');
-    */
-    
+
   });
   </script>
 </body>

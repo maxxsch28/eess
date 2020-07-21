@@ -1,90 +1,110 @@
 Tanque,1
-Fecha,05/04/20 21:48:55
+Fecha,20/07/20 20:54:37
 Producto,INFINIA DIESEL
-Nivel, ,1387.75,mm
-Litros, ,13815.4,litros
-Litros Vacio, ,5788.3,litros
-Merma mes,8.4,litros
+Nivel,*,1457.62,mm
+Litros,*,14640.3,litros
+Litros Vacio,*,4963.4,litros
+Merma mes,69.1,litros
 Nivel Agua, ,0,mm
-Temperatura,22.6,grados
+Temperatura,14.3,grados
 Perdidas,0.0,litros/hora
 Tanque,2
-Fecha,05/04/20 21:54:05
+Fecha,20/07/20 21:47:48
 Producto,INFINIA NAFTA
-Nivel, ,1479.21,mm
-Litros, ,14889.0,litros
-Litros Vacio, ,4714.7,litros
-Merma mes,3.1,litros
+Nivel, ,303.57,mm
+Litros, ,1966.1,litros
+Litros Vacio, ,17637.6,litros
+Merma mes,79.1,litros
 Nivel Agua, ,0,mm
-Temperatura,27.8,grados
+Temperatura,16.0,grados
 Perdidas,0.0,litros/hora
 Tanque,3
-Fecha,05/04/20 21:52:14
+Fecha,20/07/20 21:34:55
 Producto,SUPER
-Nivel, ,1694.21,mm
-Litros, ,17137.6,litros
-Litros Vacio, ,2466.1,litros
-Merma mes,33.6,litros
-Nivel Agua,*,0,mm
-Temperatura,25.0,grados
+Nivel, ,1422.63,mm
+Litros, ,14229.6,litros
+Litros Vacio, ,5374.1,litros
+Merma mes,249.2,litros
+Nivel Agua, ,0,mm
+Temperatura,13.8,grados
 Perdidas,0.0,litros/hora
 Tanque,4
-Fecha,05/04/20 21:52:25
+Fecha,20/07/20 21:47:08
 Producto,INFINIA DIESEL
-Nivel, ,408.22,mm
-Litros, ,2007.8,litros
-Litros Vacio, ,8846.5,litros
-Merma mes,-5.9,litros
+Nivel, ,293.40,mm
+Litros, ,1235.9,litros
+Litros Vacio, ,9618.4,litros
+Merma mes,-17.4,litros
 Nivel Agua, ,0,mm
-Temperatura,22.7,grados
+Temperatura,14.1,grados
 Perdidas,0.0,litros/hora
 Tanque,5
-Fecha,05/04/20 21:53:37
+Fecha,20/07/20 21:52:15
 Producto,SUPER
-Nivel, ,880.73,mm
-Litros, ,5863.0,litros
-Litros Vacio, ,5020.4,litros
-Merma mes,-2.2,litros
+Nivel, ,402.96,mm
+Litros, ,1993.5,litros
+Litros Vacio, ,8889.9,litros
+Merma mes,-28.9,litros
 Nivel Agua, ,0,mm
-Temperatura,26.6,grados
+Temperatura,15.1,grados
 Perdidas,0.0,litros/hora
 Tanque,6
-Fecha,05/04/20 21:53:47
+Fecha,20/07/20 21:55:28
 Producto,ULTRA DIESEL
-Nivel, ,1271.37,mm
-Litros, ,24709.1,litros
-Litros Vacio, ,16001.8,litros
-Merma mes,119.7,litros
+Nivel, ,1586.11,mm
+Litros, ,31931.3,litros
+Litros Vacio, ,8779.6,litros
+Merma mes,309.1,litros
 Nivel Agua, ,0,mm
-Temperatura,22.5,grados
+Temperatura,14.2,grados
 Perdidas,0.0,litros/hora
 DESCARGA EN TANQUE,1
-Fecha,05/04/20 12:30:27
+Fecha,20/07/20 18:00:01
 Producto,INFINIA DIESEL
-Liquido Inicial,? ,2889.2,litros
-Liquido Final, ,15928.1,litros
-Liquido Total,? ,13038.9,litros
+Liquido Inicial,? ,9611.9,litros
+Liquido Final,? ,16364.7,litros
+Liquido Total,? ,6752.9,litros
 Agua Inicial, ,0,litros
 Agua Final, ,0,litros
 Agua Total, ,0,litros
-Producto Total,? ,13038.9,litros
+Producto Total,? ,6752.9,litros
 DESCARGA EN TANQUE,3
-Fecha,03/04/20 13:00:37
+Fecha,19/07/20 19:20:04
 Producto,SUPER
-Liquido Inicial,? ,20605.0,litros
-Liquido Final, ,24725.2,litros
-Liquido Total,? ,4120.2,litros
+Liquido Inicial,? ,12257.3,litros
+Liquido Final,? ,18935.2,litros
+Liquido Total,? ,6677.9,litros
 Agua Inicial, ,0,litros
 Agua Final, ,0,litros
 Agua Total, ,0,litros
-Producto Total,? ,4120.2,litros
+Producto Total,? ,6677.9,litros
+DESCARGA EN TANQUE,3
+Fecha,18/07/20 10:25:33
+Producto,SUPER
+Liquido Inicial, ,10823.2,litros
+Liquido Final, ,17515.5,litros
+Liquido Total, ,6692.2,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total, ,6692.2,litros
 DESCARGA EN TANQUE,6
-Fecha,03/04/20 12:47:19
+Fecha,19/07/20 20:42:51
 Producto,ULTRA DIESEL
-Liquido Inicial, ,2559.2,litros
-Liquido Final, ,34505.9,litros
-Liquido Total, ,31946.8,litros
+Liquido Inicial,? ,7481.9,litros
+Liquido Final,? ,37379.1,litros
+Liquido Total,? ,29897.3,litros
 Agua Inicial, ,0,litros
 Agua Final, ,0,litros
 Agua Total, ,0,litros
-Producto Total, ,31946.8,litros
+Producto Total,? ,29897.3,litros
+DESCARGA EN TANQUE,6
+Fecha,18/07/20 10:14:08
+Producto,ULTRA DIESEL
+Liquido Inicial, ,1954.5,litros
+Liquido Final,? ,16270.4,litros
+Liquido Total,? ,14315.9,litros
+Agua Inicial, ,0,litros
+Agua Final, ,0,litros
+Agua Total, ,0,litros
+Producto Total,? ,14315.9,litros

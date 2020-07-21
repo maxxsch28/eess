@@ -88,8 +88,8 @@ $titulo="Lista adelantos de EESS a Fleteros impagos";
   <script>
     $(document).ready(function() {
       $('#comisionesSocios tbody').html("<tr><td colspan='5'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-//         $.post('func/setupOrdenesServicioImpagas.php', { mes: $('#periodo').val()}, function(data) {
-        $.post('func/setupOrdenesServicioImpagas.php', { mes: '2019-01-01'}, function(data) {
+//         $.post('func/setupAjaxOrdenesServicioImpagas.php', { mes: $('#periodo').val()}, function(data) {
+        $.post('func/setupAjaxOrdenesServicioImpagas.php', { mes: '2019-01-01'}, function(data) {
           $('#comisionesSocios tbody').html(data);
           if($('#muestraComprimido').val() == 1){
             $('#comprimir').click();
@@ -97,7 +97,7 @@ $titulo="Lista adelantos de EESS a Fleteros impagos";
         });
         $('#periodo').change(function(){
           $('#comisionesSocios tbody').html("<tr><td colspan='5'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-            $.post('func/setupOrdenesServicioImpagas.php', { mes: $(this).val(), soloExternos: $('#filtroTipoViaje').val() }, function(data) {
+            $.post('func/setupAjaxOrdenesServicioImpagas.php', { mes: $(this).val(), soloExternos: $('#filtroTipoViaje').val() }, function(data) {
               $('#comisionesSocios tbody').html(data);
               if($('#muestraComprimido').val() == 1){
                 $('#comprimir').click();
@@ -120,7 +120,7 @@ $titulo="Lista adelantos de EESS a Fleteros impagos";
       });
       $('#filtroTipoViaje').change(function(){
         $('#comisionesSocios tbody').html("<tr><td colspan='5'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-        $.post('func/setupOrdenesServicioImpagas.php', { mes: $('#periodo').val(), soloExternos: $(this).val() }, function(data) {
+        $.post('func/setupAjaxOrdenesServicioImpagas.php', { mes: $('#periodo').val(), soloExternos: $(this).val() }, function(data) {
           $('#comisionesSocios tbody').html(data);
           if($('#muestraComprimido').val() == 1){
             $('#comprimir').click();

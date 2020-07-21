@@ -156,14 +156,19 @@ $mes = array(1=>"Enero",2=>"Febrero",3=>"Marzo",4=>"Abril",5=>"Mayo",6=>"Junio",
 // codigo Calden para los combustibles
 
 
-
 $articulo = array();
-if(!isset($_POST['articulo'])){
+if(!isset($_SESSION['articulo'])){
   $sql = "SELECT a.IdArticulo, a.Descripcion, ColorARGB, b.IdFamiliaArticulo, c.Descripcion as familia, CodigoControladorSurtidores, PrecioPublico FROM dbo.articulos a, dbo.gruposarticulos b, dbo.FamiliasArticulos c, dbo.CodigosArticulosPorControladorSurtidor d WHERE a.IdGrupoArticulo=b.IdGrupoArticulo AND b.Combustible=1 AND b.IdFamiliaArticulo=c.IdFamiliaArticulo AND d.IdArticulo=a.IdArticulo ORDER BY CodigoControladorSurtidores;";
   $stmt = odbc_exec2($mssql, $sql);
   while($fila = sqlsrv_fetch_array($stmt)){
     $articulo[$fila['IdArticulo']]['idArticulo']=$fila['IdArticulo'];
     $articulo[$fila['IdArticulo']]['descripcion']=ucwords(strtolower($fila['Descripcion']));
+    $abr = explode(' ', $fila['Descripcion']);
+    $abreviatura = '';
+    foreach($abr as $inicial){
+      $abreviatura = $abreviatura.$inicial[0];
+    }
+    $articulo[$fila['IdArticulo']]['abr']=strtoupper($abreviatura);
     $articulo[$fila['IdArticulo']]['Color']=$fila['ColorARGB'];
     $articulo[$fila['IdArticulo']]['familia']=$fila['familia'];
     $articulo[$fila['IdArticulo']]['CodigoControladorSurtidores']=$fila['CodigoControladorSurtidores'];
@@ -240,7 +245,7 @@ if(!isset($_SESSION['vendedor'])){
   asort($vendedor);
 }
 
-if(!isset($_SESSION['empleado'])||1){
+if(!isset($_SESSION['empleado'])){
   $sqlCajeros = "select idEmpleado, empleado, idgrupovendedores from dbo.empleados where esVendedor=1;";
   $stmt = odbc_exec2($mssql, $sqlCajeros);
   while($rowCajero = sqlsrv_fetch_array($stmt)){

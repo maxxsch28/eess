@@ -44,27 +44,6 @@ while($fila = sqlsrv_fetch_array($stmt)){
   }
 }
 
-function muestraDetallesTanquesTelemedidos(){
-  global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
-  $tablaTanques="";
-  
-  foreach($tanque as $IdTanque => $datosTanque){
-    $porcentajeOcupacion = $datosTanque['ocupacion'] * 100;
-    $classNoVentas = ($datosTanque['litros']<=$datosTanque['nivelSuspender'])?' class="noVentas"':'';
-    if($datosTanque['litros']<=$datosTanque['nivelPedir']){$classAlerta='progress-bar-danger';}
-    elseif($porcentajeOcupacion<50){$classAlerta='progress-bar-warning';}
-    elseif($porcentajeOcupacion<75){$classAlerta='progress-bar-info';}
-    else {$classAlerta='progress-bar-success';}
-    
-    $tablaTanques.="<tr$classNoVentas>"
-      . "<td class='alert alert-{$classArticulo[$datosTanque['idArticulo']]}'>".ucwords(strtolower($articulo[$datosTanque['idArticulo']]['descripcion']))." <span class='badge '>$IdTanque</span></td>"
-    ."<td>".sprintf('%01.2f',$datosTanque['litros'])."</td>"
-    ."<td colspan='2'><div class='progress' style='margin-bottom: 0;'><div class='progress-bar $classAlerta  progress-bar-striped active' role='progressbar' aria-valuenow='$porcentajeOcupacion' aria-valuemin='0' aria-valuemax='100' style='width: $porcentajeOcupacion%;'>".round($porcentajeOcupacion,0)."%</div>".round($datosTanque['disponible'],0)."</div></td>"
-    //. "<td><span class='$classAlerta'>".round($porcentajeOcupacion,0)."%</span></td>"
-    . "</tr>";
-  }
-  echo trim($tablaTanques);
-}
        
 function muestraDetallesVentasDiarias(){
     global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
@@ -133,6 +112,89 @@ function muestraDetallesVentasDiarias(){
     //echo microtime()-$a;
 }
 
+function muestraDetallesTanquesTelemedidos(){
+  global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
+  $tablaTanques="";
+  
+  foreach($tanque as $IdTanque => $datosTanque){
+    $porcentajeOcupacion = $datosTanque['ocupacion'] * 100;
+    $classNoVentas = ($datosTanque['litros']<=$datosTanque['nivelSuspender'])?' class="noVentas"':'';
+    if($datosTanque['litros']<=$datosTanque['nivelPedir']){$classAlerta='progress-bar-danger';}
+    elseif($porcentajeOcupacion<50){$classAlerta='progress-bar-warning';}
+    elseif($porcentajeOcupacion<75){$classAlerta='progress-bar-info';}
+    else {$classAlerta='progress-bar-success';}
+    
+    $tablaTanques.="<tr$classNoVentas>"
+      . "<td class='alert alert-{$classArticulo[$datosTanque['idArticulo']]}'>".ucwords(strtolower($articulo[$datosTanque['idArticulo']]['descripcion']))." <span class='badge '>$IdTanque</span></td>"
+    ."<td>".sprintf('%01.2f',$datosTanque['litros'])."</td>"
+    ."<td colspan='2'><div class='progress' style='margin-bottom: 0;'><div class='progress-bar $classAlerta  progress-bar-striped active' role='progressbar' aria-valuenow='$porcentajeOcupacion' aria-valuemin='0' aria-valuemax='100' style='width: $porcentajeOcupacion%;'>".round($porcentajeOcupacion,0)."%</div>".round($datosTanque['disponible'],0)."</div></td>"
+    //. "<td><span class='$classAlerta'>".round($porcentajeOcupacion,0)."%</span></td>"
+    . "</tr>";
+  }
+  echo trim($tablaTanques);
+}
+
+
+
+
+function muestraDetalleDescuentosAPP(){
+  global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
+  $tablaDescuentos="";
+  $totalDescuentosNoRegistrados=0;
+  
+  $sqlDescuentos = "select a.idmovimientofac, a.RazonSocial, a.puntoventa, a.numero, a.fecha, a.total as facturado, c.Importe as cobrado, round(a.total-c.importe, 0) as descuento, round(a.NetoConceptosFinancieros*-1.21,0) as descuentoAPP, '' as turno from dbo.movimientosfac a, dbo.MovimientosDetalleFac b, dbo.CuponesTarjetasCredito c where a.IdMovimientoFac=b.IdMovimientoFac and c.IdMovimientoFac=a.IdMovimientoFac AND c.UserName='Pago electronico' AND a.Fecha>='".date('Y-m-d')."' AND b.IdCierreTurno=0 AND b.idarticulo <> '3540' UNION ALL select a.idmovimientofac, a.RazonSocial, a.puntoventa, a.numero, a.fecha, a.total as facturado, c.Importe as cobrado, round(a.total-c.importe, 0) as descuento, round(a.NetoConceptosFinancieros*-1.21,0) as descuentoAPP, d.fecha as turno from dbo.movimientosfac a, dbo.MovimientosDetalleFac b, dbo.CuponesTarjetasCredito c, dbo.CierresTurno d where a.IdMovimientoFac=b.IdMovimientoFac and c.IdMovimientoFac=a.IdMovimientoFac AND c.UserName='Pago electronico' AND a.Fecha>='".date('Y-m-d')."' AND b.IdCierreTurno=d.IdCierreTurno AND d.IdCierreTurno>0 AND b.idarticulo <> '3540' order by turno, a.idmovimientofac desc";
+  
+  //ChromePhp::log($sqlDescuentos);
+  
+  $stmt = odbc_exec2($mssql, $sqlDescuentos, __LINE__, __FILE__);
+  
+  while($fila = sqlsrv_fetch_array($stmt)){
+    if(round($fila['descuento'],0)>0 || round($fila['descuentoAPP'],0)>0){
+      if(!isset($turno)) $turno = $fila['turno']->format('H:i');
+      if($turno <> $fila['turno']->format('H:i')){
+        $tablaDescuentos .= "<tr><td colspan=4><b>A declarar como DESCUENTO SERVICLUB APP YPF</b></td><td>$".round($totalDescuentosNoRegistrados,2)."</td></tr>";
+        $totalDescuentosNoRegistrados=0;
+      }
+      $totalDescuentosNoRegistrados += $fila['descuento'];
+      $tablaDescuentos .= "<tr><td>".ucwords(strtolower($fila['RazonSocial']))."</td><td>$fila[puntoventa]-$fila[numero]</td><td>$".round($fila[facturado],2)."</td><td>$".round($fila['descuentoAPP'],2)."</td><td>$".round($fila['descuento'],2)."</td><td>".$fila['turno']->format('H:i')."</td></tr>";
+      //RazonSocial	puntoventa	numero	fecha	facturado	cobrado	descuento	IdCierreTurno
+      //SANGRONIS ANA MARIA	13	5654	2020-06-29 15:33:14.553	1503.2824	1253.2800	250.0000	52209
+      
+    }
+  }
+  if($totalDescuentosNoRegistrados>0){
+    $tablaDescuentos .= "<tr><td colspan=5><b>DESCUENTO SERVICLUB APP YPF Turno Anterior</b></td><td>$".round($totalDescuentosNoRegistrados,2)."</td></tr>";
+  } else {
+    $tablaDescuentos .= "<tr><td colspan=5><b>NO HUBO OPERACIONES CON DESCUENTOS</b></td><td></td></tr>";
+  }
+  
+  echo trim($tablaDescuentos);
+}
+function muestraDespachosGrandes(){
+  global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
+  $tablaDescuentos="";
+  $totalDescuentosNoRegistrados=0;
+  
+ 
+  $sqlUltimasFacturasGrandes = "select IdArticulo, sum(Cantidad) as litros, IdTipoMovimiento, PuntoVenta, Numero, RazonSocial, Total, Fecha from dbo.movimientosFac a, dbo.MovimientosDetalleFac b where a.IdMovimientoFac=b.IdMovimientoFac AND idArticulo in (2069, 2068) AND Fecha >='".date('Y-m-d')."' AND Total>20000 AND DocumentoAnticipado=0 AND b.ExcluidoDeTurno=0  AND (IdCondicionVenta>1 AND NumeroDocumento IS NOT NULL) group by idarticulo, IdTipoMovimiento, puntoventa, numero, RazonSocial, Total, Fecha order by a.razonsocial desc, idarticulo asc ;";
+  
+  $stmt = odbc_exec2($mssql, $sqlUltimasFacturasGrandes, __LINE__, __FILE__);
+  
+  while($fila = sqlsrv_fetch_array($stmt)){
+
+      $tablaDescuentos .= "<tr><td>".ucwords(strtolower($fila['RazonSocial']))."</td><td>$fila[PuntoVenta]-$fila[Numero]</td><td>".round($fila['litros'],2)." lts ".$articulo[$fila['IdArticulo']]['abr']."</td><td>$".round($fila['Total'],2)."</td><td>".$fila['Fecha']->format('H:i')."</td></tr>";
+      ChromePhp::log($articulo[$fila['IdArticulo']]);
+      print_r($articulo[$fila['IdArticulo']]);
+  }
+  if($tablaDescuentos==""){
+    $tablaDescuentos = "<tr><td colspan='4'><b>NO HUBO DESPACHOS MAYORES A 2 CORTES</b></td></tr>";
+  }
+
+  
+  echo trim($tablaDescuentos);
+}
+
+
 switch($_POST['que']){
   case 'tanques':
     muestraDetallesTanquesTelemedidos();
@@ -140,6 +202,14 @@ switch($_POST['que']){
 
   case 'despachos':
     muestraDetallesVentasDiarias();
+    break;
+    
+  case 'descuentos':
+    muestraDetalleDescuentosAPP();ChromePhp::log('Descuentos');
+    break;
+
+  case 'despachosGrandes':
+    muestraDespachosGrandes();ChromePhp::log('despachosGrandes');
     break;
 
 }

@@ -9,7 +9,7 @@ ChromePhp::log($_POST);
 
 
 /* Para Lolen */
-$sqlDetalle = "select IdTipoMovimiento, PuntoVenta, numero, Fecha, c.descripcion, cantidad, precio, b.iva as IVA_unitario, b.iva*cantidad as IVA_Renglon, b.ImpuestoInterno as IMP_INT_Unitario, b.ImpuestoInterno*cantidad as ImpuestosInternos_Renglon, b.Tasas as Tasa_unitario, b.Tasas*Cantidad as Tasas_Renglon from dbo.movimientosfac a , dbo.MovimientosDetalleFac b, dbo.articulos c where a.IdMovimientoFac=b.IdMovimientoFac and b.idarticulo=c.idarticulo and a.numero=43609 and a.PuntoVenta=12 and a.IdTipoMovimiento='FAA';";
+$sqlDetalle = "select IdTipoMovimiento, PuntoVenta, numero, Fecha, c.descripcion, cantidad, precio, b.iva as IVA_unitario, b.iva*cantidad as IVA_Renglon, b.ImpuestoInterno as IMP_INT_Unitario, b.ImpuestoInterno*cantidad as ImpuestosInternos_Renglon, b.Tasas as Tasa_unitario, b.Tasas*Cantidad as Tasas_Renglon from dbo.movimientosfac a , dbo.MovimientosDetalleFac b, dbo.articulos c where a.IdMovimientoFac=b.IdMovimientoFac and b.idarticulo=c.idarticulo IN (787, 786) and a.PuntoVenta=10 and a.IdTipoMovimiento='FAA';";
 
 if(isset($_POST['viejos'])&&is_numeric($_POST['viejos'])){
   $maximoMesesAtras = 8;

@@ -3,7 +3,7 @@ $nivelRequerido = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
-if(!isset($_SESSION['ultimosMeses'])||1){
+if(!isset($_SESSION['ultimosMeses'])){
   $_SESSION['ultimosMeses']='';
   $currentMonth = (int)date('m');
   for($x = $currentMonth; $x > $currentMonth-6; $x--) {

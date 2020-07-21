@@ -66,7 +66,8 @@ $titulo="Proyección Banco Provincia";
         </table>
         <h2>Referencias</h2>
         <p>Si un cheque está resaltado <span class='alert-warning'>en amarillo</span> significa que está en poder de la Estación de servicio.<br/>
-        Los cheques resaltados <span class='alert-danger'>en rojo</span> son aquellos que estuvieron en poder de la Estación pero se utilizaron para pagos a proveedores</p>
+        Los cheques resaltados <span class='alert-danger'>en rojo</span> son aquellos que estuvieron en poder de la Estación pero se utilizaron para pagos a proveedores.<br/>
+        Los cheques de hoy emitidos hoy mismo tienen la fecha <span class='alert-success'>en verde</span>.</p>
         </div>
       </div>
     </div>

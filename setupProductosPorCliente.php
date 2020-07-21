@@ -65,6 +65,7 @@ $titulo="Detalle productos por Fleteros";
             </select></label>
             <div style='float:right'>
             <input type='checkbox' name='muestraPagos' id='muestraPagos' /> Muestra pagos
+            <input type='checkbox' name='ordenaCliente' id='ordenaCliente' /> s/Prod
             <div id='comprimir' class='btn btn-success no2'>Ver comprimido</div>
             <select name='filtroTipoViaje' id='filtroTipoViaje' class='btn btn-danger'>
               <option value='0' selected="selected">Todos los clientes</option>
@@ -106,7 +107,7 @@ $titulo="Detalle productos por Fleteros";
     
     function actualiza(){
       $('#productosFleteros tbody').html("<tr><td colspan='10'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-      $.post('func/setupProductosPorClientes.php', { mes: $('#periodo').val(), soloExternos: $('#filtroTipoViaje').val(), soloProducto: $('#filtroProducto').val(), muestraPagos: $('#muestraPagos').prop("checked") }, function(data) {
+      $.post('func/setupAxProductosPorClientes.php', { mes: $('#periodo').val(), soloExternos: $('#filtroTipoViaje').val(), soloProducto: $('#filtroProducto').val(), muestraPagos: $('#muestraPagos').prop("checked"), ordenaCliente: $('#ordenaCliente').prop("checked") }, function(data) {
         $('#productosFleteros tbody').html(data);
         if($('#muestraComprimido').val() == 1){
           $('#comprimir').click();
@@ -146,15 +147,15 @@ $titulo="Detalle productos por Fleteros";
       this.asc = !this.asc
       if (!this.asc){rows = rows.reverse()}
       for (var i = 0; i < rows.length; i++){table.append(rows[i])}
-    })
-;
+    });
+    
     function comparer(index) {
       return function(a, b) {
         var valA = getCellValue(a, index), valB = getCellValue(b, index)
         return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
       }
-    }
-;
+    };
+    
     function getCellValue(row, index){ return $(row).children('td').eq(index).text()};
     
     

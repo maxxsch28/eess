@@ -13,8 +13,8 @@ if(isset($_POST['periodo'])){
 }
 
 
-
-$sqlZarpazo = "SELECT DISTINCT dbo.ordservi.sucursal_e AS sucos, dbo.ordservi.numero as numos, dbo.ordservi.fecha, dbo.ordservi.importe, dbo.ordservi.reten_ib, dbo.impupagf.sucursal_e, dbo.impupagf.pago, dbo.ordservi.observacio, dbo.ordservi.numeinter, dbo.pagos.fecha AS fechaorden, dbo.ordservi.proveedor, dbo.ordservi.fletero , dbo.pagos.detalle, SUBSTRING(dbo.pagos.detalle, CHARINDEX('-',dbo.pagos.detalle)+1, len(dbo.pagos.detalle)) as nombreFletero FROM dbo.ordservi, dbo.detaorse, dbo.impupagf, dbo.pagos where dbo.impupagf.pago=dbo.pagos.numero AND dbo.ordservi.numero=dbo.detaorse.ordenservi and dbo.ordservi.proveedor IN (1, 321) AND dbo.detaorse.tipoadelan in (2, 3, 25, 24) and dbo.ordservi.numero = dbo.impupagf.numero and dbo.ordservi.sucursal_e = dbo.impupagf.sucursal_e and dbo.detaorse.sucursal_e = dbo.impupagf.sucursal_e and dbo.pagos.sucursal = dbo.impupagf.sucursal_e AND dbo.impupagf.fletero = dbo.ordservi.fletero and dbo.pagos.fecha>='$rangoInicio' and dbo.pagos.fecha<='$rangoFin 23:59:59' AND totadelant=dbo.impupagf.importe ORDER BY nombreFletero ASC, detalle Desc, sucos, numos, fechaorden;";
+// and dbo.ordservi.sucursal_e = dbo.impupagf.sucursal_e 
+$sqlZarpazo = "SELECT DISTINCT dbo.ordservi.sucursal_e AS sucos, dbo.ordservi.numero as numos, dbo.ordservi.fecha, dbo.ordservi.importe, dbo.ordservi.reten_ib, dbo.impupagf.sucursal_e, dbo.impupagf.pago, dbo.ordservi.observacio, dbo.ordservi.numeinter, dbo.pagos.fecha AS fechaorden, dbo.ordservi.proveedor, dbo.ordservi.fletero , dbo.pagos.detalle, SUBSTRING(dbo.pagos.detalle, CHARINDEX('-',dbo.pagos.detalle)+1, len(dbo.pagos.detalle)) as nombreFletero FROM dbo.ordservi, dbo.detaorse, dbo.impupagf, dbo.pagos where dbo.impupagf.pago=dbo.pagos.numero AND dbo.ordservi.numero=dbo.detaorse.ordenservi and dbo.ordservi.proveedor IN (1, 321) AND dbo.detaorse.tipoadelan in (2, 3, 25, 24) and dbo.ordservi.numero = dbo.impupagf.numero and dbo.detaorse.sucursal_e = dbo.impupagf.sucursal_e and dbo.pagos.sucursal = dbo.impupagf.sucursal_e AND dbo.impupagf.fletero = dbo.ordservi.fletero and dbo.pagos.fecha>='$rangoInicio' and dbo.pagos.fecha<='$rangoFin 23:59:59' AND totadelant=dbo.impupagf.importe ORDER BY nombreFletero ASC, detalle Desc, sucos, numos, fechaorden;";
 
 ChromePhp::log($sqlZarpazo);
 
@@ -25,7 +25,7 @@ while($fila = sqlsrv_fetch_array($stmt)){
   if(!isset($fletero)||$fletero<>$fila['fletero']){
     if(isset($fletero)){
       // no es el primero
-      $tabla .= "<tr class='comisionEncabezado info'><td></td><td></td><td></td><td><b>$detalle</b></td><td style='text-align:right'>$ ".sprintf("%01.2f", $subtotal)."</td><td style='text-align:right'></td></tr>";
+      $tabla .= "<tr class='comisionEncabezado info' id='tr_$fletero'><td></td><td></td><td></td><td><span class='ampliaInfo' id='fletero_$fletero'><b>$detalle</b></span></td><td style='text-align:right'>$ ".sprintf("%01.2f", $subtotal)."</td><td style='text-align:right'></td></tr>";
     } else {
       
     }
@@ -39,10 +39,17 @@ while($fila = sqlsrv_fetch_array($stmt)){
   $subtotal += $fila['importe'];
   $sumaOrden = $sumaOrden + $fila['importe'];
   
-  $tabla .= "<tr class='viaje'><td>$fechaEmision</td><td>$fechaOrden</td><td>Nº $fila[sucos]-$fila[numos]</td><td>$fila[detalle]</td><td style='text-align:right'>$ ".sprintf("%01.2f", $fila['importe'])."</td><td style='text-align:right'>$ ".sprintf("%01.2f", $fila['reten_ib'])."</td></tr>";
+  $detalle2 = explode('-', $fila['detalle']);
+  $detalleFletero = ucwords(strtolower($detalle2[1]));
+  $detalle3 = explode(' ', $detalle2[0]);
+  $detalleFletero = "Pago Nº".$detalle3[3]." - $detalleFletero";
+  
+  
+  
+  $tabla .= "<tr class='viaje'><td>$fechaEmision</td><td>$fechaOrden</td><td>Nº $fila[sucos]-$fila[numos]</td><td>$detalleFletero</td><td style='text-align:right'>$ ".sprintf("%01.2f", $fila['importe'])."</td><td style='text-align:right'>$ ".sprintf("%01.2f", $fila['reten_ib'])."</td></tr>";
   $a++;
 }
-$tabla .= "<tr class='comisionEncabezado info'><td></td><td></td><td></td><td><b>$detalle</b></td><td style='text-align:right'>$ ".sprintf("%01.2f", $subtotal)."</td><td style='text-align:right'></td></tr>";
+$tabla .= "<tr class='comisionEncabezado info' id='tr_$fletero'><td></td><td></td><td></td><td><span class='ampliaInfo' id='fletero_$fletero'><b>$detalle</b></span></td><td style='text-align:right'>$ ".sprintf("%01.2f", $subtotal)."</td><td style='text-align:right'></td></tr>";
 //$sumaOrden = -1*$sumaOrden;
 if(isset($sumaOrden)&&$sumaOrden>0&&$a>1){
   // termino orden anterior

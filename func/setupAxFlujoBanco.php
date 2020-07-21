@@ -21,11 +21,11 @@ if(isset($_POST['saldoBanco'])&&is_numeric($_POST['saldoBanco'])){
 
  
  
-$sqlFlujoBanco = "select fechamovi as fecha, -1*(importe) as importe, 'obligaciones' as que, numero FROM dbo.moctacte where fechamovi>= DATEADD(month,-1,GETDATE()) AND fechamovi<DATEADD(month,+1,GETDATE()) AND conciliado=0 AND tipomovi=1 AND chequera NOT IN (0,5,7) AND numero NOT IN (SELECT cheque FROM [coop].[dbo].[flujoBanco] WHERE cheque IS NOT NULL) UNION 
+$sqlFlujoBanco = "select fechamovi AS fecha, -1*(importe) AS importe, 'obligaciones' AS que, CAST(numero as varchar(20)) as numero, fecha AS fechaCarga FROM dbo.moctacte WHERE fechamovi>= DATEADD(month,-1,GETDATE()) AND fechamovi<DATEADD(month,+1,GETDATE()) AND conciliado=0 AND tipomovi=1 AND chequera NOT IN (0,5,7) AND numero NOT IN (SELECT cheque FROM [coop].[dbo].[flujoBanco] WHERE cheque IS NOT NULL) UNION 
 
-select vencimien as fecha, importe, 'cheques' as que, numero_val as numero FROM dbo.cheques where disponible=1  UNION
+select vencimien AS fecha, importe, 'cheques' AS que, numero_val AS numero, ingreso AS fechaCarga FROM dbo.cheques WHERE disponible=1  UNION
 
-select fechamovi as fecha, importe, 'depositos' as que, numero from dbo.moctacte where fechamovi>=DATEADD(day,-5,GETDATE()) AND fechamovi<DATEADD(month,+1,GETDATE())  AND conciliado=0 AND comprobant IS NULL AND tipomovi=2 AND numero NOT IN (SELECT deposito FROM [coop].[dbo].[flujoBanco] WHERE deposito IS NOT NULL)  order by fecha asc, numero asc;";
+select fechamovi AS fecha, importe, 'depositos' AS que, CAST(numero as varchar(20)) as numero, fechamovi AS fechaCarga FROM dbo.moctacte WHERE fechamovi>=DATEADD(day,-5,GETDATE()) AND fechamovi<DATEADD(month,+1,GETDATE())  AND conciliado=0 AND comprobant IS NULL AND tipomovi=2 AND numero NOT IN (SELECT deposito FROM [coop].[dbo].[flujoBanco] WHERE deposito IS NOT NULL)  order by fecha asc, numero asc;";
 // 26/6/19 Agregado "AND comprobant IS NULL" para que no incluya los ingresos a banco generados por recibos por transferencias recibidas. (esas transferencias ya se incluyen cuando el operador carga el saldo final real)
 
 ChromePhp::log($sqlFlujoBanco);
@@ -91,7 +91,7 @@ while($fila = sqlsrv_fetch_array($stmt)){
       $estaEnCalden=2;
     }
     
-    $obligaciones[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha'], $estaEnCalden);
+    $obligaciones[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha'], $estaEnCalden, $fila['fechaCarga']);
   } elseif($fila['que']=='depositos') {
     $depositos[$fecha][] = array($fila['numero'], $fila['importe'], $fila['fecha'], 0);
   } else {
@@ -115,7 +115,7 @@ for($i=0;$i<=$j;$i++){
     $d = time()+$i*86400;
     $trObligaciones2.="<td>";
     $trDepositos2.="<td>";
-    foreach($obligaciones[date('d/m', $d)] as $id => $key) {
+    foreach($obligaciones[date('d/m', $d)] AS $id => $key) {
       if($key[3]==1){
         $class = ' alert-warning';
       } elseif($key[3]==2){
@@ -123,16 +123,20 @@ for($i=0;$i<=$j;$i++){
       } else {
         $class = '';
       }
-      
+      $class2 = '';
+      if($key[4]->format('Y-m-d')==date('Y-m-d')){
+          // emitido hoy
+          $class2 = ' alert-success';
+        }
       $trObligaciones2 .= "<span class='cheque$class' id='ch_$key[0]'> Nº $key[0], $".number_format(-1*$key[1],2,',','.');
       if($a==0||$a==1){
         // hoy, agrego botón para marcar como pagado
-        $trObligaciones2 .= "<span class='glyphicon glyphicon-remove pagado' id='$key[0]' aria-hidden='true' ></span> - ".$key[2]->format('d/m');
+        $trObligaciones2 .= "<span class='glyphicon glyphicon-remove pagado' id='$key[0]' aria-hidden='true' ></span> - <span class='$class2'>".$key[2]->format('d/m')."</span>";
       }
       $trObligaciones2 .= "<br/></span>";
       $obligacionesDia[$i] += -1*$key[1];
     }
-    foreach($depositos[date('d/m', $d)] as $id => $key) {
+    foreach($depositos[date('d/m', $d)] AS $id => $key) {
       $trDepositos2 .= "<span class='deposito' id='ch_$key[0]'>".number_format($key[1],2,',','.'); 
       if($a==0||$a==1){
         // hoy, agrego botón para marcar como pagado
@@ -141,7 +145,7 @@ for($i=0;$i<=$j;$i++){
       $trDepositos2 .= "<br/></span>";
       $depositosDia[$i] += $key[1];
     }
-    foreach($cheques[date('d/m', $d)] as $id => $key) {
+    foreach($cheques[date('d/m', $d)] AS $id => $key) {
       $trDepositos2.= "Nº $key[0], $".number_format($key[1],2,',','.').'<br/>';
       $depositosDia[$i] += $key[1];
     }

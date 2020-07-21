@@ -75,29 +75,64 @@ $titulo="Órdenes descontadas a fleteros por mes";
       </form>
     </div>
     <div class='row'>
-      <div id='viajes'>
+      <div id='viajes' class='col-md-8' style="height: 700px; overflow-y: scroll">
         <table class='table table-striped table-condensed' id='productosFleteros'>
           <thead><tr><th width='5%'>Cargada</th>
           <th width='5%'>Descontada</th>
           <th width='8%'>Nº orden</th>
           <th width='30%'>Detalle</th>
-          <th width='25%'>Importe</th>
-          <th width='5%'>Ret IIBB</th>
+          <th width='23%'>Importe</th>
+          <th width='7%'>Ret IIBB</th>
           </tr></thead>
           <tbody></tbody>
         </table>
       </div>
+      <div class='col-md-4' style="height: 700px; overflow-y: scroll">
+        <table id='ultimasFacturasSocio' class='table table-striped table-condensed'>
+        <thead><th>Fecha</th>
+        <th>Factura</th>
+        <th>Importe</th>
+        <th>Retenciones</th>
+        </tr></thead>
+        <tbody></tbody></table>
+      </div>  
     </div>
     <?php include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>
   </div> <!-- /container -->
   <?php include($_SERVER['DOCUMENT_ROOT'].'/include/termina.php');?>
   <script>
   $(document).ready(function() {
-    $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-    $.post('func/setupAjaxOrdenesDescontadasMensuales.php', { periodo: $('#periodo').val()}, function(data) {
-      $('#productosFleteros tbody').html(data);
+    traeInfo();
+    $('#periodo').change(function(){
+      traeInfo();
     });
-
+    
+    function traeInfo(){
+      $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
+      $.post('func/setupAjaxOrdenesDescontadasMensuales.php', { periodo: $('#periodo').val() }, function(data) {
+        $('#productosFleteros tbody').html(data);
+        if($('#muestraComprimido').val() == 1){
+          $('#comprimir').click();
+        }
+        $('.ampliaInfo').click(function(){
+          $('#ultimasFacturasSocio tbody').html("<tr><td colspan='4'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
+          $('.comisionEncabezado.success').addClass('info');
+          $('.comisionEncabezado.success').removeClass('success');
+          // obtengo Id
+          var id=$(this).attr('id');
+          var id2 = id.split("_");
+          $('#tr_'+id2[1]).addClass('success');
+          $('#tr_'+id2[1]).removeClass('info');
+          $.post('func/setupOrdenesServicioImputadas.php', { idSocio: id, comprimido:1, periodo: $('#periodo').val() }, function(data) {
+            $('#ultimasFacturasSocio tbody').html(data);
+            $('#botonesBusqueda').show();
+          });
+        });
+      });
+    }
+    
+    
+    
     /* contextMenu */
     $.contextMenu({
       selector: '.x', 
@@ -137,15 +172,6 @@ $titulo="Órdenes descontadas a fleteros por mes";
         $('#productosFleteros').addClass('table-striped');
         $('#muestraComprimido').val(0);
       }
-    });
-    $('#periodo').change(function(){
-      $('#productosFleteros tbody').html("<tr><td colspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
-      $.post('func/setupAjaxOrdenesDescontadasMensuales.php', { periodo: $('#periodo').val() }, function(data) {
-        $('#productosFleteros tbody').html(data);
-        if($('#muestraComprimido').val() == 1){
-          $('#comprimir').click();
-        }
-      });
     });
   });
   </script>

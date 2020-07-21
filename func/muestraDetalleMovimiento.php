@@ -215,7 +215,8 @@ switch($tipo){
       }			
     } else {
       // Cobranzas contado con tarjeta o cheques:
-      $sqlMovimiento = "select *, dbo.CuponesTarjetasCredito.IdCierreTurno as cierre, dbo.CuponesTarjetasCredito.Importe as Importe2 from dbo.CuponesTarjetasCredito,  dbo.LotesTarjetasCredito where dbo.LotesTarjetasCredito.IdLoteTarjetasCredito=dbo.CuponesTarjetasCredito.IdLoteTarjetasCredito AND dbo.CuponesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
+      $sqlMovimiento = "select * FROM dbo.CuponesTarjetasCredito.IdCierreTurno as cierre, dbo.CuponesTarjetasCredito.Importe as Importe2 from dbo.CuponesTarjetasCredito,  dbo.LotesTarjetasCredito where dbo.LotesTarjetasCredito.IdLoteTarjetasCredito=dbo.CuponesTarjetasCredito.IdLoteTarjetasCredito AND dbo.CuponesTarjetasCredito.IdAsiento=$_GET[idAsiento]"; 
+      ChromePhp::log("SQL: ".$sqlMovimiento);
       //$sqlMovimiento = "select *, dbo.CuponesTarjetasCredito.IdCierreTurno as cierre from dbo.CuponesTarjetasCredito where dbo.CuponesTarjetasCredito.IdAsiento=$_GET[idAsiento]";
       $stmt2 = odbc_exec2( $mssql, $sqlMovimiento, __LINE__, __FILE__);
       $rowMovimiento = sqlsrv_fetch_array($stmt2);

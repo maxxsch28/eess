@@ -3,7 +3,7 @@ $nivelRequerido = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 
 
-if(!isset($_SESSION['ultimosMeses'])||1){
+if(!isset($_SESSION['ultimosMeses'])){
 	$_SESSION['ultimosMeses']='';
 	$currentMonth = (int)date('m');
 	for($x = $currentMonth; $x > $currentMonth-6; $x--) {
@@ -13,7 +13,7 @@ if(!isset($_SESSION['ultimosMeses'])||1){
 if(!isset($_SESSION['ultimosCierresTesoreria'])){
 	// carga los datos de esta orden
 	$sqlCajas = "SELECT IdCierreCajaTesoreria, FechaCierre FROM dbo.CierresCajaTesoreria WHERE FechaCierre>=DATEADD(month, -1, GETDATE()) ORDER BY FechaCierre desc;";
-	$stmt = odbc_exec( $mssql, $sqlCajas);
+	$stmt = odbc_exec2( $mssql, $sqlCajas);
 	$_SESSION['ultimosCierresTesoreria']='';
 	while($rowCuentas = odbc_fetch_array($stmt)){
 		$_SESSION['ultimosCierresTesoreria'].="<option value='$rowCuentas[IdCierreCajaTesoreria]'>".date_format($rowCuentas['FechaCierre'], "d/m/Y H:i:s")."</option>";

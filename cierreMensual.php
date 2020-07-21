@@ -8,16 +8,18 @@ $titulo="Presenta cierre mensual de Tesorería";
 
 //select Fecha, Anio, IdTipoMovimientoProveedor, puntoventa, numero, razonsocial, netoNoGravado, NetoMercaderias, NetoCombustibles, NetoLubricantes, NetoGastos, NetoFletes, Total, idasiento, dbo.cuentasgastos.Descripcion as CuentaGasto, dbo.MovimientosDetallePro.Descripcion  from dbo.MovimientosPro, dbo.CuentasGastos, dbo.MovimientosDetallePro where Fecha>='2015-04-01' and Fecha<'2015-05-01' and dbo.MovimientosDetallePro.IdCuentaGastos=dbo.CuentasGastos.IdCuentaGastos and dbo.MovimientosPro.IdMovimientoPro=dbo.MovimientosDetallePro.IdMovimientoPro and (IdTipoMovimientoProveedor<>'RV' AND IdTipoMovimientoProveedor<>'VP') and dbo.movimientosdetallepro.IdCuentaGastos<>43 order by CuentaGasto asc, RazonSocial asc
 setlocale(LC_ALL, "es_ES", 'Spanish_Spain', 'Spanish');
-if(!isset($_SESSION['ultimoDiaMes'])){
+if(!isset($_SESSION['ultimoDiaMes'])||1){
   $_SESSION['ultimoDiaMes']='';
   $currentMonth = date('m');
-  for($x = $currentMonth; $x > $currentMonth-12; $x--) {
-    $dia = new DateTime(date("Y-m-01", strtotime("-$x months")));
+  for($x = -25; $x <=0; $x++) {
+    $dia = new DateTime(date("Y-m-01", strtotime("+$x months")));
     $ultimoDia = new DateTime(date("Y-m-01", strtotime("-$x months")));
     $ultimoDia->modify("last day of previous month");
-    $_SESSION['ultimoDiaMes'] .= "<option value='".$ultimoDia->format('d-m-Y')."'>".$dia->format('F')."</option>";
+    $_SESSION['ultimoDiaMes'] .= "<option value='".$dia->format('d-m-Y')."'>".$dia->format('F Y')."</option>";
   }
 }
+
+
 
 
 ?>
@@ -49,6 +51,7 @@ if(!isset($_SESSION['ultimoDiaMes'])){
 		<div class="col-md-12">
 		 <form class='form-horizontal'>
                     <input type="hidden" name='fechaCierre' value='<?php echo date('d/m/Y')?>' id='fechaCierre'/>
+                    <input type="hidden" name='mensual' value='0' id='mensual'/>
                     <?php if(!isset($_GET['saldoCaja'])){?>
                     <div class="form-group" id='rop'> 
                       <div class="col-md-6 form-group">
@@ -123,10 +126,12 @@ if(!isset($_SESSION['ultimoDiaMes'])){
       muestraCierre();
       
       $('#mes').change(function(){
+        $('#mensual').val(1);
         $('#fechaCierre').val($(this).val());
         muestraCierre($(this).val());
       });
       $('#dia').change(function(){
+        $('#mensual').val(0);
         muestraCierre($(this).val());
       });
       
@@ -136,22 +141,41 @@ if(!isset($_SESSION['ultimoDiaMes'])){
           $('#fechaCierre').val(fecha);
         } else if($('#mes').is(':disabled')){
           $('#fechaCierre').val($('#dia').val());
+          $('#mensual').val(0);
         } else {
           $('#fechaCierre').val($('#mes').val());
+          $('#mensual').val(1);
         }
-        $.post('func/listaCierreTesoreriaEfectivo.php', { fechaCierre: $('#fechaCierre').val(), saldoCaja: <?php if(isset($_GET['saldoCaja']))echo "1"; else echo "0";?> }, function(data) {
+        $.post('func/listaCierreTesoreriaEfectivo.php', { fechaCierre: $('#fechaCierre').val(), mensual: $('#mensual').val(), saldoCaja: <?php if(isset($_GET['saldoCaja']))echo "1"; else echo "0";?> }, function(data) {
           // comienza magia json
           $('#listaEfectivo tbody tr:has(td)').remove();
           $('#listaCheques tbody tr:has(td)').remove();
           $.each(data, function (i, item) {
             var trHTML = '';
+            switch(item.clase) {
+              case "neg":
+                var neg = " class='neg'";
+                var signo = '-';
+                break;
+              case "bold":
+                var neg = " class='subt'";
+                var signo = '';
+                break;
+              default:
+                var neg = '';
+                var signo = '';
+            }
+            /*
             if(item.clase == 'neg'){
               var neg = " class='neg'";
               var signo = '-';
+            } else if(item.clase == 'x') {
+              var neg = "' class='subt'";
+              var signo = '';
             } else {
               var neg = '';
               var signo = '';
-            }
+            }*/
             // cambiar para que de acuerdo a si la variable T es Efectivo o Cheque agregue la fila donde corresponda.
             trHTML = '<tr'+ neg +'><td>' + item.txt + '</td><td>'+signo+'$ ' + item.importe + '</td></tr>';
             $('#lista'+item.t+' tbody').append(trHTML); 

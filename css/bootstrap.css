@@ -295,6 +295,9 @@ th, caption{
 .neg, .nc{
     color: #f00;
 }
+.subt{
+  font-weight: bold;
+}
 #listadoVentas{
     display:none;
     font-size: .8em;

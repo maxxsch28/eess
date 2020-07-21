@@ -54,18 +54,10 @@ if(isset($_POST['mes'])){
 
 
   
-//   $sqlOrdenes = "SELECT ORDSERVI.sucursal_e, ordservi.numero, ordservi.fletero, ordservi.importe, ordservi.numeinter, FLETEROS.NOMBRE AS nomFletero, Choferes.Nombre as nomChofer, tipoadel.detalle as nomRubro, detaorse.tipoadelan, detaorse.cantidad as cantServ, detaorse.precio_uni,  detaorse.importe as importeDetalle FROM ORDSERVI INNER JOIN detaorse ON ORDSERVI.sucursal_e = detaorse.sucursal_e AND ORDSERVI.numero = detaorse.ordenservi LEFT JOIN Proveedo ON OrdServi.Proveedor = Proveedo.Codigo LEFT JOIN Fleteros ON OrdServi.Fletero   = Fleteros.Fletero LEFT JOIN Choferes ON OrdServi.Chofer    = Choferes.Codigo LEFT JOIN equipos as equipo ON equipo.equipo = ordservi.equipo LEFT JOIN equipos as acoplado ON acoplado.equipo = ordservi.Acoplado INNER JOIN tipoadel ON tipoadel.codigo = detaorse.tipoadelan WHERE ordservi.proveedor=321 AND ordservi.anulada = 0 AND STR(OrdServi.Sucursal_E,4) + STR(OrdServi.Numero,10) NOT IN ( SELECT STR(Sucursal_E,4) + STR(OrdenServi,10) FROM OrSeFact ) AND OrdServi.Fletero > 0 ORDER BY nomFletero ";
+   //$sqlOrdenes = "SELECT ORDSERVI.sucursal_e, ordservi.numero, ordservi.fletero, ordservi.importe, ordservi.numeinter, FLETEROS.NOMBRE AS nomFletero, tipoadel.detalle as nomRubro, detaorse.tipoadelan, detaorse.cantidad as cantServ, detaorse.precio_uni,  detaorse.importe as importeDetalle FROM ORDSERVI INNER JOIN detaorse ON ORDSERVI.sucursal_e = detaorse.sucursal_e AND ORDSERVI.numero = detaorse.ordenservi LEFT JOIN Proveedo ON OrdServi.Proveedor = Proveedo.Codigo LEFT JOIN Fleteros ON OrdServi.Fletero   = Fleteros.Fletero LEFT JOIN Choferes ON OrdServi.Chofer    = Choferes.Codigo LEFT JOIN equipos as equipo ON equipo.equipo = ordservi.equipo LEFT JOIN equipos as acoplado ON acoplado.equipo = ordservi.Acoplado INNER JOIN tipoadel ON tipoadel.codigo = detaorse.tipoadelan WHERE ordservi.proveedor=321 AND ordservi.anulada = 0 AND STR(OrdServi.Sucursal_E,4) + STR(OrdServi.Numero,10) NOT IN ( SELECT STR(Sucursal_E,4) + STR(OrdenServi,10) FROM OrSeFact ) AND OrdServi.Fletero > 0 ORDER BY nomFletero ";
   
 $sqlOrdenes = "SELECT ORDSERVI.sucursal_e, ordservi.numero, ordservi.fletero, ordservi.importe, ordservi.numeinter Collate SQL_Latin1_General_CP1253_CI_AI AS numerinter, FLETEROS.NOMBRE Collate SQL_Latin1_General_CP1253_CI_AI AS nomFletero,  Choferes.Nombre Collate SQL_Latin1_General_CP1253_CI_AI as nomChofer, tipoadel.detalle as nomRubro, detaorse.tipoadelan, detaorse.precio_uni,  detaorse.importe as importeDetalle, fecha FROM ORDSERVI INNER JOIN detaorse ON ORDSERVI.sucursal_e = detaorse.sucursal_e AND ORDSERVI.numero = detaorse.ordenservi LEFT JOIN Proveedo ON OrdServi.Proveedor = Proveedo.Codigo LEFT JOIN Fleteros ON OrdServi.Fletero   = Fleteros.Fletero LEFT JOIN Choferes ON OrdServi.Chofer    = Choferes.Codigo LEFT JOIN equipos as equipo ON equipo.equipo = ordservi.equipo LEFT JOIN equipos as acoplado ON acoplado.equipo = ordservi.Acoplado INNER JOIN tipoadel ON tipoadel.codigo = detaorse.tipoadelan WHERE ordservi.proveedor=321 AND ordservi.anulada = 0 AND OrdServi.Fletero > 0 AND Fecha>'$desdeQueFechaBusco' ORDER BY nomFletero, fecha asc ";
-/* 
-1:26 segundos para el query completo.
-Tengo que probar si hago un query de SELECT STR(Sucursal_E,4) + STR(OrdenServi,10) FROM OrSeFact y lo paso a un array, luego hago uin query sin esa parte y por PHP elimino los renglones que estén en OrSeFact.
 
-Probar un script que muestre agrupado por fletero cantidad y total de ordenes de servicio impagas, pudiendo verse el detalle.
-
-Probar el mismo script de las dos maneras, tomando el query pesado o probando mi alternativa, decantarse por la mas veloz. Si el query de OrSeFact se pasa a una variable de sesion probablemente sea mas rápido
-
-*/
 
 } 
 ChromePhp::log($sqlOrdenes);
@@ -89,9 +81,11 @@ $tabla = "";
 $a = $totalB = $totalA = $cantidadFacturas = $cantidadClientes = $totalPendiente = $salen= 0;
 $totalAComisionar = array();
 $numeroResultados = sqlsrv_num_rows($stmt);
+
 while($fila = sqlsrv_fetch_array($stmt)){
   $orsefact = trim($fila['sucursal_e']).'-'.trim($fila['numero']);
   if(!in_array($orsefact, $_SESSION['OrSeFact'])){
+    // si la orden de servicio está incluida en el $_SESSION['OrSeFact] quiere decir que ya está pagada por lo que no sale en este listado.
     if(!isset($idSocio)){
       $idSocio = $fila['fletero'];
       $socio = $fila['nomFletero'];

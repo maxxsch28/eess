@@ -80,7 +80,9 @@ if(isset($_POST['qMeses'])){
             }?>
         <h2>Referencias</h2>
         <p>Si un cheque está resaltado <span class='alert-warning'>en amarillo</span> significa que está en poder de la Estación de servicio.<br/>
-        Las facturas resaltadas <span class='alert-danger'>en rojo</span> son las ya vencidas al momento del recibo. La cantidad de días indicada entre paréntesis en esos casos corresponde a los días pasados entre la fecha de vencimiento del documento y la del recibo que lo imputa.</p>
+        Las facturas resaltadas <span class='alert-danger'>en rojo</span> son las ya vencidas al momento del recibo. La cantidad de días indicada entre paréntesis en esos casos corresponde a los días pasados entre la fecha de vencimiento del documento y la del recibo que lo imputa.<br/>
+        Los cheques de hoy emitidos hoy mismo tienen la fecha <span class='alert-success'>en verde</span>.
+        </p>
       </div>
     </div>
     <?php include($_SERVER['DOCUMENT_ROOT'].'/include/footer.php')?>

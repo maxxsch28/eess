@@ -8,9 +8,16 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 
 // tengo que hacer que reste las notas de crédito:
+if( !isset($_SESSION['fechaTurnoAnterior']) || ($_SESSION['fechaTurnoAnterior']-date('Y-m-d H:i:s'))>12 || 1){
+  $sqlFechaTurnoAnterior = "SELECT TOP 1 fecha from dbo.cierresturno WHERE idCaja=1 order by idcierreturno desc";
+  $stmt = odbc_exec2( $mssql, $sqlFechaTurnoAnterior, __FILE__, __LINE__);
+  $rowFacturasExluidas = sqlsrv_fetch_array($stmt);
+  $_SESSION['fechaTurnoAnterior'] = $rowFacturasExluidas[0]->format('Y-m-d H:i:s');
+}
 
 
-$sql = "select IdArticulo, sum(Cantidad) as facturado, 'fact' as q from dbo.MovimientosDetalleFac, dbo.movimientosfac where FechaEmision>=(SELECT TOP 1 fecha from dbo.cierresturno WHERE idCaja=1 order by idcierreturno desc) AND IdArticulo IN (2068, 2069) AND dbo.MovimientosDetalleFac.IdMovimientofac=dbo.movimientosfac.IdMovimientoFac AND ExcluidoDeTurno=0 AND IdCierreTurno IS NULL GROUP BY IdArticulo UNION select IdArticulo, SUM(Cantidad) as despachado, 'desp' as q from Despachos where Fecha>=(SELECT TOP 1 fecha from dbo.cierresturno WHERE idCaja=1 order by idcierreturno desc) AND idArticulo IN (2068, 2069) GROUP BY IdArticulo ORDER BY IdArticulo, q DESC;";
+$sql = "select IdArticulo, sum(Cantidad) as facturado, 'fact' as q from dbo.MovimientosDetalleFac, dbo.movimientosfac where FechaEmision>='$_SESSION[fechaTurnoAnterior]' AND IdArticulo IN (2068, 2069) AND dbo.MovimientosDetalleFac.IdMovimientofac=dbo.movimientosfac.IdMovimientoFac AND ExcluidoDeTurno=0 AND IdCierreTurno IS NULL GROUP BY IdArticulo UNION select IdArticulo, SUM(Cantidad) as despachado, 'desp' as q from Despachos where Fecha>='$_SESSION[fechaTurnoAnterior]' AND idArticulo IN (2068, 2069) GROUP BY IdArticulo ORDER BY IdArticulo, q DESC;";
+ChromePhp::log($sql);
 
 $stmt = odbc_exec2( $mssql, $sql, __FILE__, __LINE__);
 

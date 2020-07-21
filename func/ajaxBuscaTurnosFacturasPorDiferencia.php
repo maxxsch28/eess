@@ -7,7 +7,7 @@ unset($_SESSION['litrosMes'], $_SESSION['litrosPrecio']);
 
 if(!isset($_SESSION['empleados'])){
   $s = "SELECT IdEmpleado, Empleado FROM empleados ORDER BY IdEmpleado";
-  $q = odbc_exec($mssql, $s);
+  $q = odbc_exec2($mssql, $s);
   while($r = odbc_fetch_array($q, SQLSRV_FETCH_ASSOC)){
     $rr[$r['IdEmpleado']]=$r['Empleado'];
   }

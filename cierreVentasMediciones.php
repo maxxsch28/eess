@@ -12,7 +12,7 @@ include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
 // Grabo el estado de tanques a las 22 hs
 // Saco el contenido del archivo de stock de teknivel
 $output = shell_exec('rm /srv/www/htdocs/ypf/tmp/stocks.txt');
-$output = shell_exec('smbget smb://maxx:e757g4aB@192.168.1.13/Teknivel/Tnq/stocks.txt -o /srv/www/htdocs/ypf/tmp/stocks.txt');
+$output = shell_exec('smbget smb://Administrator:Pepe1212bis@192.168.1.13/Teknivel/Tnq/stocks.txt -o /srv/www/htdocs/ypf/tmp/stocks.txt');
 //var_dump($output);
 $file = file_get_contents('tmp/stocks.txt');
 //var_dump($file);

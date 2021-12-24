@@ -129,11 +129,17 @@ if(isset($_GET['idFoja'])&&is_numeric($_GET['idFoja'])){
                   
                   <?php $a++;
                   }
-                } else {?>
-                  <div class='formActa' id='formActa1'>
+                } else {
+                  // cambio el sistema de multiples adds a máximo 3 actas por foja
+                  $actasPorFoja = 3;
+                  for($acta=0;$acta<3;$acta++){
+                  ?>
+                  <div class='formActa' id='formActa<?php echo $acta?>'>
                     <div class='botonera pull-right'>
-                      <span class='btn-add glyphicon glyphicon-plus'>&nbsp;</span>
-                      <span class='btn-remove glyphicon-minus'>&nbsp;</span>
+                      <!-- <span class='btn-add glyphicon glyphicon-plus'>&nbsp;</span>-->
+                      <?php if($acta > 0){?> 
+                      <span class='btn-remove glyphicon glyphicon-remove'>&nbsp;</span>
+                      <?php }?>
                     </div>
                     <div class="form-group">
                       <label for="acta" class="col-sm-3 control-label">Acta Nº</label>
@@ -149,14 +155,18 @@ if(isset($_GET['idFoja'])&&is_numeric($_GET['idFoja'])){
                     </div>
                     <div class="form-group">
                       <label for="altas" class="col-sm-3 control-label">Altas</label>
-                      <div class="col-sm-7 input-group">
-                        <input type="text" class="form-control" name='altas[]' id="altas" placeholder="Nuevos socios"  data-plus-as-tab='true' ><span class="input-group-addon glyphicon glyphicon-import"></span>
+                      <div class="col-sm-3 input-group">
+                        <input type="text" class="form-control buscaSocioABM" name='altas' id="altas_<?php echo $acta?>" placeholder="Nuevos socios"  data-plus-as-tab='true' ><span class="input-group-addon glyphicon glyphicon-import"></span>
+                      </div>
+                      <div class="col-sm-7 col-md-offset-3" id='socios_altas_<?php echo $acta?>'>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="bajas" class="col-sm-3 control-label">Bajas</label>
-                      <div class="col-sm-7 input-group">
-                        <input type="text" class="form-control" name='bajas[]' id="bajas" placeholder="Renuncias o expulsiones"  data-plus-as-tab='true' ><span class="input-group-addon glyphicon glyphicon-export"></span>
+                      <div class="col-sm-3 input-group">
+                        <input type="text" class="form-control buscaSocioABM" name='bajas' id="bajas_<?php echo $acta?>" placeholder="Renuncias o expulsiones"  data-plus-as-tab='true' ><span class="input-group-addon glyphicon glyphicon-export"></span>
+                      </div>
+                      <div class="col-sm-7 col-md-offset-3" id='socios_bajas_<?php echo $acta?>'>
                       </div>
                     </div>
                     <div class="form-group">
@@ -166,7 +176,8 @@ if(isset($_GET['idFoja'])&&is_numeric($_GET['idFoja'])){
                       </div>
                     </div>
                   </div>
-                <?php }?>
+                  <?php if($acta < $actasPorFoja - 1) echo "<div class='modal-footer'></div>";
+                }}?>
               </fieldset>
               <div class="modal-footer">
                 <div id='msgbox' class='pull-left'></div>
@@ -191,6 +202,37 @@ if(isset($_GET['idFoja'])&&is_numeric($_GET['idFoja'])){
           $('#ingresoSocio').ajaxForm(opciones);    
       });
       
+      $(".buscaSocioABM").focusout(function(){
+        $(this).val("");
+      }).click(function(){
+        $(this).val("");
+      });
+      
+      $(".buscaSocioABM").autocomplete({
+        source: "func/ajaxBuscaSocio.php",
+        minLength: 2,
+        select: function( event, ui ) {
+          var que = $(this).attr('id');
+          
+          var label = "danger";
+          if( que.substr(0,5) == 'altas') {
+            label = "success";
+          }
+          $("#socios_"+que).append("<span class='abmSocio label label-"+label+"'>  <span aria-hidden='true'>&times;</span> "+ui.item.label+"<input name='"+que+"[]["+ui.item.value+"]' type='hidden' value='"+ui.item.value+"'/></span>&nbsp;");
+
+          $(this).val("  ");
+          
+          $('.abmSocio').click(function(){
+            $(this).remove();
+          });
+        }
+      });
+
+      $('.abmSocio').click(function(){
+        $(this).remove();
+      });
+
+
       function mostrarRespuesta(responseText){
         $('#botonEnviando').hide();
         $('#cargaLectura').fadeIn();
@@ -206,12 +248,13 @@ if(isset($_GET['idFoja'])&&is_numeric($_GET['idFoja'])){
           listaUltimos();
         }
       }
-      
-      var regex = /^(.+?)(\d+)$/i;
 
+      
+      /* Deprecated, lo cambie para no complicarme la vida */
+      /*
+      var regex = /^(.+?)(\d+)$/i;
       var cloneIndex = $(".formActa").length;
 
-      
       function clone(){
         $(this).parents(".formActa").clone()
           .appendTo("#actas")
@@ -228,15 +271,30 @@ if(isset($_GET['idFoja'])&&is_numeric($_GET['idFoja'])){
           .on('click', '.btn-remove', remove);
         cloneIndex++;
       }
+
+      $(".btn-add").on("click", clone);
+      */
+
       function remove(){
+        var cloneIndex2 = $(".formActa").length;
+        if(cloneIndex2>1){
+          $(this).parents(".formActa").hide();
+        }
+      }
+      $(".btn-remove").on("click", remove);
+      
+
+      function remove2(){
         var cloneIndex2 = $(".formActa").length;
         if(cloneIndex2>1){
           $(this).parents(".formActa").remove();
         }
       }
-      $(".btn-add").on("click", clone);
-      $(".btn-remove").on("click", remove);
-      
+      $(".btn-remove").on("click", remove2);
+
+
+
+
       function listaUltimos(){
         $.post('func/ajaxListaUltimasFojas.php', function(data) {
           $('#ultimas').html(data);

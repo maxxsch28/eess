@@ -28,7 +28,7 @@ $titulo="Lista facturacion | Movistar";
                         <div class="input-group">
                         <select name='periodo' id='periodo' class='input-sm col-md-10'>
                             <?php 
-                            for ($abc = 36; $abc >= 0; $abc--) {
+                            for ($abc = 72; $abc >= 0; $abc--) {
                                 $mes = date("F Y", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                                 $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                                 echo "<option value='$valorMes' ".(($abc==1)?' selected="selected"':'').">$mes</option>";

@@ -511,7 +511,7 @@ if(!isset($_GET['soloComb'])){
                 </div>
                 <div class="panel-body gris" >
                   <table class='table' id='despachosGrandes'>
-                    <thead><tr><th>Cliente</th><th>Ticket</th><th>Cantidad</th><th>Total</th><th>Hora</th></tr></thead>
+                    <thead><tr><th>Cliente</th><th><?php if($_SESSION['esMovil']){echo "PV";} else {echo "Ticket";}?></th><th>Cantidad</th><th>Total</th><th>Hora</th></tr></thead>
                     <tbody>
                       <tr><td colspan='8' rowspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>
                     </tbody>

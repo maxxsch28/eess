@@ -1,10 +1,5 @@
 <?php
-	/*
-		UserCake Version: 1.0
-		http://usercake.com
-		
-
-	*/
+// 404	
 $titulo = "404 - Página no encontrada";
 require_once($_SERVER['DOCUMENT_ROOT']."/include/inicia.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/include/config.php"); ?>

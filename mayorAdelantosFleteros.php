@@ -1,13 +1,15 @@
 <?php
-// libroDiarioTransporte.php
-// Revisa todo el diario y visualiza los asientos desbalanceados
+// mayorAdelantosFleteros.php
+// Muestra mayor adelantos fleteros con detalle que no da Setup-
 
 $nivelRequerido = 2;
 include($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php');
-if(isset($_GET['desbalanceado'])){
-  $titulo = "Muestra asientos desbalanceados";
+if(isset($_GET['gasoil'])){
+  $titulo = "Muestra mayores adelantos de gasoil";
+  $gasoil = 1;
 } else {
-  $titulo = "Muestra libro diario";
+  $titulo = "Muestra mayores adelantos fleteros";
+  $gasoil = 0;
 }
 
 ?>
@@ -37,7 +39,7 @@ if(isset($_GET['desbalanceado'])){
             height: 297mm;
         }
       }
-
+      
     </style>
    
   </head>
@@ -49,17 +51,17 @@ if(isset($_GET['desbalanceado'])){
       <input type='hidden' name='gasoil' value='<?php echo $gasoil?>'/>
       <div class='row'>
         <div class="col-md-12 mitad">
-            <h2>Libro diario Setup  
+            <h2>Mayor de <b>Adelantos fleteros</b> 
             <span id='refresh' class='pull-right glyphicon glyphicon-refresh gly-spin'></span>&nbsp;
             <select name='periodo' id='periodo' class='input-sm pull-right'>
                 <?php 
                 for ($abc = 12; $abc >= 0; $abc--) {
                     $mes = date("F Y", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
                     $valorMes = date("Ym", mktime(0, 0, 0, date("m")-$abc, date("d"), date("Y")));
-                    echo "<option value='$valorMes' >$mes</option>";
+                    echo "<option value='$valorMes' ".(($abc==1)?' selected="selected"':'').">$mes</option>";
                 }?>
                 <?php
-                echo "<option value='".date("Y")."' selected='selected'>".date("Y")." anual</option><option value='".date("Y",strtotime("-1 year"))."'>".date("Y",strtotime("-1 year"))." anual</option>";
+                echo "<option value='".date("Y")."'>".date("Y")." anual</option><option value='".date("Y",strtotime("-1 year"))."'>".date("Y",strtotime("-1 year"))." anual</option>";
                 ?>
             </select>
             </h2>
@@ -69,8 +71,9 @@ if(isset($_GET['desbalanceado'])){
             <input type='hidden' name='status' value='<?php echo (isset($_REQUEST['status']))?$_REQUEST['status']:''?>'>
           <div class="col-md-12">
             <div>
-                <table id='libroDiarioTransporte' class='table table-condensed'>
+                <table id='cuentaSetup' class='table table-condensed'>
                 <thead><tr><th>Fecha</th><th>Asiento</th><th>Detalle</th><th  width='10%'>Debe</th><th width='10%' >Haber</th><th width='20%'>Concepto</th></tr></thead>
+                <tbody id='cuentaSetupTbody'></tbody>
                 </table>
             </div>
           </div>
@@ -85,7 +88,18 @@ if(isset($_GET['desbalanceado'])){
         actualiza();
         
         $('#periodo').change(function(){
-              actualiza(true);
+            if($('#periodo').val()<10000&&false){
+                // anual
+                $('#cuentaSetup tbody').empty();
+                for(i = 1; i < 13; i++) { 
+                    actualiza(false, i);
+
+                }
+            } else {
+                // mensual
+                actualiza(true);
+            }
+
         });
         $('#refresh').click(function(){
             actualiza(true);
@@ -93,7 +107,7 @@ if(isset($_GET['desbalanceado'])){
 
         function actualiza(limpia=false, periodo=false) {
             $('#refresh').addClass('gly-spin');
-            $("#libroDiarioTransporte tbody").fadeOut(3000);
+            $("#cuentaSetup").fadeOut(3000);
             if(periodo){
                 mes = $('#periodo').val()+periodo;
             } else {
@@ -104,12 +118,10 @@ if(isset($_GET['desbalanceado'])){
                 currency: 'ARS',
                 minimumFractionDigits: 2
             })
-            $.post('func/setupDiario.php', { mes: mes, caja:'Setup' }, function(data) {
+            $.post('func/setupMuestraCuentaContable.php', { mes: mes, caja:'Setup' }, function(data) {
                 if(limpia === true){
-                    $('#libroDiarioTransporte').empty();
+                    $('#cuentaSetup tbody').empty();
                 }
-                $('#libroDiarioTransporte').html(data);
-                /*
                 var totalD = 0;
                 var totalH = 0;
                 $.each(data, function(i, item) {
@@ -120,10 +132,10 @@ if(isset($_GET['desbalanceado'])){
                     $('<tr>').append($('<td>').text(item.fecha),$('<td>').text(item.asiento),$('<td>').text(item.detalle),$('<td>').text(debe.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })),$('<td>').text(haber.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })),$('<td>').text(item.concepto)).appendTo('#cuentaSetup tbody');
                 });
                 $('<tr>').append($('<td>').text(""),$('<td>').text(""),$('<td>').text("TOTAL"),$('<td>').text(totalD.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })),$('<td>').text(totalH.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })),$('<td>').text("")).appendTo('#cuentaSetup tbody');
-                */
+
                 $('#refresh').removeClass('gly-spin');
-                $("#libroDiarioTransporte tbody").fadeIn(1000);
-            }); //, "json"
+                $("#cuentaSetup").fadeIn(1000);
+            }, "json");
         };
 
         

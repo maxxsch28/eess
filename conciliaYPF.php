@@ -183,7 +183,6 @@ $titulo = "Conciliar Cuenta Corriente YPF - CaldenOil (conciliatutti)";
       });
       
       $('.mConciliado').click(function() {
-        alert('h');
         $('.mConciliado').removeClass('alert-warning');
         var currentli = $(this).parent().prop('className');
         $('.'+currentli + ' .mConciliado').addClass('alert-warning');

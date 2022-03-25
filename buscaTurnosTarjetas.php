@@ -20,7 +20,7 @@ if(!isset($_SESSION['ultimosCierresTesoreria'])){
   }
 }
 if(!isset($_SESSION['tarjetasCredito'])){
-  $sqlTarjetas = "SELECT IdTarjeta, Nombre, IdCuentaContable_Presentacion FROM dbo.tarjetasCredito WHERE Activa=1 ORDER BY Nombre ASC;";
+  $sqlTarjetas = "SELECT IdTarjeta, Nombre, IdCuentaContable_Presentacion FROM dbo.tarjetasCredito WHERE Activa=1 OR PagoElectronico=1 ORDER BY Nombre ASC;";
   ChromePhp::log($sqlTarjetas);
   $stmt = odbc_exec2( $mssql, $sqlTarjetas, __LINE__, __FILE__);
   $_SESSION['tarjetasCredito']=array();
@@ -40,6 +40,11 @@ if(!isset($_SESSION['tarjetasCredito'])){
       body {
         padding-top: 60px;
         padding-bottom: 40px;
+      }
+      .mm {
+        padding: 0;
+        padding-left: 2px;
+        width: 7ex;
       }
     </style>
   </head>

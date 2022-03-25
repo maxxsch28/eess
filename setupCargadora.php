@@ -53,6 +53,9 @@ $titulo="Detalle Cargadora";
               <?php
               echo "<option value='".date('Y')."'  selected=selected>".date('Y')."</option>";
               echo "<option value='".(date('Y')-1)."' >".(date('Y')-1)."</option>";
+              echo "<option value='".(date('Y')-2)."' >".(date('Y')-2)."</option>";
+              echo "<option value='".(date('Y')-3)."' >".(date('Y')-3)."</option>";
+              echo "<option value='".(date('Y')-3)."' >".(date('Y')-4)."</option>";
               ?>
               <?php 
               for ($abc = 11; $abc >= 0; $abc--) {

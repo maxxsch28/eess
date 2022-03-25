@@ -28,6 +28,21 @@ function cargaEventosSocio($idSocio){
 
 }
 
+// Si no existe el slector de libros lo crea, te deja preestablecido el último usado.
+if(!isset($_SESSION['selectorLibro'])){
+  $sql = "SELECT * FROM dbo.[socios.libros2] order by tipo ASC, numeroLibro ASC;";
+  $stmt = odbc_exec2( $mssql4, $sql, __LINE__, __FILE__);
+  $selectorLibro = "";
+  $_SESSION['libros'] = array();
+  while($row = sqlsrv_fetch_array($stmt)){
+    $_SESSION['libros'][$row['idLibro']] = ucfirst($row['tipo'])." Nº$row[numeroLibro]";
+    $selected = (isset($_SESSION['idLibro'])&&$row['idLibro']==$_SESSION['idLibro'])?" selected='selected'":'';
+    $selectorLibro .="<option value='$row[idLibro]' $selected>".ucfirst($row['tipo'])." Nº$row[numeroLibro]</option>";
+  }
+  $_SESSION['selectorLibro'] = $selectorLibro;
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,15 +90,15 @@ function cargaEventosSocio($idSocio){
               </div>
               <div class='col-md-7'>
               <form name='ingresoSocio' id='ingresoSocio' class="form-horizontal">
-                <?php if(isset($_POST['idSocio'])){
-                  echo "<input type='hidden' name='idSocio' value='$_POST[idSocio]'/>";
+                <?php if(isset($_GET['idSocio'])){
+                  echo "<input type='hidden' name='idSocio' value='$_GET[idSocio]'/>";
                 }?>
                 <fieldset>
                 <legend>Datos personales</legend>
                   <div class="form-group">
                     <label for="idFletero" class="col-sm-3 control-label">Código Setup</label>
                     <div class="col-sm-3 input-group">
-                      <input type="text" class="form-control" name='idFletero' id="idFletero" placeholder="Fletero Setup" required='required' data-plus-as-tab='true' value='<?php echo (($modifica)?$datosSocio['idFletero']:'') ?>'/><span class="input-group-addon glyphicon glyphicon-barcode"></span>
+                      <input type="text" class="form-control" name='idFletero' id="idFletero" placeholder="Fletero Setup" data-plus-as-tab='true' value='<?php echo (($modifica)?$datosSocio['idFletero']:'') ?>'/><span class="input-group-addon glyphicon glyphicon-barcode"></span>
                     </div>
                   </div>
                   <div class="form-group">
@@ -124,9 +139,14 @@ function cargaEventosSocio($idSocio){
                   <div class="form-group">
                     <label for="fechaIngreso" class="col-sm-3 control-label">Acta</label>
                     <div class="col-sm-7 input-group">
-                      <input type="text" class="form-control input-sm" id="libro" name="libro" placeholder="Libro"  <?php if(!isset($_GET['dbg']))echo 'required="required"';?> data-plus-as-tab='true'/><span class='input-group-addon'></span>
-                      <input type="text" class="form-control input-sm" id="foja" name="foja" placeholder="Foja"  <?php if(!isset($_GET['dbg']))echo 'required="required"';?> data-plus-as-tab='true'/><span class='input-group-addon'></span>
-                      <input type="text" class="form-control input-sm" id="acta" name="acta" placeholder="Acta"  <?php if(!isset($_GET['dbg']))echo 'required="required"';?> data-plus-as-tab='true'/>
+                       
+                          <select id='idLibro' class='btn-bg primary form-control' name='idLibro' data-plus-as-tab='true' >
+                              <?php echo $_SESSION['selectorLibro']?>
+                          </select>
+
+                      <span class='input-group-addon'></span>
+                      <input type="text" class="form-control input" id="foja" name="foja" placeholder="Foja"  <?php if(!isset($_GET['dbg']))echo 'required="required"';?> data-plus-as-tab='true'/><span class='input-group-addon'></span>
+                      <input type="text" class="form-control input" id="acta" name="acta" placeholder="Acta"  <?php if(!isset($_GET['dbg']))echo 'required="required"';?> data-plus-as-tab='true'/>
                       <span class="input-group-addon glyphicon glyphicon-number"></span>
                     </div> 
               </fieldset>
@@ -155,17 +175,17 @@ function cargaEventosSocio($idSocio){
                   <div class="col-sm-7 input-group">
                     <label class="radio-inline">
 
-                      <input type="radio" name="iva" class='iva' id="ri" value="ri" <?php echo (($modifica&&$datosSocio['iva']==1)?"checked='checked'":'')?>/> Responsable Inscripto
+                      <input type="radio" name="iva" class='iva' id="ri" value="1" <?php echo (($modifica&&$datosSocio['iva']==1)?"checked='checked'":'')?>/> Responsable Inscripto
                     </label>
 
                     <label class="radio-inline">
 
-                      <input type="radio" name="iva" class='iva'  id="mo" value="mo" <?php echo (($modifica&&$datosSocio['iva']==2)?"checked='checked'":'')?>> Monotributo
+                      <input type="radio" name="iva" class='iva'  id="mo" value="2" <?php echo (($modifica&&$datosSocio['iva']==2)?"checked='checked'":'')?>> Monotributo
                     </label>
 
                     <label class="radio-inline">
 
-                      <input type="radio" name="iva" class='iva'  id="ot" value="ot"  <?php echo (($modifica&&$datosSocio['iva']>2)?"checked='checked'":'')?>> Otro
+                      <input type="radio" name="iva" class='iva'  id="ot" value="3"  <?php echo (($modifica&&$datosSocio['iva']>2)?"checked='checked'":'')?>> Otro
                     </label>
                   </div>
                 </div>

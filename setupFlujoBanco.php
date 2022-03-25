@@ -58,6 +58,7 @@ $titulo="Proyección Banco Provincia";
                 $j++;
               } else {
                 $d = time()+$i*86400;
+                $hasta = date("Y-m-d", $d);
                 echo "<th class=''>".$weekday[date('l', $d)].' '.date('j/n', $d)."</th>";
               }
             }?>
@@ -78,7 +79,7 @@ $titulo="Proyección Banco Provincia";
   $(document).ready(function() {
     $('#flujoBanco tbody').html("<tr><td colspan='32'><center><img src='img/ajax-loader.gif'/></center></td></tr>").fadeIn();
     function actualizaProyeccion(){
-      $.post('func/setupAxFlujoBanco.php', { m:1, saldoBanco:$('#saldoBanco').val() }, function(data) {
+      $.post('func/setupAxFlujoBanco.php', { m:1, saldoBanco:$('#saldoBanco').val(), hasta:'<?php echo $hasta?>' }, function(data) {
         $('#flujoBanco tbody').html(data);
         $('#comprimir').click(function(){
           if($('.detalle').is(":visible") === true ) {

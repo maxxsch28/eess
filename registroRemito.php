@@ -181,6 +181,7 @@ $(document).ready(function() {
   }
 
   function mostrarRespuesta(responseText){
+    //console.log(responseText);
     $("#loader_gif").fadeOut("slow"); // Hago desaparecer el loader de ajax
       
       if(responseText.status==='success'){

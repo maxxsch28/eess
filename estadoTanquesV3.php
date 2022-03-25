@@ -496,7 +496,7 @@ if(!isset($_GET['soloComb'])){
                 </div>
                 <div class="panel-body gris" >
                   <table class='table' id='descuentosAPP'>
-                    <thead><tr><th>Cliente</th><th>Ticket</th><th>Total</th><th>-10%/15%</th><th>Serviclub</th><th>Hora</th></tr></thead>
+                    <thead><tr><th>Cliente</th><?php if(!$_SESSION['esMovil']){?><th>Ticket</th><?php }?><th>Total</th><th>-10%/15%</th><th>Serviclub</th><th>Hora</th></tr></thead>
                     <tbody>
                       <tr><td colspan='8' rowspan='8'><center><img src='img/ajax-loader.gif'/></center></td></tr>
                     </tbody>

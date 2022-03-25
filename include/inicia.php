@@ -11,6 +11,7 @@ $db_pass = "vGCP6eZ6dqUFZ2pB";
 $db_name = "pedidosypf";
 $db_name2 = "transporte";
 $db_name3 = 'cuentaypf';
+$db_name4 = 'movistar';
 $db_port = "3306";
 $db_table_prefix = "users_";
 $clienteYER = 1283;
@@ -21,7 +22,7 @@ $CFG->tomaLitrosDesdeTabla = false;
 $CFG->tanquesATomarMilimetrosDesdeTablas = array(7); // 7 es para que ningún tanque de true.
 $CFG->fechaDesdeDondeTomoPromedioHistoricos = "2017-01-01";
 $CFG->tipoFechaSQL = "Y-d-m";
-
+ 
 //Dbal Support - Thanks phpBB ; )
 require_once($_SERVER['DOCUMENT_ROOT']."/classes/mysqli.php");
 
@@ -30,7 +31,7 @@ $db = new $sql_db();
 if(is_array($db->sql_connect($db_host, $db_user,$db_pass,$db_name, $db_port, false, false))){
   die("MYSQL No se puede conectar a la base de datos");
 }
-	
+
 require_once($_SERVER['DOCUMENT_ROOT']."/include/es.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/classes/class.user.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/func/funcs.user.php");
@@ -68,6 +69,7 @@ else if(isset($_COOKIE["userPieUser"])) {
 $mysqli = new mysqli($db_host, $db_user, $db_pass, $db_name);
 $mysqli2 = new mysqli($db_host, $db_user, $db_pass, $db_name2);
 $mysqli3 = new mysqli($db_host, $db_user, $db_pass, $db_name3);
+
 
 if ($mysqli->connect_error) {
     die('MySQL - Error de Conexión ('.$mysqli->connect_errno.') '.$mysqli->connect_error);
@@ -110,21 +112,22 @@ $connectionOptions4 = array(
 
 /* Connect using Windows Authentication. */  
 
-try  
-{  
-$conn = new PDO( "sqlsrv:server=$serverName ; Database=CoopDeTrabajo.Net", "sa", "B8000ftq");  
-$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );  
+try {  
+  $conn = new PDO( "sqlsrv:server=$serverName ; Database=CoopDeTrabajo.Net", "sa", "B8000ftq");  
+  $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );  
 }  
-catch(Exception $e)  
-{   
-die( print_r( $e->getMessage() ) );   
-}  
+catch(Exception $e) {   
+  die( print_r(__FILE__.' '.__LINE__.' '. $e->getMessage() ) );   
+} 
 
 
 
 if (!function_exists('sqlsrv_connect')) {
+  debug2(__LINE__);
     echo "sqlsrv_connect functions are not available.<br />\n";
 }
+//echo phpinfo();
+
 $mssql = sqlsrv_connect($serverName, $connectionOptions);
 //print_r(sqlsrv_server_info($mssql));
 if( $mssql === false ){
@@ -244,7 +247,7 @@ if(!isset($_SESSION['vendedor'])){
   $vendedor = $_SESSION['vendedor'];
   asort($vendedor);
 }
-
+debug2(__LINE__);
 if(!isset($_SESSION['empleado'])){
   $sqlCajeros = "select idEmpleado, empleado, idgrupovendedores from dbo.empleados where esVendedor=1;";
   $stmt = odbc_exec2($mssql, $sqlCajeros);
@@ -309,7 +312,7 @@ if(!isset($_SESSION['transporte_libros_contables'])){
         $_SESSION['transporte_libros_contables'][$rowVentas['codigo']]=trim($rowVentas['detalle']);
     }
 }
-
+debug2(__LINE__);
 
 // LOGIN
 $langauge = "es";
@@ -351,6 +354,8 @@ if(!isset($_SESSION['esMovil'])){
   $detect = new Mobile_Detect;
   $_SESSION['esMovil'] = ($detect->isMobile()||$detect->isTablet())?true:false; 
 }
+
+debug2(__LINE__);
 
 // FUNCIONES COMUNES
 function loguea($idObjetivo, $idAccion, $idRegistro = NULL){
@@ -567,4 +572,15 @@ function picos($desde='', $hasta=''){
   return $pico;
 }
 
+
+
+
+
+
+function debug2($linea) {
+  //echo "ping, linea $linea<br>";
+
+}
+
+debug2(__LINE__);
 ?>

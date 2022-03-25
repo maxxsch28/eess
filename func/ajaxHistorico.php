@@ -11,7 +11,7 @@ if(isset($_GET['alterno'])&&$_GET['alterno']==1){
   } else 
     $_SESSION['soloMios']=0;
 }
-$filtroUsuarios = (!isset($_SESSION['soloMios'])||$_SESSION['soloMios']==0)?"":" AND tmpBuscaAsientos.user_id=".$loggedInUser->user_id;
+$filtroUsuarios = (!isset($_SESSION['soloMios'])||$_SESSION['soloMios']==0)?"":" AND tmpBuscaAsientos.user_id=".((isset($loggedInUser->user_id))?$loggedInUser->user_id:'0');
 
 $sql = "SELECT id, importe, leyenda, fuzzyness, ambito, rangoinicio, rangofin, cuentaEESS, cuentaTransporte, cantidadusos, username, color FROM tmpBuscaAsientos, users_users WHERE tmpBuscaAsientos.user_id=users_users.user_id $filtroUsuarios ORDER BY id DESC LIMIT 10;";
 //ChromePhp::log($sql);

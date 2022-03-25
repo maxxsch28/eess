@@ -4,9 +4,23 @@ include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 
 $fechaDesde = date("Y-m-01", strtotime("-2 months"));
 
+$mes  = date("m", strtotime("-1 months"));
+$anio = date("Y", strtotime("-1 months"));
+//$fechaDesde = "2021-05-01";
+
 // acomodar asientos que son de movistar carga de documentos para que la cuenta sea la de movistar.
 // idem repsol
 // idem peysse y tabacalera
+
+
+
+
+
+
+
+
+
+
 
 // acomodar Movistar para que si es un gasto de administracion no lo cambie.
 $sql = array();
@@ -45,7 +59,7 @@ $s['RepuestosYVarios'] = array(41, 1, "242, 201, 491, 29, 149, 25, 7, 167, 515, 
 $s['Edenred'] = array(17, 1, "547");// 36, 515
 
 
-
+$sql['facturasC'] = "update dbo.movimientospro set IdTipoMovimientoProveedor='FAC' where IdProveedor IN (select IdProveedor from dbo.proveedores where activo=1 and IdCategoriaIVA=3) and IdTipoMovimientoProveedor='FAB' AND fecha>='$fechaDesde'";
 
 // ASIENTOS
 $sql['RepuestosYVariosAsientos'] = "UPDATE dbo.asientosdetalle set IdCuentaContable=543 WHERE IdCuentaContable IN (706, 734) AND idasiento IN (SELECT dbo.asientos.IdAsiento FROM dbo.asientos, dbo.MovimientosPro where  dbo.asientos.fecha>='$fechaDesde' AND dbo.asientos.IdAsiento=dbo.MovimientosPro.IdAsiento AND idProveedor IN ({$s['RepuestosYVarios'][2]}))";
@@ -80,16 +94,21 @@ $sql['BDUCompraNetos'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderi
 
 $sql['BDUMantenimientoNetos'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (57, 324, 470, 408, 288, 286, 366, 138, 76, 146, 228, 221, 134, 300, 103, 204, 398, 100, 261, 157) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
 
-$sql['LimpiezaNetos']="update dbo.MovimientosPro set NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN ({$s['Limpieza'][2]}) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
+$sql['LimpiezaNetos']="UPDATE dbo.MovimientosPro SET NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN ({$s['Limpieza'][2]}) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
 
-$sql['PublicidadNetos'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (128, 393, 414, 31, 503, 424, 40, 429, 513, 488, 498, 56, 207, 8, 466, 52) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
+$sql['PublicidadNetos'] = "UPDATE dbo.MovimientosPro SET NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (128, 393, 414, 31, 503, 424, 40, 429, 513, 488, 498, 56, 207, 8, 466, 52) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
 
-$sql['SegurosNetos'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (162, 435, 77, 379) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde'); update dbo.MovimientosPro set NetoGastos=netoNoGravado, netoNoGravado=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (162, 435, 77, 379) and netoNoGravado>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
+$sql['SegurosNetos'] = "UPDATE dbo.MovimientosPro SET NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (162, 435, 77, 379) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde'); UPDATE dbo.MovimientosPro set NetoGastos=netoNoGravado, netoNoGravado=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (162, 435, 77, 379) and netoNoGravado>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
 
-$sql['VestimentaNetos'] = "update dbo.MovimientosPro set NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (55, 499, 497, 486, 472, 330, 430, 139, 121, 67) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde'); update dbo.MovimientosPro set NetoGastos=netoNoGravado, netoNoGravado=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (55, 499, 497, 486, 472, 330, 430, 139, 121, 67) and netoNoGravado>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
+$sql['VestimentaNetos'] = "UPDATE dbo.MovimientosPro SET NetoGastos=NetoMercaderias, NetoMercaderias=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (55, 499, 497, 486, 472, 330, 430, 139, 121, 67) and NetoMercaderias>0 and NetoGastos=0 and Fecha>='$fechaDesde'); UPDATE dbo.MovimientosPro SET NetoGastos=netoNoGravado, netoNoGravado=0 where IdMovimientoPro in (select IdMovimientoPro from dbo.MovimientosPro where IdProveedor IN (55, 499, 497, 486, 472, 330, 430, 139, 121, 67) and netoNoGravado>0 and NetoGastos=0 and Fecha>='$fechaDesde')";
 
-$sql['CorreoNetos'] = "update dbo.movimientosPro set netoNoGravado=NetoGastos, netoGastos=0 where idproveedor=85 and fecha>='$fechaDesde' and netoNoGravado=0 and netoGastos>0 and total=netoGastos;
-update dbo.movimientosPro set netoNoGravado=NetoMercaderias, netoMercaderias=0 where idproveedor=85 and fecha>='$fechaDesde' and netoNogravado=0 and netoMercaderias>0 and total=netoMercaderias;";
+$sql['CorreoNetos'] = "UPDATE dbo.movimientosPro SET netoNoGravado=NetoGastos, netoGastos=0 where idproveedor=85 and fecha>='$fechaDesde' and netoNoGravado=0 and netoGastos>0 and total=netoGastos;
+UPDATE dbo.movimientosPro SET netoNoGravado=NetoMercaderias, netoMercaderias=0 where idproveedor=85 and fecha>='$fechaDesde' and netoNogravado=0 and netoMercaderias>0 and total=netoMercaderias;";
+
+$sql['prefijos_0_tarjetas'] = "UPDATE dbo.AcreditacionesTarjetasCredito set prefijo=1 where prefijo=0 and MesImputacionIVACompras=$mes and AnioImputacionIVACompras=$anio;";
+
+$sql['prefijos_0_tarjetas_proveedores'] = "UPDATE dbo.movimientospro SET PuntoVenta=1 WHERE PuntoVenta=0 AND IdTipoMovimientoProveedor='ACR' AND  IdAcreditacionTarjetasCredito in (select IdAcreditacionTarjetasCredito from dbo.AcreditacionesTarjetasCredito where MesImputacionIVACompras=$mes and AnioImputacionIVACompras=$anio);";
+
 
 
 foreach($s as $rubro => $array){
@@ -100,7 +119,7 @@ foreach($s as $rubro => $array){
   }
   $sql['verifica'.$rubro] = "SELECT * FROM dbo.MovimientosDetallePro where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where idproveedor in ($array[2]) AND IdCuentaGastos<>$array[0] AND Fecha>='$fechaDesde' ))$excepto";
   
-  $sql[$rubro] = "update dbo.MovimientosDetallePro set idcuentagastos=$array[0], idcentrocostos=$array[1] where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where idproveedor in ($array[2]) AND IdCuentaGastos<>$array[0] AND Fecha>='$fechaDesde' ))$excepto";
+  $sql[$rubro] = "UPDATE dbo.MovimientosDetallePro set idcuentagastos=$array[0], idcentrocostos=$array[1] where idMovimientodetallepro in (select idMovimientodetallepro from dbo.MovimientosDetallePro where idmovimientopro in (select idmovimientopro from dbo.movimientospro where idproveedor in ($array[2]) AND IdCuentaGastos<>$array[0] AND Fecha>='$fechaDesde' ))$excepto";
   //echo $sql[$rubro].'<br><br>';
 }
 
@@ -253,6 +272,4 @@ foreach ($sql as $rubro => $acomoda){
     echo "<b>$rubro</b>: Sin cambios<br>";
   }
 }
-
-
 ?>

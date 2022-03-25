@@ -71,7 +71,9 @@ while($fila = sqlsrv_fetch_array($stmt)){
   }
   //Salida	SalidaHora	Sucursal_E	Parte	Tramo	Origen	nom_Origen	Loc_Origen	ProvOrigen	Destino	Nom_Destin	Loc_Desti	Fletero	Fle_Nombre	Kilometros	TipoViaje	TpV_Nombre	APagar_Fle	Pagado_Fle	LiquidarCh	Cumplido	Rendido	Anulado	NomOrigen	NomDestino	ImpVta	Cliente
 
-  $importe = ($fila['APagar_Fle']>0)?$fila['APagar_Fle']:(($fila['LiquidarCh']>0)?$fila['LiquidarCh']:$fila['ImpVta']);
+  $importe = ($fila['APagar_Fle']>0&&$fila['APagar_Fle']==$fila['ImpVta'])?$fila['APagar_Fle']:(($fila['LiquidarCh']>0)?$fila['LiquidarCh']:$fila['ImpVta']);
+  //$importe = ($fila['APagar_Fle']>0)?$fila['APagar_Fle']:(($fila['LiquidarCh']>0)?$fila['LiquidarCh']:$fila['ImpVta']);
+  //$importe = ($fila['ImpVta']>0)?$fila['ImpVta']:(($fila['LiquidarCh']>0)?$fila['LiquidarCh']:$fila['ImpVta']);
   $tipoComision = ($fila['TipoViaje']==0)?1:$fila['TipoViaje'];
   
   if(!isset($comision[$idSocio][$tipoComision])){

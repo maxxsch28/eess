@@ -22,18 +22,32 @@ $args = array(
 );
 
 $post = filter_var_array($_POST, $args);
-
-if(isset($_POST['idSocio'])){
+//print_r($post);die;
+if(isset($post['idFletero'])&&is_numeric($post['idFletero'])){
+  ChromePhp::log('Modifico: '.$post['idFletero']);
+  
   // Modificacion
-  if(!is_numeric($_POST['idSocio'])){
+  if(!is_numeric($post['idFletero'])){
     echo "me muero!";
     die;
   }
-  
+  // grabo la modificación
+  $sql = "UPDATE dbo.[socios.socios] SET razonsocial='$post[razonsocial]', nombre='$post[nombre]', domicilio='$post[domicilio]', domicilio2='$post[domicilio2]', fechaIngreso='".fecha($post['fechaIngreso'], 'sql')."', celular='$post[celular]', email='$post[email]', iva='$post[iva]', cuit='$post[cuit]' WHERE idSocio='$post[idSocio]';";
+  Chromephp::log($sql);
+  $stmt = odbc_exec2( $mssql4, $sql, __LINE__, __FILE__);
+  if(sqlsrv_num_rows($stmt)>0){
+    $msg['status']  = "success";
+    $msg['msg'] = 'Datos del socio modificados';   
+  } else {
+    // falla en actualizacion de datos
+    $msg['status']  = "error";
+    $msg['msg'] = 'Datos del socio no actualizados';
+    
+  }
 } else {
   // alta
   // verifico que con ese CUIT ni con ese número de Setup exista ya cargado un socio.
-  $sql = "SELECT * FROM dbo.[socios.socios] WHERE idFletero='$post[idFletero]' OR cuit='$post[cuit]';";
+  $sql = "SELECT * FROM dbo.[socios.socios] WHERE (idFletero='$post[idFletero]' AND idFletero<>'') OR cuit='$post[cuit]';";
   $stmt = odbc_exec2( $mssql4, $sql, __LINE__, __FILE__);
 
   if(sqlsrv_num_rows($stmt)>0){

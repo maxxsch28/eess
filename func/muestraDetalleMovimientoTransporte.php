@@ -6,11 +6,16 @@ include_once(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
 $limit=11;
 $offset=0;
 
-$parametros = explode('_', $_GET['idAsiento']);
-$idTranglob = $parametros[0];
-$tipo = $parametros[1];
+$parametros = explode('_', $_GET['idTranglob']);
+if($parametros[0]<>'c'){
+  $idTranglob = $parametros[0];
+  $tipo = $parametros[1];
+}else{
+  $idTranglob = $parametros[1];
+  $tipo = $parametros[2];
+}
 ChromePhp::log($_GET);
-ChromePhp::log($tipo);
+
 switch($tipo){
   case '54':
   // extracción de efectivo de cuenta bancaria
@@ -314,8 +319,8 @@ switch($tipo){
     break;
 
   default:
-          echo "$tipo";
-          break;
+    echo "$tipo";
+    break;
 		
 }
 ChromePhp::log($sqlMovimiento);

@@ -60,10 +60,10 @@ while($fila = sqlsrv_fetch_array($stmt)){
     $tabla .= "$fila[comprobant] $fila[tipo] $fila[sucursal]-$fila[numero] (neto facturado $".number_format($fila['importe'], 2, ',', '.').")";
   }
   
-  $tabla.="</td><td class='text-right x'>$".number_format($signo*$fila['impobasefl'], 2, ',', '.')."</td>
+  $tabla.="</td><td class='text-right x'>$".number_format($signo*$fila['importefle'], 2, ',', '.')."</td>
   </tr>";
-  $sumaPrecio[$fila['fletero']] = $sumaPrecio[$fila['fletero']]+$signo*$fila['impobasefl'];
-  $totalPrecio = $totalPrecio+$signo*$fila['impobasefl'];
+  $sumaPrecio[$fila['fletero']] = $sumaPrecio[$fila['fletero']]+$signo*$fila['importefle'];
+  $totalPrecio = $totalPrecio+$signo*$fila['importefle'];
   
   if(isset($tablaEncabezado)){
     $tabla.=$tablaEncabezado;

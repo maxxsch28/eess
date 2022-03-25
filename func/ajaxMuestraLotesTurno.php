@@ -13,10 +13,10 @@ if(isset($_GET['idTurno'])&&is_numeric($_GET['idTurno'])){
 
   // Obtengo lotes cargados en el turno requerido
   $sqlLotesTurno = "select IdLoteTarjetasCredito, dbo.TarjetasCredito.IdTarjeta, Nombre, Loteprefijo, LoteNumero, Importe, IdCuentaContable_presentacion, idAsiento, TipoAcreditacion from dbo.LotesTarjetasCredito, dbo.TarjetasCredito where dbo.LotesTarjetasCredito.IdTarjeta=dbo.TarjetasCredito.IdTarjeta AND Importe<>0 AND IdCierreTurno=$_GET[idTurno] order by LotePrefijo, LoteNumero";
-
+  echo "              &nbsp;";
   $stmt = odbc_exec2( $mssql, $sqlLotesTurno, __LINE__, __FILE__);
   
-  echo "<form name='modificacionLotesTarjetas' id='modificacionLotesTarjetas'><table class='table table-striped table-bordered IdCierreTurno' id='$_GET[idTurno]'><thead><tr><th width='15%'>idLote / Asiento</th><th>Tarjeta</th><th colspan=2 width='18%'>Prefijo y Lote</th><th>Importe</th><th><span id='marcarRevisado' class='btn btn-xs btn-".(($revisado[0]==1)?"success'>REVISADO":"danger'>NO REVISADO")."</span></th></tr></thead><tbody>";
+  echo "<form name='modificacionLotesTarjetas' id='modificacionLotesTarjetas'><table class='table table-striped table-bordered IdCierreTurno' id='$_GET[idTurno]'><thead><tr><th width='15%'>idLote / Asiento</th><th >Tarjeta</th><th colspan=2 width='18%'>Prefijo y Lote</th><th width='27%'>Importe</th><th><span id='marcarRevisado' class='btn btn-xs btn-".(($revisado[0]==1)?"success'>OK":"danger'>N.R.")."</span></th></tr></thead><tbody>";
   $sumaLote = 0;
   while($rowLotesIngresados = sqlsrv_fetch_array($stmt)){
       //print_r($rowLotesIngresados);
@@ -32,16 +32,16 @@ if(isset($_GET['idTurno'])&&is_numeric($_GET['idTurno'])){
       $sumaLote += $rowLotesIngresados['Importe'];
       
       if($rowLotesIngresados['TipoAcreditacion']<>0){
-        echo "<tr><td>$rowLotesIngresados[IdLoteTarjetasCredito]</td><td>$rowLotesIngresados[Nombre]</td><td>$rowLotesIngresados[Loteprefijo]</td><td>$rowLotesIngresados[LoteNumero]</td><td>".sprintf("%.2f",$rowLotesIngresados['Importe'])."</td><td>$rowLotesIngresados[idAsiento] ($rowLotesIngresados[IdCuentaContable_presentacion])</td><td><span class='label label-success'>Acreditado</span></td></tr>";
+        echo "<tr><td>$rowLotesIngresados[IdLoteTarjetasCredito]</td><td>$rowLotesIngresados[Nombre]</td><td>$rowLotesIngresados[Loteprefijo]</td><td>$rowLotesIngresados[LoteNumero]</td><td>".sprintf("%.2f",$rowLotesIngresados['Importe'])."</td><td>$rowLotesIngresados[idAsiento] ($rowLotesIngresados[IdCuentaContable_presentacion])</td><td><span class='label label-success'>Acred.</span></td></tr>";
       } else {
-        $selectorTarjeta = "<select name='selectorTarjeta' id='selectorTarjeta_$rowLotesIngresados[IdLoteTarjetasCredito]'>";
+        $selectorTarjeta = "<select name='selectorTarjeta' id='selectorTarjeta_$rowLotesIngresados[IdLoteTarjetasCredito]' class='col-xd-8'>";
         foreach($_SESSION['tarjetasCredito'] as $idTarjeta => $nombre){
           $tarjetaSantander = (substr($nombre, 0, 2)=='S ')?" class='bg-danger text-danger'":'';
           $selectorTarjeta .= "<option value='$idTarjeta'$tarjetaSantander".(($rowLotesIngresados['IdTarjeta']==$idTarjeta)?' selected':'').">$nombre</option>";
         }
         $selectorTarjeta .= "</select>";
         
-        echo "<tr><td>$rowLotesIngresados[IdLoteTarjetasCredito] ($rowLotesIngresados[IdCuentaContable_presentacion])<input type='hidden' name='IdCuentaContable_presentacion' id='IdCuentaContable_presentacion_$rowLotesIngresados[IdLoteTarjetasCredito]' value='$rowLotesIngresados[IdCuentaContable_presentacion]'/><br/>$rowLotesIngresados[idAsiento]</td><td>$selectorTarjeta</td><td>$rowLotesIngresados[Loteprefijo]</td><td><input type='text' name='IdLote' id='LoteNumero_$rowLotesIngresados[IdLoteTarjetasCredito]' value='$rowLotesIngresados[LoteNumero]' class='col-xs-11' pattern='[0-9]*'/></td><td>$ ".sprintf("%.2f",$rowLotesIngresados['Importe'])."</td><td><span class='btn btn-default btn-xs graba' id='actualizaLote_$rowLotesIngresados[IdLoteTarjetasCredito]'>Graba</span></td></tr>";
+        echo "<tr><td>$rowLotesIngresados[IdLoteTarjetasCredito] ($rowLotesIngresados[IdCuentaContable_presentacion])<input type='hidden' name='IdCuentaContable_presentacion' id='IdCuentaContable_presentacion_$rowLotesIngresados[IdLoteTarjetasCredito]' value='$rowLotesIngresados[IdCuentaContable_presentacion]'/><br/>$rowLotesIngresados[idAsiento]</td><td>$selectorTarjeta</td><td>$rowLotesIngresados[Loteprefijo]</td><td><input type='text' name='IdLote' id='LoteNumero_$rowLotesIngresados[IdLoteTarjetasCredito]' value='$rowLotesIngresados[LoteNumero]' class='col-xs-4 mm' pattern='[0-9]*'/></td><td>$ ".sprintf("%.2f",$rowLotesIngresados['Importe'])."</td><td><span class='btn btn-default btn-xs graba' id='actualizaLote_$rowLotesIngresados[IdLoteTarjetasCredito]'>Graba</span></td></tr>";
       }
   }
   if($sumaLote>0){

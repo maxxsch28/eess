@@ -228,7 +228,7 @@ for($dia=$desde; $desde<=$hasta; $desde++){
   $stmt = odbc_exec2( $mssql, $sql['ordenesPago'], __LINE__, __FILE__);
   while($fila = sqlsrv_fetch_array(($stmt))){
     $jsonCierre[] = array('t' => 'Efectivo', 'clase' => 'neg', 'txt' => "Orden de pago Nº $fila[Numero], $fila[RazonSocial], ".$fila['Fecha']->format('d/m/Y H:i'), 'importe' => peso($fila['PagoEfectivo']));
-    $efectivo -= $multiplica*$fila['PagoEfectivo'];
+    $efectivo -= $fila['PagoEfectivo'];
   }
   // Ordenes de pago con cheques de ChequesTerceros
   $sql['ordenesPagoCheques'] = "select b.RazonSocial, PagoEfectivo, a.Numero, a.Fecha, d.Nombre, c.Numero as NumeroCheque, c.Importe from dbo.OrdenesPago a, dbo.Proveedores b, dbo.ChequesTerceros c, dbo.bancos d WHERE a.IdProveedor=b.IdProveedor AND a.Fecha>'".$ultimoCierre['FechaCierre']->format('Y-m-d H:i:s')."' AND a.Fecha<'$aa-$mm-$desde 23:59:59' AND (a.IdCierreCajaTesoreria>$ultimoCierre[IdCierreCajaTesoreria] OR a.IdCierreCajaTesoreria IS NULL) AND a.IdOrdenPago=c.IdOrdenPago AND c.IdBanco=d.IdBanco;";
@@ -237,7 +237,7 @@ for($dia=$desde; $desde<=$hasta; $desde++){
   $stmt = odbc_exec2( $mssql, $sql['ordenesPagoCheques'], __LINE__, __FILE__);
   while($fila = sqlsrv_fetch_array(($stmt))){
     $jsonCierre[] = array('t' => 'Cheques', 'clase' => 'neg', 'txt' => "OP Nº $fila[Numero], $fila[RazonSocial], ".$fila['Fecha']->format('d/m/Y H:i').', Cheque Nº '.$fila['NumeroCheque'], 'importe' => peso($fila['Importe']));
-    $cheques -= $multiplica*$fila['Importe'];
+    $cheques -= $fila['Importe'];
   }
 
 
@@ -252,7 +252,7 @@ for($dia=$desde; $desde<=$hasta; $desde++){
   $stmt = odbc_exec2( $mssql, $sql['comprasContado'], __LINE__, __FILE__);
   while($fila = sqlsrv_fetch_array(($stmt))){
     $jsonCierre[] = array('t' => 'Efectivo', 'clase' => 'neg', 'txt' => "Pago contado $fila[IdTipoMovimientoProveedor] $fila[PuntoVenta]-$fila[Numero], $fila[RazonSocial], ".$fila['LastUpdated']->format('d/m/Y H:i'), 'importe' => peso($fila['PagoEfectivo']));
-    $efectivo -= $multiplica*$fila['PagoEfectivo'];
+    $efectivo += $multiplica*$fila['PagoEfectivo'];
   }
   if($mensual){
     $jsonCierre2[] = array('t' => 'Efectivo', 'clase' => 'bold', 'txt' => "$desde/$mm", 'importe' => peso($efectivo));

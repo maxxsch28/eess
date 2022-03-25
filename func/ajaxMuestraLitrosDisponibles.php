@@ -6,10 +6,12 @@ include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
  // $array=array();
 //$_POST['mes']='201411';
 
-
+//ChromePhp::log("oko ". ($_SESSION['fechaTurnoAnterior']). ' ssss '.date('Y-m-d H:i:s').'    diferencia '.(strtotime($_SESSION['fechaTurnoAnterior'])-strtotime(date('Y-m-d H:i:s'))));
 // tengo que hacer que reste las notas de crédito:
-if( !isset($_SESSION['fechaTurnoAnterior']) || ($_SESSION['fechaTurnoAnterior']-date('Y-m-d H:i:s'))>12 || 1){
+if( !isset($_SESSION['fechaTurnoAnterior']) || (strtotime(date('Y-m-d H:i:s'))-strtotime($_SESSION['fechaTurnoAnterior']))>43200 ){
+//if( !isset($_SESSION['fechaTurnoAnterior'])){
   $sqlFechaTurnoAnterior = "SELECT TOP 1 fecha from dbo.cierresturno WHERE idCaja=1 order by idcierreturno desc";
+  ChromePhp::log($sqlFechaTurnoAnterior);
   $stmt = odbc_exec2( $mssql, $sqlFechaTurnoAnterior, __FILE__, __LINE__);
   $rowFacturasExluidas = sqlsrv_fetch_array($stmt);
   $_SESSION['fechaTurnoAnterior'] = $rowFacturasExluidas[0]->format('Y-m-d H:i:s');

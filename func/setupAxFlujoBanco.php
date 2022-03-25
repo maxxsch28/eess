@@ -2,7 +2,7 @@
 // setupFlujoBanco.php
 // Lista los viajes que no se han liquidados a una fecha determinada
 include(($_SERVER['DOCUMENT_ROOT'].'/include/inicia.php'));
-//print_r($_POST);
+print_r($_POST);
  // $array=array();
 //$_POST['mes']='201411';
 
@@ -26,6 +26,16 @@ $sqlFlujoBanco = "select fechamovi AS fecha, -1*(importe) AS importe, 'obligacio
 select vencimien AS fecha, importe, 'cheques' AS que, numero_val AS numero, ingreso AS fechaCarga FROM dbo.cheques WHERE disponible=1  UNION
 
 select fechamovi AS fecha, importe, 'depositos' AS que, CAST(numero as varchar(20)) as numero, fechamovi AS fechaCarga FROM dbo.moctacte WHERE fechamovi>=DATEADD(day,-5,GETDATE()) AND fechamovi<DATEADD(month,+1,GETDATE())  AND conciliado=0 AND comprobant IS NULL AND tipomovi=2 AND numero NOT IN (SELECT deposito FROM [coop].[dbo].[flujoBanco] WHERE deposito IS NOT NULL)  order by fecha asc, numero asc;";
+
+
+
+ 
+$sqlFlujoBanco = "select fechamovi AS fecha, -1*(importe) AS importe, 'obligaciones' AS que, CAST(numero as varchar(20)) as numero, fecha AS fechaCarga FROM dbo.moctacte WHERE fechamovi>= DATEADD(month,-2,GETDATE()) AND fechamovi<'$_POST[hasta]' AND conciliado=0 AND tipomovi=1 AND chequera NOT IN (0,5,7) AND numero NOT IN (SELECT cheque FROM [coop].[dbo].[flujoBanco] WHERE cheque IS NOT NULL) UNION 
+
+select vencimien AS fecha, importe, 'cheques' AS que, numero_val AS numero, ingreso AS fechaCarga FROM dbo.cheques WHERE disponible=1  UNION
+
+select fechamovi AS fecha, importe, 'depositos' AS que, CAST(numero as varchar(20)) as numero, fechamovi AS fechaCarga FROM dbo.moctacte WHERE fechamovi>=DATEADD(day,-5,GETDATE()) AND fechamovi<'$_POST[hasta]'  AND conciliado=0 AND comprobant IS NULL AND tipomovi=2 AND numero NOT IN (SELECT deposito FROM [coop].[dbo].[flujoBanco] WHERE deposito IS NOT NULL)  order by fecha asc, numero asc;";
+
 // 26/6/19 Agregado "AND comprobant IS NULL" para que no incluya los ingresos a banco generados por recibos por transferencias recibidas. (esas transferencias ya se incluyen cuando el operador carga el saldo final real)
 
 ChromePhp::log($sqlFlujoBanco);
@@ -33,7 +43,11 @@ $stmt = odbc_exec2($mssql2, $sqlFlujoBanco, __LINE__, __FILE__);
 $tabla = "";$a=0;
 $obligaciones = array();
 $depositos = array();
-$neto = $neto = $_SESSION['saldoBanco'];
+$neto = $neto = $_SESSION['saldoBanco']*1000;
+
+$totalChequesEnCalden = $totalQChequesEnCalden =0;
+
+
 
 while($fila = sqlsrv_fetch_array($stmt)){
   // tiene que armar un array para obligaciones y depositos por fecha, si la fecha cae sábado o domingo tienen que pasarse al lunes siguiente
@@ -86,6 +100,8 @@ while($fila = sqlsrv_fetch_array($stmt)){
     if($filaCalden){
       // está en Calden
       $estaEnCalden=1;
+      $totalChequesEnCalden += $fila['importe'];
+      $totalQChequesEnCalden ++;
     } 
     if($filaCalden[1]>0){
       $estaEnCalden=2;
@@ -129,7 +145,7 @@ for($i=0;$i<=$j;$i++){
           $class2 = ' alert-success';
         }
       $trObligaciones2 .= "<span class='cheque$class' id='ch_$key[0]'> Nº $key[0], $".number_format(-1*$key[1],2,',','.');
-      if($a==0||$a==1){
+      if($a==0||$a<3){
         // hoy, agrego botón para marcar como pagado
         $trObligaciones2 .= "<span class='glyphicon glyphicon-remove pagado' id='$key[0]' aria-hidden='true' ></span> - <span class='$class2'>".$key[2]->format('d/m')."</span>";
       }
@@ -173,5 +189,6 @@ $trObligaciones .= '</tr>';
 $trDepositos .= '</tr>';
 $trDepositos2 .= '</tr>';
 $trNeto .= '</tr>';
-echo $trNeto.$trObligaciones.$trObligaciones2.$trDepositos.$trDepositos2;
+echo $trNeto.$trObligaciones.$trObligaciones2.$trDepositos.$trDepositos2."<tr><td></td><td colspan=4>EESS tiene $totalQChequesEnCalden cheques por $".number_format(-1*$totalChequesEnCalden,2,',','.')."</td></tr>";
+
 ?>

@@ -57,6 +57,7 @@ function muestraDetallesVentasDiarias(){
       @$nivelPedir[$datosTanque['idArticulo']] += $datosTanque['nivelPedir'];
       @$nivelSuspender[$datosTanque['idArticulo']] += $datosTanque['nivelSuspender'];
     }
+
     foreach($articulo as $IdArticulo => $datosArticulo){
       /*
       Color: -8323073
@@ -141,6 +142,7 @@ function muestraDetalleDescuentosAPP(){
   global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
   $tablaDescuentos="";
   $totalDescuentosNoRegistrados=0;
+  $limiteTextoMovil = 15;
   
   $sqlDescuentos = "select a.idmovimientofac, a.RazonSocial, a.puntoventa, a.numero, a.fecha, a.total as facturado, c.Importe as cobrado, round(a.total-c.importe, 0) as descuento, round(a.NetoConceptosFinancieros*-1.21,0) as descuentoAPP, '' as turno from dbo.movimientosfac a, dbo.MovimientosDetalleFac b, dbo.CuponesTarjetasCredito c where a.IdMovimientoFac=b.IdMovimientoFac and c.IdMovimientoFac=a.IdMovimientoFac AND c.UserName='Pago electronico' AND a.Fecha>='".date('Y-m-d')."' AND b.IdCierreTurno=0 AND b.idarticulo <> '3540' UNION ALL select a.idmovimientofac, a.RazonSocial, a.puntoventa, a.numero, a.fecha, a.total as facturado, c.Importe as cobrado, round(a.total-c.importe, 0) as descuento, round(a.NetoConceptosFinancieros*-1.21,0) as descuentoAPP, d.fecha as turno from dbo.movimientosfac a, dbo.MovimientosDetalleFac b, dbo.CuponesTarjetasCredito c, dbo.CierresTurno d where a.IdMovimientoFac=b.IdMovimientoFac and c.IdMovimientoFac=a.IdMovimientoFac AND c.UserName='Pago electronico' AND a.Fecha>='".date('Y-m-d')."' AND b.IdCierreTurno=d.IdCierreTurno AND d.IdCierreTurno>0 AND b.idarticulo <> '3540' order by turno, a.idmovimientofac desc";
   
@@ -149,49 +151,80 @@ function muestraDetalleDescuentosAPP(){
   $stmt = odbc_exec2($mssql, $sqlDescuentos, __LINE__, __FILE__);
   
   while($fila = sqlsrv_fetch_array($stmt)){
+
+    if($_SESSION['esMovil']){
+      $numero = "$fila[PuntoVenta]";
+      $limiteTextoMovil = 15;
+      $colspan=4;
+      $tdTicket = "";
+
+    } else {
+      $numero = "$fila[PuntoVenta]-$fila[Numero]";
+      $limiteTextoMovil = 18;
+      $colspan = 5;
+      $tdTicket = "<td>$fila[puntoventa]-$fila[numero]</td>";
+    }
+
     if(round($fila['descuento'],0)>0 || round($fila['descuentoAPP'],0)>0){
+      /*
+      // desactivado. Esto era para poder separar por turno para los chicos, pero no se utiliza
       if(!isset($turno)) $turno = $fila['turno']->format('H:i');
       if($turno <> $fila['turno']->format('H:i')){
         $tablaDescuentos .= "<tr><td colspan=4><b>A declarar como DESCUENTO SERVICLUB APP YPF</b></td><td>$".round($totalDescuentosNoRegistrados,2)."</td></tr>";
         $totalDescuentosNoRegistrados=0;
       }
+      */
+      $nombreCliente = ucwords(strtolower((strlen($fila['RazonSocial'])>$limiteTextoMovil)?substr($fila['RazonSocial'],0,$limiteTextoMovil).'...':$fila['RazonSocial']));
+      $nombreCliente = ($fila['RazonSocial']=='Consumidor Final')?"Cons. Final":$nombreCliente;
       $totalDescuentosNoRegistrados += $fila['descuento'];
-      $tablaDescuentos .= "<tr><td>".ucwords(strtolower($fila['RazonSocial']))."</td><td>$fila[puntoventa]-$fila[numero]</td><td>$".round($fila[facturado],2)."</td><td>$".round($fila['descuentoAPP'],2)."</td><td>$".round($fila['descuento'],2)."</td><td>".$fila['turno']->format('H:i')."</td></tr>";
+      $tablaDescuentos .= "<tr><td>$nombreCliente</td>$tdTicket<td>$".round($fila['facturado'],2)."</td><td>$".round($fila['descuentoAPP'],2)."</td><td>$".round($fila['descuento'],2)."</td><td>".$fila['turno']->format('H:i')."</td></tr>";
       //RazonSocial	puntoventa	numero	fecha	facturado	cobrado	descuento	IdCierreTurno
       //SANGRONIS ANA MARIA	13	5654	2020-06-29 15:33:14.553	1503.2824	1253.2800	250.0000	52209
       
     }
   }
   if($totalDescuentosNoRegistrados>0){
-    $tablaDescuentos .= "<tr><td colspan=5><b>DESCUENTO SERVICLUB APP YPF Turno Anterior</b></td><td>$".round($totalDescuentosNoRegistrados,2)."</td></tr>";
+    $tablaDescuentos .= "<tr><td colspan=$colspan><b>DESCUENTO SERVICLUB APP YPF</b></td><td>$".round($totalDescuentosNoRegistrados,2)."</td></tr>";
   } else {
-    $tablaDescuentos .= "<tr><td colspan=5><b>NO HUBO OPERACIONES CON DESCUENTOS</b></td><td></td></tr>";
+    $tablaDescuentos .= "<tr><td colspan=$colspan><b>NO HUBO OPERACIONES CON DESCUENTOS</b></td><td></td></tr>";
   }
   
   echo trim($tablaDescuentos);
 }
-function muestraDespachosGrandes(){
+function muestraDespachosGrandes($cortes=1){
   global $mssql, $articulo, $classArticulo, $tanque, $pico, $desde, $hasta;
   $tablaDescuentos="";
   $totalDescuentosNoRegistrados=0;
-  
- 
-  $sqlUltimasFacturasGrandes = "select IdArticulo, sum(Cantidad) as litros, IdTipoMovimiento, PuntoVenta, Numero, RazonSocial, Total, Fecha from dbo.movimientosFac a, dbo.MovimientosDetalleFac b where a.IdMovimientoFac=b.IdMovimientoFac AND idArticulo in (2069, 2068) AND Fecha >='".date('Y-m-d')."' AND Total>20000 AND DocumentoAnticipado=0 AND b.ExcluidoDeTurno=0  AND (IdCondicionVenta>1 AND NumeroDocumento IS NOT NULL) group by idarticulo, IdTipoMovimiento, puntoventa, numero, RazonSocial, Total, Fecha order by a.razonsocial desc, idarticulo asc ;";
+  $totalDespachosGrandes = 0;
+
+  $sqlUltimasFacturasGrandes = "select IdArticulo, sum(Cantidad) as litros, IdTipoMovimiento, PuntoVenta, Numero, RazonSocial, CASE WHEN IdTipoMovimiento IN ('NCB', 'NCA', 'RDV') THEN -1 * Total ELSE Total END as Total, Fecha from dbo.movimientosFac a, dbo.MovimientosDetalleFac b where a.IdMovimientoFac=b.IdMovimientoFac AND idArticulo in (2069, 2068) AND Fecha >='".date('Y-m-d')."' AND Total>$cortes*9900 AND DocumentoAnticipado=0 AND b.ExcluidoDeTurno=0  AND (IdCondicionVenta>1 AND NumeroDocumento IS NOT NULL) AND IdMovimientoCancelado IS null AND DocumentoCancelado=0 group by idarticulo, IdTipoMovimiento, puntoventa, numero, RazonSocial, Total, Fecha order by a.fecha desc, a.razonsocial desc, idarticulo asc ;";
   
   $stmt = odbc_exec2($mssql, $sqlUltimasFacturasGrandes, __LINE__, __FILE__);
   
   while($fila = sqlsrv_fetch_array($stmt)){
+    if($_SESSION['esMovil']){
+      $numero = "$fila[PuntoVenta]";
+      $limiteTextoMovil = 15;
 
-      $tablaDescuentos .= "<tr><td>".ucwords(strtolower($fila['RazonSocial']))."</td><td>$fila[PuntoVenta]-$fila[Numero]</td><td>".round($fila['litros'],2)." lts ".$articulo[$fila['IdArticulo']]['abr']."</td><td>$".round($fila['Total'],2)."</td><td>".$fila['Fecha']->format('H:i')."</td></tr>";
-      ChromePhp::log($articulo[$fila['IdArticulo']]);
-      print_r($articulo[$fila['IdArticulo']]);
+    } else {
+      $numero = "$fila[PuntoVenta]-$fila[Numero]";
+      $limiteTextoMovil = 18;
+    }
+    $nombreCliente = ucwords(strtolower((strlen($fila['RazonSocial'])>$limiteTextoMovil)?substr($fila['RazonSocial'],0,$limiteTextoMovil).'...':$fila['RazonSocial']));
+    $tablaDescuentos .= "<tr><td>$nombreCliente</td><td>$numero</td><td>".number_format($fila['litros'],2)." ".$articulo[$fila['IdArticulo']]['abr']."</td><td>$".round($fila['Total'],2)."</td><td>".$fila['Fecha']->format('H:i')."</td></tr>";
+    $totalDespachosGrandes += $fila['litros'];
+    //ChromePhp::log($articulo[$fila['IdArticulo']]);
+    //print_r($articulo[$fila['IdArticulo']]);
   }
   if($tablaDescuentos==""){
-    $tablaDescuentos = "<tr><td colspan='4'><b>NO HUBO DESPACHOS MAYORES A 2 CORTES</b></td></tr>";
+    $tablaDescuentos = "<tr><td colspan='4'><b>NO HUBO DESPACHOS MAYORES A $cortes CORTES</b></td></tr>";
   }
 
   
   echo trim($tablaDescuentos);
+  if($totalDespachosGrandes>0){
+    echo "<tr><td colspan='3'><b>Total ".number_format($totalDespachosGrandes,2)." lts</b></td><td></td><td></td></tr>";
+  }
 }
 
 

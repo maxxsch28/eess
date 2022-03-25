@@ -9,7 +9,7 @@ ChromePhp::log($_POST);
 
 
 /* Para Lolen */
-$sqlDetalle = "select IdTipoMovimiento, PuntoVenta, numero, Fecha, c.descripcion, cantidad, precio, b.iva as IVA_unitario, b.iva*cantidad as IVA_Renglon, b.ImpuestoInterno as IMP_INT_Unitario, b.ImpuestoInterno*cantidad as ImpuestosInternos_Renglon, b.Tasas as Tasa_unitario, b.Tasas*Cantidad as Tasas_Renglon from dbo.movimientosfac a , dbo.MovimientosDetalleFac b, dbo.articulos c where a.IdMovimientoFac=b.IdMovimientoFac and b.idarticulo=c.idarticulo IN (787, 786) and a.PuntoVenta=10 and a.IdTipoMovimiento='FAA';";
+$sqlDetalle = "select IdTipoMovimiento, PuntoVenta, numero, Fecha, c.descripcion, cantidad, precio, b.iva as IVA_unitario, b.iva*cantidad as IVA_Renglon, b.ImpuestoInterno as IMP_INT_Unitario, b.ImpuestoInterno*cantidad as ImpuestosInternos_Renglon, b.Tasas as Tasa_unitario, b.Tasas*Cantidad as Tasas_Renglon from dbo.movimientosfac a , dbo.MovimientosDetalleFac b, dbo.articulos c where a.IdMovimientoFac=b.IdMovimientoFac and b.idarticulo=c.idarticulo AND numero IN (787, 786) and a.PuntoVenta=10 and a.IdTipoMovimiento='FAA';";
 
 if(isset($_POST['viejos'])&&is_numeric($_POST['viejos'])){
   $maximoMesesAtras = 8;
@@ -53,7 +53,7 @@ if(isset($_POST['ticket'])&&is_numeric($_POST['ticket'])){
         $sqlYaAsignado = "SELECT IdMovimientoFac, IdEmpleado, fechaCanje from coop.dbo.promoDesayunos WHERE IdMovimientoFac=$rowTicket[6];";
         $stmt2 = odbc_exec2( $mssql, $sqlYaAsignado, __LINE__, __FILE__);
         if($stmt2 && sqlsrv_has_rows($stmt2)){
-          // ya está tomado ese documento, mínimamente aviso
+          // ya está tomado ese documento, mínimamente avisor
           $devuelve.="<input type='radio' name='multi' class='multi' value='$rowTicket[6]' disabled='disabled'><span class='text-danger'> $rowTicket[7] $rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4] (".$rowTicket[2]->format('d/m/Y').")</span><br/>";
         } else {
           $devuelve.="<input type='radio' name='multi' class='multi' value='$rowTicket[6]'> $rowTicket[7] $rowTicket[0]-$rowTicket[1], $rowTicket[5] lts de {$articulo[$rowTicket[3]]}, $$rowTicket[4]<br/>(".$rowTicket[2]->format('d/m/Y').") $empleados<br/>";

@@ -19,6 +19,10 @@ function print_r2($val){
         print_r($val);
         echo  '</pre>';
 }
+if(strpos($_GET['idAsiento'], '_')){
+  $_GET['idAsiento'] = substr($_GET['idAsiento'], strpos($_GET['idAsiento'], '_')+1);
+}
+
 
 $sqlAsiento = "SELECT Fecha, Concepto, dbo.ModelosContables.Nombre, dbo.Asientos.idModeloContable, dbo.ModelosContables.Descripcion FROM dbo.Asientos, dbo.ModelosContables WHERE idAsiento=$_GET[idAsiento] AND dbo.Asientos.IdModeloContable=dbo.ModelosContables.IdModeloContable;";
 

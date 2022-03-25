@@ -35,6 +35,21 @@ switch($_POST['que']){
   case 'productos':
     echo $_SESSION['tablaProductos'];
     break;
+  case 'resumen2':
+      // resumen
+      // Inicial
+      // Recepcion
+      // Ventas medidas
+      // Existencia teórica
+      // Medicion real
+      // Diferencia lts (%)
+      $i=0;
+      foreach($articulo as $idProducto => $producto){
+        //$i++;
+        echo $_SESSION['tablaResumen'][$idProducto];
+      }
+      echo $_SESSION['muestraPorcentuales'];
+      break;
   case 'resumen':
     // resumen
     // Inicial
@@ -51,7 +66,7 @@ switch($_POST['que']){
     break;
   case 'tanques':
     $result = $mysqli->query($sqlAforadores);
-    $tabla = "";$a=0;$q=0;
+    $tabla = "";$a=0;$q=0;$i=0;
     while($fila = $result->fetch_assoc()){
       if(!isset($anterior)){
         $inicial = $fila;
@@ -81,7 +96,7 @@ switch($_POST['que']){
           // defino tabla para este tanque
           $tableProductos.="<th>Ing.</th><th>Vtas.</th><th>{$fila['tq'.$idProducto]}</th><th>Medido</th><th>&#916;</th>";
           //$tablaResumen[$idProducto] = "<div class='panel panel-{$classArticulo[$idProducto]}'><div class='panel-heading'><h3 class='panel-title'>$articulo[$idProducto]</h3></div><div class='panel-body'>Existencia Inicial: <b>{$fila['tq'.$idProducto]}</b><br/>";
-          $tablaResumen[$idProducto] = "<div class='col-xs-6 small'><ul class='list-group'><li class='list-group-item list-group-item-$classArticulo[$idProducto]'>{$articulo[$idProducto]['descripcion']}</li><li class='list-group-item'>Existencia Inicial: <span class='pull-right'><b>{$inicial['tq'.$idProducto]}</b></span><br/>";
+          $tablaResumen[$idProducto] = "<div class='col-xs-3 small'><ul class='list-group'><li class='list-group-item list-group-item-$classArticulo[$idProducto]'>{$articulo[$idProducto]['descripcion']}</li><li class='list-group-item'>Existencia Inicial: <span class='pull-right'><b>{$inicial['tq'.$idProducto]}</b></span><br/>";
         }
         $tableProductos .= "</tr></thead><tbody>";
       } else {
@@ -176,10 +191,10 @@ switch($_POST['que']){
       $tableTanques[$tanque] .= "<tr><td>Final</td><td>".sprintf("%.2f", $totalRecibidoTanque[$tanque])."</td><td>".sprintf("%.2f", $despachado)."</td><td></td><td></td><td class='".((($sumaDiferencias[$tanque])<-$toleranciaTanques)?'neg':((($sumaDiferencias[$tanque])>$toleranciaTanques)?'pos':''))."'>$sumaDiferencias[$tanque] lts<br/>x&#772;".round($promedio).' &sigma;'.round(stats_standard_deviation($arrayDiferencias['tq'.$tanque]),1)."</td><td>".sprintf("%.2f", $sumaDiferencias[$tanque]/$despachado*100)."%</td></tr>";
     }
     ksort($totalDespachoProducto);
+    ChromePHP::log($totalDespachoProducto);
     $tableProductos .= "<tr><td>Final</td>";
-    $i=$totalDespachadoMensual=0;
+    $i=$totalDespachadoMensual=0;$i=0;
     foreach($totalDespachoProducto as $idProducto => $despachado){
-      $i++;
       $tableProductos .= "<td>".sprintf("%.2f", $totalRecibidoProducto[$idProducto])."</td>"
         . "<td>".sprintf("%.2f", $despachado)."</td>"
         . "<td colspan='3' class='".((($sumaDiferencias[$idProducto])<-100)?'neg':((($sumaDiferencias[$idProducto])>100)?'pos':''))."'>("
@@ -192,37 +207,54 @@ switch($_POST['que']){
       }else{
         $maxTolerable=0.3;
       }
-      $tablaResumen[$idProducto] .= "Recepción: <span class='pull-right' style='clear:both'><b>+".round($totalRecibidoProducto[$idProducto],0)."</b></span><br/>"
+      $tablaResumen[$idProducto] .= "$i Recepción: <span class='pull-right' style='clear:both'><b>+".round($totalRecibidoProducto[$idProducto],0)."</b></span><br/>"
         . "Ventas: <span class='pull-right' style='border-bottom:1px solid #000; clear:both'><b>-".round($totalDespachoProducto[$idProducto],0)."</b></span><br/><br/>"
         . "Existencia teórica: <span class='pull-right' style='clear:both'><b>".round($inicial['tq'.$idProducto]+$totalRecibidoProducto[$idProducto]-$totalDespachoProducto[$idProducto],0)."</b></span><br/>"
         . "Medición real: <span class='pull-right' style='border-bottom:1px solid #000; clear:both'><b>$medido[$idProducto]</b></span><br/><br/>"
         . "&nbsp;<span class='pull-right ".((($dif/$sumaDespachado[$idProducto]*100)<=-$maxTolerable)?'neg':((round($dif/$sumaDespachado[$idProducto]*100,1
         )>=$maxTolerable)?'pos':'0'))."'>(".round($dif/$sumaDespachado[$idProducto]*100,1)."%) <b>$dif</b></span></li>"
         . "</ul></div>";
-      if($i==2){
+
+      if($i==1){
         // diesel
-        $porcentajeFamilia[$articulo[$idProducto]['familia']] = round(100*$litrosPremium[$articulo[$idProducto]['familia']]/$totalFamilia[$articulo[$idProducto]['familia']],1);
+        $porcentajeFamilia[$articulo[$idProducto]['familia']] = round(100*$litrosPremium[$articulo[$idProducto]['familia']]/$totalFamilia[$articulo[$idProducto]['familia']],2);
         
         // revisa para que familia tengo que hacer la barra
-        $tablaResumen[$idProducto] .= "<div class='col-md-12'><div class='progress'>";
+        $porcentualGasoil .= "<div class='col-md-12'><div class='progress'>";
         $t100 = 100;
         foreach($articulo as $idArticulo => $detalleArticulo) {
           
           if($detalleArticulo['familia']==$articulo[$idProducto]['familia']){
             //echo"$idProducto - ";print_r($porcentajeFamilia);
-            $tablaResumen[$idProducto] .= "<div class='fam_{$articulo[$idProducto]['familia']} progress-bar progress-bar-{$classArticulo[$detalleArticulo[idArticulo]]}' style='width: ".($t100-$porcentajeFamilia[$articulo[$idProducto]['familia']])."%'>"
+            $porcentualGasoil .= "<div class='fam_{$articulo[$idProducto]['familia']} progress-bar progress-bar-{$classArticulo[$detalleArticulo[idArticulo]]}' style='width: ".($t100-$porcentajeFamilia[$articulo[$idProducto]['familia']])."%'>"
+            .($t100-$porcentajeFamilia[$articulo[$idProducto]['familia']])."% ".$articulo[$detalleArticulo['idArticulo']]['descripcion']."
+            </div>";
+            $t100 -= $porcentajeFamilia[$articulo[$idProducto]['familia']];
+          }
+        }
+        $porcentualGasoil .= "</div></div>";
+      }elseif($i==3){
+        $porcentajeFamilia[$articulo[$idProducto]['familia']] = round(100*$litrosPremium[$articulo[$idProducto]['familia']]/$totalFamilia[$articulo[$idProducto]['familia']],1);
+        
+        // revisa para que familia tengo que hacer la barra
+        $porcentualNaftas2 .= "<div class='col-md-12'><div class='progress'>";
+        $t100 = 100;
+        foreach($articulo as $idArticulo => $detalleArticulo) {
+          
+          if($detalleArticulo['familia']==$articulo[$idProducto]['familia']){
+            //echo"$idProducto - ";print_r($porcentajeFamilia);
+            $porcentualNaftas2 .= "<div class='fam_{$articulo[$idProducto]['familia']} progress-bar progress-bar-{$classArticulo[$detalleArticulo[idArticulo]]}' style='width: ".($t100-$porcentajeFamilia[$articulo[$idProducto]['familia']])."%'>"
             .($t100-$porcentajeFamilia[$articulo[$idProducto]['familia']])."% ".$articulo[$detalleArticulo['idArticulo']]['descripcion']."
             </div>";
             $t100 = $t100 - $porcentajeFamilia[$articulo[$idProducto]['familia']];
           }
         }
-        
+        $porcentualNaftas2 .= "</div></div>";
 
-        $tablaResumen[$idProducto] .= "</div></div>";
-      }elseif($i==4){
+
         // naftas
         $porcentajeSuper = round(($totalDespachoProducto[2078]/($totalDespachoProducto[2078]+$totalDespachoProducto[2076]))*100,1);
-        $tablaResumen[$idProducto] .= "<div class='col-md-12'><div class='progress'>
+        $porcentualNaftas .= "<div class='col-md-12'><div class='progress'>
           <div class='progress-bar progress-bar-info' style='width: ".(100-$porcentajeSuper)."%'>
             ".(100-$porcentajeSuper)."% Infinia
           </div>
@@ -230,27 +262,31 @@ switch($_POST['que']){
             $porcentajeSuper% Super
           </div>
         </div></div>";
-        $tablaResumen[$idProducto] .= "<div class='col-md-12'><div class='progress'>";
-        foreach($articulo as $idProducto3=>$producto){
-          $totalDespachadoMensual = $totalDespachadoMensual + $totalDespachoProducto[$idProducto3];
-        }
-        foreach($articulo as $idProducto3=>$producto){
-          $porcentaje[$idProducto3] = round(100*($totalDespachoProducto[$idProducto3]/$totalDespachadoMensual),0);
-          if(!isset($acumulado)){$acumulado = $porcentaje[$idProducto3];}
-          elseif(($acumulado+$porcentaje[$idProducto3])>100){$porcentaje[$idProducto3]=100-$acumulado;}
-          else {$acumulado += $porcentaje[$idProducto3];}
-          $tablaResumen[$idProducto] .= "<div class='progress-bar progress-bar-$classArticulo[$idProducto3]' style='width: {$porcentaje[$idProducto3]}%'>$porcentaje[$idProducto3]% $producto</div>";
-        }
-        $tablaResumen[$idProducto] .= "</div></div>";
+        
       }
+      $i++;
     }
+    $muestraPorcentuales = $porcentualGasoil.$porcentualNaftas."<div class='col-md-12'><div class='progress'>";
+    foreach($articulo as $idProducto3=>$producto){
+      $totalDespachadoMensual = $totalDespachadoMensual + $totalDespachoProducto[$idProducto3];
+    }
+    foreach($articulo as $idProducto3=>$producto){
+      $porcentaje[$idProducto3] = round(100*($totalDespachoProducto[$idProducto3]/$totalDespachadoMensual),0);
+      if(!isset($acumulado)){$acumulado = $porcentaje[$idProducto3];}
+      elseif(($acumulado+$porcentaje[$idProducto3])>100){$porcentaje[$idProducto3]=100-$acumulado;}
+      else {$acumulado += $porcentaje[$idProducto3];}
+      $muestraPorcentuales .= "<div class='progress-bar progress-bar-$classArticulo[$idProducto3]' style='width: {$porcentaje[$idProducto3]}%'>$porcentaje[$idProducto3]% $producto[abr] </div>";
+    }
+    $muestraPorcentuales .= "</div></div>";
+
     $tableProductos .= "</tr><tr><td></td><td colspan=10><b>".sprintf("%.2f", ($totalDespachoProducto[2068]/($totalDespachoProducto[2068]+$totalDespachoProducto[2069]))*100)."% Euro/Gasoil</b></td><td colspan=10><b>".sprintf("%.2f", ($totalDespachoProducto[2076]/($totalDespachoProducto[2076]+$totalDespachoProducto[2078]))*100)."% Infinia/Naftas</b></td></tr></tbody></table>";
 
     foreach($arrayPicosTanques as $pico => $tanque){
       echo $tableTanques[$tanque]."</tbody></table></div>";
     }
     $_SESSION['tablaProductos']=$tableProductos;
-    $_SESSION['tablaResumen']=$tablaResumen;
+    $_SESSION['tablaResumen'] = $tablaResumen;
+    $_SESSION['muestraPorcentuales'] = $muestraPorcentuales;
     break;
 }
 ?>

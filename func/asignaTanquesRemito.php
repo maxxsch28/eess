@@ -69,7 +69,7 @@ if(isset($_POST['tipo'])&&$_POST['tipo']=='yer'){
           $inputTq4 = $_POST['totalEd']-$_POST['inputTq1'];
           $inputTq5 = $_POST['totalNS']-$_POST['inputTq3'];
           //substr($_POST['fecha'],-4).substr($_POST['fecha'],3,2).substr($_POST['fecha'],0,2);
-          $sql1 = "INSERT INTO recepcioncombustibles (fecha, remito1, remito2, tq1, tq2, tq3, tq4, tq5, tq6, idOrden) VALUES ('$fecha', '$_POST[remito1]', '$_POST[remito2]', '0$_POST[inputTq1]', '0$_POST[inputTq2]', '0$_POST[inputTq3]', '$inputTq4', '0$inputTq5', '0$_POST[inputTq6]', '$idOrden')";
+          $sql1 = "INSERT INTO recepcioncombustibles (fecha, remito1, remito2, tq1, tq2, tq3, tq4, tq5, tq6, idOrden, op) VALUES ('$fecha', '$_POST[remito1]', '$_POST[remito2]', '0$_POST[inputTq1]', '0$_POST[inputTq2]', '0$_POST[inputTq3]', '$inputTq4', '0$inputTq5', '0$_POST[inputTq6]', '$idOrden', '0$_POST[op]')";
           ChromePhp::log($sql1);
           $res1 = $mysqli->query($sql1);
           
